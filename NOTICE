@@ -1,0 +1,30 @@
+Echo Loop Windows (unofficial fork)
+===================================
+
+This repository is an unofficial fork of Echo Loop:
+
+    https://github.com/echo-loop/Echo-Loop
+
+Based on upstream version 1.0.46.
+Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+See LICENSE for the full license text.
+
+Modifications (2026-11-05):
+
+- Added Windows desktop build support (Visual Studio 2022 Build Tools,
+  Windows SDK, ATL, CMake, NuGet).
+- Added local-first mode: login and subscription entry points are hidden,
+  first-run onboarding is skipped, and community collection / podcast
+  enrollment work without an account.
+- Added a custom OpenAI-compatible AI configuration (Base URL, API key,
+  model) for translation, sentence analysis, sense groups, AI dictionary
+  lookups and the AI assistant.
+- Added a media_kit-based just_audio playback bridge for Windows.
+- Added Windows build fixes: /utf-8 compile option, configurable install
+  prefix, and WebView2Loader.dll installation.
+
+This project is not affiliated with, endorsed by, or sponsored by the
+original Echo Loop authors or 中央民族大学.
+
+Third-party components remain under their respective licenses; see
+THIRD_PARTY_NOTICES.md.

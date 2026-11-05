@@ -1,0 +1,1827 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart'
+    show getTemporaryDirectory, getApplicationCacheDirectory;
+
+import '../database/app_database.dart';
+import '../database/providers.dart';
+import '../l10n/app_localizations.dart';
+import '../models/app_update_info.dart';
+import '../providers/app_update_provider.dart';
+import '../providers/developer_options_provider.dart';
+import '../providers/offline_asr_settings_provider.dart';
+import '../providers/tts/tts_settings_provider.dart';
+import '../services/tts/tts_engine.dart';
+import '../providers/package_info_provider.dart';
+import '../providers/reminder_settings_provider.dart';
+import '../providers/sentence_ai_provider.dart';
+import '../providers/settings_provider.dart';
+import '../providers/audio_library_provider.dart';
+import '../providers/collection_provider.dart';
+import '../providers/learning_progress_provider.dart';
+import '../providers/new_user_guide_provider.dart';
+import '../providers/tag_provider.dart';
+import '../analytics/analytics_providers.dart';
+import '../analytics/models/event_names.dart';
+import '../config/app_store_config.dart';
+import '../features/auth/providers/auth_providers.dart';
+import '../features/auth/screens/account_screen.dart';
+import '../features/custom_ai/providers/custom_ai_config_provider.dart';
+import '../features/user_region/user_region_override.dart';
+import '../features/user_region/user_region_providers.dart';
+import '../features/user_region/widgets/user_region_override_tile.dart';
+import '../features/subscription/providers/subscription_availability.dart';
+import '../features/subscription/providers/subscription_controller.dart';
+import '../services/app_update_launcher.dart';
+import '../router/app_router.dart';
+import '../features/onboarding_survey/providers/onboarding_survey_provider.dart';
+import '../services/app_network_image_cache.dart';
+import '../services/tts/tts_cache_store.dart';
+import '../services/dictionary_download_manager.dart';
+import '../services/orphan_file_cleanup_service.dart';
+import '../services/temp_cleanup_service.dart';
+import '../utils/file_size.dart';
+import '../services/demo_data_seeder.dart';
+import '../models/dict_entry.dart';
+import '../services/dictionary_service.dart';
+import '../theme/app_theme.dart';
+import '../providers/dictionary/dictionary_registry.dart';
+import '../providers/dictionary/visible_sources_provider.dart';
+import '../widgets/dictionary/dict_source_presentation.dart';
+import 'asr_settings_screen.dart';
+import 'custom_ai_settings_screen.dart';
+import 'dictionary_settings_screen.dart';
+import 'display_settings_screen.dart';
+import 'tts_settings_screen.dart';
+import 'learning_settings_screen.dart';
+import 'log_viewer_screen.dart';
+import 'playback_settings_screen.dart';
+import 'reading_text_settings_screen.dart';
+import 'preferences_viewer_screen.dart';
+import 'storage_browser_screen.dart';
+import 'download_tasks_screen.dart';
+import 'reminder_settings_screen.dart';
+import '../services/runtime_endpoint_router.dart';
+import '../widgets/app_update_dialog.dart';
+
+const double _settingsLeadingIconExtent = 32;
+const double _settingsSvgIconExtent = 26;
+const double _settingsBrandIconExtent = 20;
+const double _settingsMaterialIconExtent = 26;
+const _faqUrl = 'https://my.feishu.cn/docx/OPZRdXkRvoAW5Bx78LocBUdqn80';
+
+class SettingsScreen extends ConsumerStatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  /// 连续点击版本号解锁开发者选项的计数器
+  int _devTapCount = 0;
+  DateTime? _lastDevTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final settings = ref.watch(appSettingsProvider);
+    final showDeveloperOptions = ref.watch(showDeveloperOptionsProvider);
+    final settingsController = ref.read(appSettingsProvider.notifier);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.settings)),
+      body: ListView(
+        padding: const EdgeInsets.all(AppSpacing.m),
+        children: [
+          // Windows 版暂不提供登录与订阅，隐藏对应入口。
+          if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows)
+            _buildAccountSection(context, l10n),
+          if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows)
+            const SizedBox(height: AppSpacing.m),
+          _buildSection(
+            context,
+            title: l10n.appearance,
+            children: [
+              _buildThemeModeTile(context, l10n, settings, settingsController),
+              _buildLanguageTile(context, l10n, settings, settingsController),
+              _buildReadingTextTile(context, l10n),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.m),
+          _buildStudySection(context, ref, l10n),
+          const SizedBox(height: AppSpacing.m),
+          _buildAboutSection(context, ref, l10n),
+          const SizedBox(height: AppSpacing.m),
+          _buildStorageSection(context, ref, l10n),
+          const SizedBox(height: AppSpacing.m),
+          _buildVersionLabel(context, ref, l10n),
+          if (showDeveloperOptions) ...[
+            const SizedBox(height: AppSpacing.m),
+            _buildDeveloperSection(
+              context,
+              ref,
+              l10n,
+              settings,
+              settingsController,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 构建账号分组：登录入口 + 订阅入口（登录 item 下方）。
+  Widget _buildAccountSection(BuildContext context, AppLocalizations l10n) {
+    final session = ref.watch(supabaseSessionProvider).value;
+    final isChinaUser = ref.watch(isChinaUserProvider);
+    final isSignedIn = session != null;
+    final accountSubtitle = session == null
+        ? null
+        : switch (authDisplayProviderForSession(session)) {
+            AuthDisplayProvider.apple => l10n.authSignedInWithApple,
+            AuthDisplayProvider.google => l10n.authSignedInWithGoogle,
+            AuthDisplayProvider.email ||
+            AuthDisplayProvider.unknown => compactAccountListIdentifier(
+              session.user.email ?? session.user.id,
+            ),
+          };
+
+    return _buildSection(
+      context,
+      title: l10n.account,
+      children: [
+        ListTile(
+          leading: _buildAccountLeadingIcon(
+            context,
+            l10n,
+            isChinaUser: isChinaUser,
+          ),
+          title: Text(l10n.account),
+          subtitle: accountSubtitle == null
+              ? null
+              : Text(
+                  accountSubtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                isSignedIn ? l10n.authSignedInStatus : l10n.authSignedOutStatus,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+          onTap: () =>
+              context.push(isSignedIn ? AppRoutes.account : AppRoutes.login),
+        ),
+        // 当前平台未启用订阅（未注入 RC key）时隐藏入口。
+        if (ref.watch(subscriptionAvailabilityProvider))
+          _buildSubscriptionTile(context, l10n),
+      ],
+    );
+  }
+
+  /// 中国区路由启用时，在账号入口图标右上角显示地区标记。
+  Widget _buildAccountLeadingIcon(
+    BuildContext context,
+    AppLocalizations l10n, {
+    required bool isChinaUser,
+  }) {
+    final accountIcon = _settingsThemedSvgIcon(
+      context,
+      'assets/icon/account-1.svg',
+    );
+    if (!isChinaUser) return accountIcon;
+
+    return Tooltip(
+      message: l10n.chinaRoutingIndicatorTooltip,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          accountIcon,
+          Positioned(
+            top: 0,
+            right: 0,
+            child: ExcludeSemantics(
+              child: SvgPicture.asset(
+                'assets/icon/china_flag.svg',
+                width: 12,
+                height: 8,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建订阅入口（账户分组内、登录 item 下方）。
+  ///
+  /// 保持简洁：只展示标题 + 状态徽章，详情（套餐、续费、管理）留给点击后的 Paywall。
+  /// 未订阅：右侧高亮金色「升级」徽章，提示开通会员。
+  /// 已订阅：右侧弱化「会员」描边徽章。
+  /// 点击统一进入 Paywall（其内部按 isPremium 区分购买页 / 管理订阅区）。
+  Widget _buildSubscriptionTile(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final gold = AppTheme.premiumGold(theme.brightness);
+    final isPremium = ref.watch(subscriptionControllerProvider).isActive;
+    final upgradeBadgeBackground = AppTheme.premiumUpgradeBadgeBackground(
+      theme.brightness,
+    );
+    const upgradeBadgeTextColor = AppTheme.onPremiumUpgradeBadge;
+
+    return ListTile(
+      leading: _settingsSvgIcon('assets/icon/diamond.svg'),
+      title: Text(l10n.premiumEntryTitle),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isPremium)
+            // 已订阅：弱化徽章（描边，不再金底高亮），不再上销。
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: gold.withValues(alpha: 0.6)),
+              ),
+              child: Text(
+                l10n.premiumEntryBadgeActive,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: gold,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            )
+          else
+            // 未订阅：与订阅页优惠条统一为高对比实底徽章，引导开通。
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: upgradeBadgeBackground,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                l10n.premiumEntryBadgeUpgrade,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: upgradeBadgeTextColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          const SizedBox(width: AppSpacing.xs),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+      onTap: () => context.push(AppRoutes.paywall),
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.m,
+            AppSpacing.s,
+            AppSpacing.m,
+            AppSpacing.s,
+          ),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Card(child: Column(children: _intersperseDividers(children))),
+      ],
+    );
+  }
+
+  /// 构建「学习」分组：提醒、学习、语音识别、语音合成、播放、词典等入口合并到同一张卡片中。
+  Widget _buildStudySection(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final reminderSettings = ref.watch(reminderSettingsProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final showAsr = ref.watch(showOfflineAsrSectionProvider);
+    final settings = ref.watch(appSettingsProvider);
+    final settingsController = ref.read(appSettingsProvider.notifier);
+
+    return _buildSection(
+      context,
+      title: l10n.learningSection,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.auto_awesome),
+          title: Text(l10n.aiService),
+          subtitle: Text(
+            ref.watch(customAiConfiguredProvider)
+                ? l10n.aiServiceStatusConfigured
+                : l10n.aiServiceStatusNotConfigured,
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const CustomAiSettingsScreen(),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/bell.svg'),
+          title: Text(l10n.reminderSettings),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (reminderSettings.savedReviewReminderEnabled)
+                Text(
+                  reminderSettings.formattedTime,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const ReminderSettingsScreen(),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/book-shelf.svg'),
+          title: Text(l10n.learningSettings),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const LearningSettingsScreen(),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/eye.svg'),
+          title: Text(l10n.displaySettings),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const DisplaySettingsScreen(),
+            ),
+          ),
+        ),
+        if (showAsr)
+          ListTile(
+            leading: _settingsThemedSvgIcon(
+              context,
+              'assets/icon/microphone.svg',
+            ),
+            title: Text(l10n.speechRecognition),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  ref.watch(offlineAsrSettingsProvider).backend ==
+                          AsrBackend.platform
+                      ? l10n.asrBackendPlatform
+                      : l10n.asrBackendOffline,
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AsrSettingsScreen(),
+              ),
+            ),
+          ),
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/speaker.svg'),
+          title: Text(l10n.ttsSettings),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _ttsEngineSummary(l10n, ref.watch(ttsSettingsProvider).engine),
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const TtsSettingsScreen()),
+          ),
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(
+            context,
+            'assets/icon/play-pause.svg',
+          ),
+          title: Text(l10n.playbackSettings),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const PlaybackSettingsScreen(),
+            ),
+          ),
+        ),
+        _buildNativeLanguageTile(context, l10n, settings, settingsController),
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/locale-1.svg'),
+          title: Text(l10n.dictionarySettings),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                dictSourceLabel(
+                  l10n,
+                  ref.watch(resolvedDefaultSourceIdProvider),
+                ),
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const DictionarySettingsScreen(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 设置首页仅展示当前语音引擎品牌，口音和音色留在语音合成详情页展示。
+  String _ttsEngineSummary(AppLocalizations l10n, TtsEngineKind engine) {
+    return switch (engine) {
+      TtsEngineKind.platform => platformSpeechEngineName(l10n),
+      TtsEngineKind.edge => l10n.ttsEngineEdge,
+      TtsEngineKind.kokoro || TtsEngineKind.piper => l10n.asrBackendOffline,
+    };
+  }
+
+  /// 构建存储管理区域
+  Widget _buildStorageSection(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    return _buildSection(
+      context,
+      title: l10n.storage,
+      children: [
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/diskette.svg'),
+          title: Text(l10n.backupAndRestore),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push(AppRoutes.backupRestore),
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/trash-bin.svg'),
+          title: Text(l10n.clearCache),
+          onTap: () => _clearAiCache(context, ref, l10n),
+        ),
+      ],
+    );
+  }
+
+  /// 清空缓存：AI 分析缓存 + 临时目录（录音残留、导出/导入临时文件）
+  Future<void> _clearAiCache(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.clearCache),
+        content: Text(l10n.clearCacheConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.confirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    // 1. 清空 SQLite 缓存（词级时间戳属于字幕数据，不在此清除）
+    final dao = ref.read(sentenceAiCacheDaoProvider);
+    final deleted = await dao.deleteAll();
+
+    // 2. 清空内存缓存（句子 AI + AI 词典的 L1，否则清缓存后重查仍命中旧结果）
+    ref.read(sentenceAiNotifierProvider).clearMemoryCache();
+    ref.read(aiDictionarySourceProvider).clearMemoryCache();
+
+    // 3. 清理临时目录（录音 .caf 残留、Library/Caches 下 app 自建导出/导入临时目录）
+    final result = await cleanupAllTempFiles();
+
+    // 3.5 清网络图片磁盘缓存（走 flutter_cache_manager API，自动清文件+索引）
+    final imageFreed = await _clearNetworkImageCache();
+
+    // 4. 清理非当前语言的词典文件 + 旧版遗留 dict.db
+    final settings = ref.read(appSettingsProvider);
+    final dictManager = DictionaryDownloadManager();
+    final dictFreed = await dictManager.deleteUnusedDictionaries(
+      settings.nativeLanguage,
+    );
+    dictManager.dispose();
+
+    // 5. 清扫孤儿音频/字幕文件（磁盘有、DB 无引用）+ 全量清波形缓存
+    final referencedRelPaths = await ref
+        .read(audioItemDaoProvider)
+        .getAllReferencedRelPaths();
+    final orphanResult = await cleanupOrphanMediaFiles(
+      referencedRelPaths: referencedRelPaths,
+    );
+    final waveformResult = await cleanupAllWaveforms();
+
+    // 6. 清 TTS 合成音频缓存（可再生的 transient 磁盘缓存，含后台预热产物）
+    final ttsFreed = await _clearTtsCache(ref);
+
+    final totalFreed =
+        result.freedBytes +
+        imageFreed +
+        dictFreed +
+        orphanResult.freedBytes +
+        waveformResult.freedBytes +
+        ttsFreed;
+
+    if (!context.mounted) return;
+    final String message;
+    if (deleted == 0 && totalFreed == 0) {
+      message = l10n.clearCacheEmpty;
+    } else if (totalFreed > 0) {
+      message = l10n.clearCacheSuccessWithSize(formatBytes(totalFreed));
+      ref.read(analyticsServiceProvider).track(Events.cacheCleared, {
+        EventParams.bytesFreed: totalFreed,
+      });
+    } else {
+      message = l10n.clearCacheSuccess;
+    }
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// 清网络图片磁盘缓存，返回释放字节数（best-effort）。
+  ///
+  /// 用 [AppNetworkImageCache] 的 `emptyCache()`（flutter_cache_manager 标准 API），
+  /// 会同时清文件和 json 索引，避免直接删文件导致索引不一致。
+  /// 字节数为清理前测量 `Library/Caches/app_network_images` 目录大小，量取失败计 0。
+  Future<int> _clearNetworkImageCache() async {
+    var freed = 0;
+    try {
+      final cachesDir = await getTemporaryDirectory();
+      final imageDir = Directory(
+        '${cachesDir.path}/${AppNetworkImageCache.cacheKey}',
+      );
+      if (await imageDir.exists()) {
+        freed = await calculateDirectorySize(imageDir);
+      }
+    } catch (_) {}
+    try {
+      await AppNetworkImageCache.instance.emptyCache();
+    } catch (_) {
+      freed = 0;
+    }
+    return freed;
+  }
+
+  /// 清 TTS 合成音频缓存，返回释放字节数（best-effort）。
+  ///
+  /// TTS 缓存（`ApplicationCacheDirectory/tts_cache/`）是可再生的 transient 磁盘
+  /// 缓存——含发音按钮合成产物与语音合成设置页的后台预热产物，清掉后下次发音
+  /// 重新合成即可。仅清本 app 自建的 `tts_cache/` 子目录（删文件 + 删索引），
+  /// 不触碰系统 `Library/Caches` 根（见 §7.5）。
+  Future<int> _clearTtsCache(WidgetRef ref) async {
+    try {
+      final store = TtsCacheStore(
+        resolveDao: () => ref.read(ttsCacheDaoProvider),
+        resolveCacheDir: getApplicationCacheDirectory,
+      );
+      return await store.clearAll();
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  /// 构建关于信息区域
+  Widget _buildAboutSection(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final updateState = ref.watch(appUpdateProvider);
+    final isChecking = updateState is AppUpdateChecking;
+
+    return _buildSection(
+      context,
+      title: l10n.about,
+      children: [
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/group.svg'),
+          title: Text(l10n.aboutCommunity),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () async {
+            final isZh = Localizations.localeOf(context).languageCode == 'zh';
+            final path = isZh ? '/zh-CN/social' : '/en/social';
+            final uri = runtimeEndpointRouter.apiUri(path);
+            await launchUrl(uri);
+          },
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/feedback.svg'),
+          title: Text(l10n.writeFeedback),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => launchUrl(Uri.parse('mailto:support@echo-loop.top')),
+        ),
+        if (defaultTargetPlatform == TargetPlatform.iOS)
+          ListTile(
+            leading: _settingsMaterialIcon(Icons.star_rounded),
+            title: Text(l10n.rateUs),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => launchUrl(
+              appStoreReviewUri,
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/help.svg'),
+          title: const Text('FAQ'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => launchUrl(
+            Uri.parse(_faqUrl),
+            mode: LaunchMode.externalApplication,
+          ),
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/refresh.svg'),
+          title: Text(l10n.checkForUpdate),
+          trailing: isChecking
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.chevron_right),
+          onTap: isChecking ? null : () => _checkForUpdate(context, ref, l10n),
+        ),
+        ListTile(
+          leading: _settingsSvgIcon('assets/icon/documents.svg'),
+          title: Text(l10n.termsOfService),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => launchUrl(Uri.parse('https://www.echo-loop.top/terms')),
+        ),
+        ListTile(
+          leading: _settingsThemedSvgIcon(context, 'assets/icon/lock.svg'),
+          title: Text(l10n.privacyPolicy),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () =>
+              launchUrl(Uri.parse('https://www.echo-loop.top/privacy')),
+        ),
+        ListTile(
+          leading: SizedBox(
+            width: _settingsLeadingIconExtent,
+            height: _settingsLeadingIconExtent,
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.github,
+                size: _settingsBrandIconExtent,
+              ),
+            ),
+          ),
+          title: Text(l10n.viewSourceCode),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () =>
+              launchUrl(Uri.parse('https://github.com/echo-loop/Echo-Loop/')),
+        ),
+      ],
+    );
+  }
+
+  /// 版本号标签，置于设置页最底部。
+  /// 连续点击可解锁开发者选项。
+  Widget _buildVersionLabel(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final versionDisplay = ref.watch(packageInfoProvider).version;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _handleVersionTap(context, ref, l10n),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Center(
+          child: Text(
+            kReleaseMode
+                ? 'Version $versionDisplay'
+                : 'Version $versionDisplay (Debug)',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 连续点击版本号解锁开发者选项。
+  ///
+  /// 两次点击间隔超过 1 秒重置计数。
+  /// 第 4 次起显示剩余次数提示，第 7 次解锁。
+  /// 已解锁时点击提示"已开启"。
+  void _handleVersionTap(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    if (ref.read(showDeveloperOptionsProvider)) return;
+
+    final now = DateTime.now();
+    if (_lastDevTap != null &&
+        now.difference(_lastDevTap!) > const Duration(seconds: 1)) {
+      _devTapCount = 0;
+    }
+    _lastDevTap = now;
+    _devTapCount++;
+
+    if (_devTapCount >= 7) {
+      _devTapCount = 0;
+      ref.read(showDeveloperOptionsProvider.notifier).setEnabled(true);
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(l10n.developerOptionsEnabled)));
+    }
+  }
+
+  /// 手动检查更新
+  Future<void> _checkForUpdate(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final result = await ref.read(appUpdateProvider.notifier).manualCheck();
+    if (!context.mounted) return;
+
+    if (result.type == AppUpdateType.none || result.info == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result.info == null ? l10n.checkUpdateFailed : l10n.alreadyLatest,
+          ),
+        ),
+      );
+    } else {
+      final isForce = result.type == AppUpdateType.forceUpdate;
+      final downloadUrl = AppUpdate.getDownloadUrl(result.info!);
+      final launcher = AppUpdateLauncher();
+      showAppUpdateDialog(
+        context: context,
+        info: result.info!,
+        isForceUpdate: isForce,
+        downloadUrl: downloadUrl,
+        onUpdate: () =>
+            launcher.launch(info: result.info!, primaryUrl: downloadUrl),
+        onDismiss: () => ref.read(appUpdateProvider.notifier).dismiss(),
+      );
+    }
+  }
+
+  /// 构建开发者选项区域
+  Widget _buildDeveloperSection(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    final formattedTimeMachine = _formatTimeMachineDateTime(
+      context,
+      settings.timeMachineDateTime,
+    );
+    return _buildSection(
+      context,
+      title: l10n.developer,
+      children: [
+        // 关闭开发者选项的开关（所有构建模式下均可见）
+        SwitchListTile(
+          secondary: _emojiIcon('🛠️'),
+          title: Text(l10n.developerOptionsDisable),
+          value: true,
+          onChanged: (value) {
+            if (!value) {
+              ref.read(showDeveloperOptionsProvider.notifier).setEnabled(false);
+              // 关闭开发者选项后入口不可见，恢复自动地区，避免强制地区残留。
+              unawaited(
+                ref
+                    .read(userRegionOverrideStoreProvider)
+                    .save(UserRegionOverride.auto),
+              );
+            }
+          },
+        ),
+        UserRegionOverrideTile(leading: _emojiIcon('🌏')),
+        ListTile(
+          leading: _emojiIcon('🔧'),
+          title: Text(l10n.timeMachine),
+          trailing: _trailingValue(
+            context,
+            formattedTimeMachine ?? l10n.timeMachineUseSystemTime,
+          ),
+          onTap: () => _showTimeMachineDialog(
+            context,
+            l10n,
+            controller,
+            settings.timeMachineDateTime,
+          ),
+        ),
+        ListTile(
+          leading: _emojiIcon('📋'),
+          title: const Text('日志'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const LogViewerScreen()),
+          ),
+        ),
+        ListTile(
+          leading: _emojiIcon('🧭'),
+          title: Text(l10n.resetNewUserGuide),
+          onTap: () => _resetNewUserGuide(context, ref, l10n),
+        ),
+        ListTile(
+          leading: _emojiIcon('📝'),
+          title: Text(l10n.resetOnboarding),
+          onTap: () => _resetOnboarding(context, ref, l10n),
+        ),
+        ListTile(
+          leading: _emojiIcon('🎭'),
+          title: Text(l10n.demoMode),
+          trailing: settings.isDemoModeLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Switch(
+                  value: settings.isDemoMode,
+                  onChanged: (value) =>
+                      _toggleDemoMode(context, ref, controller, value),
+                ),
+        ),
+        ListTile(
+          leading: _emojiIcon('📖'),
+          title: const Text('词典查询'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _showDictionaryLookupDialog(context),
+        ),
+        ListTile(
+          leading: _emojiIcon('⚙️'),
+          title: const Text('偏好设置'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const PreferencesViewerScreen(),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: _emojiIcon('💾'),
+          title: const Text('内部存储'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const StorageBrowserScreen(),
+            ),
+          ),
+        ),
+        ListTile(
+          leading: _emojiIcon('⬇️'),
+          title: const Text('下载任务'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const DownloadTasksScreen(),
+            ),
+          ),
+        ),
+        // 仅 macOS：插件桌面端客户端不读取系统代理，开启后把系统代理写入下载插件。
+        if (defaultTargetPlatform == TargetPlatform.macOS)
+          SwitchListTile(
+            secondary: _emojiIcon('🌐'),
+            title: const Text('下载使用系统代理'),
+            subtitle: const Text('默认开启；读取 macOS 系统代理，对之后开始的下载生效。无系统代理时直连'),
+            value: ref.watch(useSystemProxyForDownloadsProvider),
+            onChanged: (value) => ref
+                .read(useSystemProxyForDownloadsProvider.notifier)
+                .setEnabled(value),
+          ),
+      ],
+    );
+  }
+
+  /// 重置页面级新用户引导状态，便于开发调试重复验证引导流程。
+  Future<void> _resetNewUserGuide(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    await ref.read(guideControllerProvider.notifier).resetAll();
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(l10n.resetNewUserGuideDone)));
+  }
+
+  /// 重置 Onboarding 问卷状态：清空问卷答案 SP key，便于开发调试。
+  ///
+  /// 故意**不动**用户的界面语言（`locale` SP key）和其它设置——老用户
+  /// 已经选过中文，重置 onboarding 不应把他们的偏好一起抹掉，否则热重启后
+  /// 会回退到"跟随系统"。
+  ///
+  /// `initialOnboardingCompletedProvider` 在 `main()` 通过
+  /// `overrideWithValue` 注入，运行期不可改写，因此重置后必须重启 App
+  /// 才能再次进入问卷。
+  Future<void> _resetOnboarding(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final storage = ref.read(onboardingStorageProvider);
+    await storage.clear();
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(l10n.resetOnboardingDone)));
+  }
+
+  /// 显示词典查询对话框
+  void _showDictionaryLookupDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const _DictionaryLookupDialog(),
+    );
+  }
+
+  /// 切换演示模式。
+  ///
+  /// 切库 3 步：准备目标库 → 切换指向 → 重新加载数据。
+  /// 开启时创建演示数据库并 seed，关闭时切回生产数据库并清理文件。
+  Future<void> _toggleDemoMode(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings controller,
+    bool enabled,
+  ) async {
+    controller.setDemoModeLoading(true);
+
+    // 记住当前数据库名称，异常时用于恢复连接
+    final currentDbName = enabled ? 'echo_loop.db' : 'echo_loop_demo.db';
+
+    try {
+      // Step 1: 关闭旧数据库（避免 Drift "multiple databases" 警告）
+      await closeCurrentDatabase(
+        studyTimeService: ref.read(studyTimeServiceProvider),
+      );
+
+      if (enabled) {
+        // Step 2a: 创建并 seed demo 库（幂等）
+        final demoDb = AppDatabase(openConnectionWithName('echo_loop_demo.db'));
+        await DemoDataSeeder(demoDb).seedIfEmpty();
+        // Step 3a: 切换指向
+        switchAppDatabase(demoDb, (p) => ref.invalidate(p));
+      } else {
+        // Step 2b: 创建 prod 库
+        final prodDb = AppDatabase(openConnectionWithName('echo_loop.db'));
+        // Step 3b: 切换指向
+        switchAppDatabase(prodDb, (p) => ref.invalidate(p));
+        // 清理演示文件（demo 数据库已关闭）
+        await DemoDataSeeder.cleanupFiles();
+      }
+
+      // Step 4: 重新加载数据（与 MainShell.initState 一致）
+      await ref.read(audioLibraryProvider.notifier).loadLibrary();
+      ref.read(collectionListProvider.notifier).loadCollections();
+      ref.read(tagListProvider.notifier).loadTags();
+      await ref.read(learningProgressProvider.notifier).loadAll();
+
+      await controller.setDemoMode(enabled);
+    } catch (e) {
+      // 恢复数据库连接，防止 app 处于无数据库状态
+      final fallbackDb = AppDatabase(openConnectionWithName(currentDbName));
+      switchAppDatabase(fallbackDb, (p) => ref.invalidate(p));
+      await ref.read(audioLibraryProvider.notifier).loadLibrary();
+      ref.read(collectionListProvider.notifier).loadCollections();
+      ref.read(tagListProvider.notifier).loadTags();
+      await ref.read(learningProgressProvider.notifier).loadAll();
+
+      controller.setDemoModeLoading(false);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Demo mode error: $e')));
+    }
+  }
+
+  /// 显示时光机设置对话框。
+  ///
+  /// 对话框内允许分别选择日期与时间，并支持恢复系统时间。
+  Future<void> _showTimeMachineDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettings controller,
+    DateTime? initialDateTime,
+  ) async {
+    DateTime? selectedDateTime = initialDateTime;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final formattedDateTime = _formatTimeMachineDateTime(
+              context,
+              selectedDateTime,
+            );
+            return AlertDialog(
+              title: Text(l10n.timeMachine),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    formattedDateTime == null
+                        ? l10n.timeMachineUseSystemTime
+                        : '${l10n.timeMachineCurrentTime}: $formattedDateTime',
+                  ),
+                  const SizedBox(height: AppSpacing.m),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            final nextDateTime = await _pickDate(
+                              dialogContext,
+                              selectedDateTime,
+                            );
+                            if (nextDateTime == null) return;
+                            setState(() {
+                              selectedDateTime = nextDateTime;
+                            });
+                          },
+                          child: Text(l10n.timeMachineSelectDate),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.s),
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () async {
+                            final nextDateTime = await _pickTime(
+                              dialogContext,
+                              selectedDateTime,
+                            );
+                            if (nextDateTime == null) return;
+                            setState(() {
+                              selectedDateTime = nextDateTime;
+                            });
+                          },
+                          child: Text(l10n.timeMachineSelectTime),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedDateTime = null;
+                        });
+                      },
+                      child: Text(l10n.timeMachineReset),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: () async {
+                    await controller.setTimeMachineDateTime(selectedDateTime);
+                    if (!dialogContext.mounted) return;
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: Text(l10n.save),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// 选择时光机日期，并保留已有时间部分。
+  Future<DateTime?> _pickDate(
+    BuildContext context,
+    DateTime? currentDateTime,
+  ) async {
+    final minimumDateTime = minimumTimeMachineDateTime(DateTime.now());
+    final baseDateTime = _normalizedPickerBaseDateTime(
+      currentDateTime,
+      minimumDateTime: minimumDateTime,
+    );
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: baseDateTime,
+      firstDate: DateTime(
+        minimumDateTime.year,
+        minimumDateTime.month,
+        minimumDateTime.day,
+      ),
+      lastDate: DateTime(2100, 12, 31),
+    );
+    if (pickedDate == null) return null;
+
+    return normalizedFutureTimeMachineDateTime(
+      DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        baseDateTime.hour,
+        baseDateTime.minute,
+      ),
+      DateTime.now(),
+    );
+  }
+
+  /// 选择时光机时间，并保留已有日期部分。
+  Future<DateTime?> _pickTime(
+    BuildContext context,
+    DateTime? currentDateTime,
+  ) async {
+    final baseDateTime = _normalizedPickerBaseDateTime(
+      currentDateTime,
+      minimumDateTime: minimumTimeMachineDateTime(DateTime.now()),
+    );
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: baseDateTime.hour,
+        minute: baseDateTime.minute,
+      ),
+    );
+    if (pickedTime == null) return null;
+
+    return normalizedFutureTimeMachineDateTime(
+      DateTime(
+        baseDateTime.year,
+        baseDateTime.month,
+        baseDateTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      ),
+      DateTime.now(),
+    );
+  }
+
+  /// 为 picker 提供分钟精度的默认时间。
+  DateTime _normalizedPickerBaseDateTime(
+    DateTime? currentDateTime, {
+    required DateTime minimumDateTime,
+  }) {
+    final baseDateTime = currentDateTime == null
+        ? minimumDateTime
+        : normalizedFutureTimeMachineDateTime(
+            currentDateTime,
+            minimumDateTime.subtract(const Duration(minutes: 1)),
+          );
+    return DateTime(
+      baseDateTime.year,
+      baseDateTime.month,
+      baseDateTime.day,
+      baseDateTime.hour,
+      baseDateTime.minute,
+    );
+  }
+
+  String? _formatTimeMachineDateTime(BuildContext context, DateTime? dateTime) {
+    if (dateTime == null) return null;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat('yyyy-MM-dd HH:mm', locale).format(dateTime);
+  }
+
+  /// 构建 emoji 图标（Learna AI 风格）
+  Widget _emojiIcon(String emoji) {
+    return SizedBox(
+      width: 32,
+      height: 32,
+      child: Center(child: Text(emoji, style: const TextStyle(fontSize: 22))),
+    );
+  }
+
+  /// 构建设置列表 SVG 图标，统一约束尺寸，避免资源原始尺寸影响行高。
+  Widget _settingsSvgIcon(String assetName) {
+    return SizedBox(
+      width: _settingsLeadingIconExtent,
+      height: _settingsLeadingIconExtent,
+      child: Center(
+        child: SvgPicture.asset(
+          assetName,
+          width: _settingsSvgIconExtent,
+          height: _settingsSvgIconExtent,
+        ),
+      ),
+    );
+  }
+
+  /// 构建随主题切换前景色的单色 SVG，保证深色卡面上的图标对比度。
+  Widget _settingsThemedSvgIcon(BuildContext context, String assetName) {
+    return SizedBox(
+      width: _settingsLeadingIconExtent,
+      height: _settingsLeadingIconExtent,
+      child: Center(
+        child: SvgPicture.asset(
+          assetName,
+          width: _settingsSvgIconExtent,
+          height: _settingsSvgIconExtent,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.onSurfaceVariant,
+            BlendMode.srcIn,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建设置列表 Material 图标，用于暂未提供 SVG 的少量入口。
+  Widget _settingsMaterialIcon(IconData icon) {
+    return SizedBox(
+      width: _settingsLeadingIconExtent,
+      height: _settingsLeadingIconExtent,
+      child: Center(child: Icon(icon, size: _settingsMaterialIconExtent)),
+    );
+  }
+
+  /// 在 children 之间插入浅灰分割线
+  List<Widget> _intersperseDividers(List<Widget> children) {
+    if (children.length <= 1) return children;
+    final result = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      result.add(children[i]);
+      if (i < children.length - 1) {
+        result.add(const Divider(height: 1, indent: 56));
+      }
+    }
+    return result;
+  }
+
+  /// 开发者选项中显示「当前值 + chevron」的 trailing，保持与普通设置项一致的视觉。
+  Widget _trailingValue(BuildContext context, String value) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(value, style: TextStyle(color: colorScheme.onSurfaceVariant)),
+        const SizedBox(width: AppSpacing.xs),
+        const Icon(Icons.chevron_right),
+      ],
+    );
+  }
+
+  Widget _buildThemeModeTile(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return ListTile(
+      leading: _settingsSvgIcon('assets/icon/artist-palette.svg'),
+      title: Text(l10n.themeMode),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _getThemeModeName(l10n, settings.themeMode),
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+      onTap: () => _showThemeModeDialog(context, l10n, settings, controller),
+    );
+  }
+
+  /// 学习内容「文字大小与字体」入口。
+  Widget _buildReadingTextTile(BuildContext context, AppLocalizations l10n) {
+    return ListTile(
+      leading: _settingsThemedSvgIcon(context, 'assets/icon/text-size.svg'),
+      title: Text(l10n.readingTextSettings),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => const ReadingTextSettingsScreen(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageTile(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return ListTile(
+      leading: _settingsSvgIcon('assets/icon/locale.svg'),
+      title: Text(l10n.language),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _getLanguageName(l10n, settings.locale),
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+      onTap: () => _showLanguageDialog(context, l10n, settings, controller),
+    );
+  }
+
+  Widget _buildNativeLanguageTile(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final displayName =
+        supportedNativeLanguages[settings.nativeLanguage] ??
+        settings.nativeLanguage;
+    return ListTile(
+      leading: _settingsThemedSvgIcon(context, 'assets/icon/speak.svg'),
+      title: Text(l10n.nativeLanguage),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            displayName,
+            style: TextStyle(color: colorScheme.onSurfaceVariant),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+      onTap: () =>
+          _showNativeLanguageDialog(context, l10n, settings, controller),
+    );
+  }
+
+  void _showNativeLanguageDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.nativeLanguage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.s),
+              child: Text(
+                l10n.nativeLanguageDescription,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            for (final entry in supportedNativeLanguages.entries)
+              _buildNativeLanguageOption(
+                context,
+                settings,
+                controller,
+                entry.key,
+                entry.value,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNativeLanguageOption(
+    BuildContext context,
+    AppSettingsState settings,
+    AppSettings controller,
+    String code,
+    String label,
+  ) {
+    final isSelected = settings.nativeLanguage == code;
+    return ListTile(
+      leading: Icon(
+        isSelected ? Icons.check_circle : Icons.circle_outlined,
+        color: isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.outline,
+      ),
+      title: Text(label),
+      selected: isSelected,
+      onTap: () {
+        if (!isSelected) {
+          ref.read(analyticsServiceProvider).track(
+            Events.nativeLanguageChanged,
+            {
+              EventParams.previousLanguage: settings.nativeLanguage,
+              EventParams.newLanguage: code,
+            },
+          );
+        }
+        controller.setNativeLanguage(code);
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  String _getThemeModeName(AppLocalizations l10n, ThemeMode mode) {
+    return switch (mode) {
+      ThemeMode.light => l10n.themeModeLight,
+      ThemeMode.dark => l10n.themeModeDark,
+      ThemeMode.system => l10n.themeModeSystem,
+    };
+  }
+
+  String _getLanguageName(AppLocalizations l10n, Locale? locale) {
+    if (locale == null) return l10n.languageSystem;
+    if (locale.languageCode == 'zh') return l10n.languageChinese;
+    if (locale.languageCode == 'en') return l10n.languageEnglish;
+    return l10n.languageSystem;
+  }
+
+  void _showThemeModeDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.themeMode),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildThemeOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              ThemeMode.system,
+              Icons.brightness_auto_rounded,
+              l10n.themeModeSystem,
+            ),
+            _buildThemeOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              ThemeMode.light,
+              Icons.light_mode_rounded,
+              l10n.themeModeLight,
+            ),
+            _buildThemeOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              ThemeMode.dark,
+              Icons.dark_mode_rounded,
+              l10n.themeModeDark,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+    ThemeMode mode,
+    IconData themeIcon,
+    String label,
+  ) {
+    final isSelected = settings.themeMode == mode;
+    final colorScheme = Theme.of(context).colorScheme;
+    return ListTile(
+      leading: Icon(
+        isSelected ? Icons.check_circle : Icons.circle_outlined,
+        color: isSelected ? colorScheme.primary : colorScheme.outline,
+      ),
+      title: Row(
+        children: [
+          Icon(
+            themeIcon,
+            size: 22,
+            color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+          ),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onTap: () {
+        if (!isSelected) {
+          ref.read(analyticsServiceProvider).track(Events.themeModeChanged, {
+            EventParams.previousMode: settings.themeMode.name,
+            EventParams.newMode: mode.name,
+          });
+        }
+        controller.setThemeMode(mode);
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  void _showLanguageDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.language),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.s),
+              child: Text(
+                l10n.languageDescription,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            _buildLanguageOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              null,
+              '⚙️',
+              l10n.languageSystem,
+            ),
+            _buildLanguageOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              const Locale('en'),
+              '🇺🇸',
+              l10n.languageEnglish,
+            ),
+            _buildLanguageOption(
+              context,
+              l10n,
+              settings,
+              controller,
+              const Locale('zh', 'CN'),
+              '🇨🇳',
+              l10n.languageChinese,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(
+    BuildContext context,
+    AppLocalizations l10n,
+    AppSettingsState settings,
+    AppSettings controller,
+    Locale? locale,
+    String emoji,
+    String label,
+  ) {
+    final isSelected = settings.locale == locale;
+    return ListTile(
+      leading: Icon(
+        isSelected ? Icons.check_circle : Icons.circle_outlined,
+        color: isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.outline,
+      ),
+      title: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      ),
+      selected: isSelected,
+      onTap: () {
+        if (!isSelected) {
+          ref.read(analyticsServiceProvider).track(Events.appLocaleChanged, {
+            EventParams.previousLocale:
+                settings.locale?.languageCode ?? 'system',
+            EventParams.newLocale: locale?.languageCode ?? 'system',
+          });
+        }
+        controller.setLocale(locale);
+        Navigator.pop(context);
+      },
+    );
+  }
+}
+
+/// 词典查询对话框
+///
+/// 输入单词后调用 [DictionaryService.lookup] 查询，
+/// 显示音标、释义、柯林斯星级和考试标签，未收录时提示。
+class _DictionaryLookupDialog extends StatefulWidget {
+  const _DictionaryLookupDialog();
+
+  @override
+  State<_DictionaryLookupDialog> createState() =>
+      _DictionaryLookupDialogState();
+}
+
+class _DictionaryLookupDialogState extends State<_DictionaryLookupDialog> {
+  final _controller = TextEditingController();
+  DictEntry? _result;
+  bool _searched = false;
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _lookup() {
+    final word = _controller.text.trim();
+    if (word.isEmpty) return;
+
+    final entry = DictionaryService.instance.lookup(word);
+    setState(() {
+      _result = entry;
+      _searched = true;
+      _loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('词典查询'),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _controller,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: '输入单词...',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: _lookup,
+                ),
+              ),
+              onSubmitted: (_) => _lookup(),
+            ),
+            const SizedBox(height: 16),
+            if (_loading)
+              const CircularProgressIndicator()
+            else if (_searched)
+              _buildResult(),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('关闭'),
+        ),
+      ],
+    );
+  }
+
+  /// 构建查询结果展示
+  Widget _buildResult() {
+    if (_result == null) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text('未收录', style: TextStyle(color: Colors.red, fontSize: 16)),
+      );
+    }
+
+    final entry = _result!;
+    return Flexible(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 单词 + 音标
+            SelectableText(
+              '${entry.word}  ${entry.phonetic}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+
+            // 柯林斯星级
+            if (entry.collins > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  '柯林斯: ${'★' * entry.collins}${'☆' * (5 - entry.collins)}',
+                  style: TextStyle(color: Colors.orange[700]),
+                ),
+              ),
+
+            // 考试标签
+            if (entry.examTags.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Wrap(
+                  spacing: 6,
+                  children: entry.examTags
+                      .map(
+                        (tag) => Chip(
+                          label: Text(
+                            tag,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+
+            // 释义
+            if (entry.translation != null)
+              SelectableText(
+                entry.translation!,
+                style: const TextStyle(fontSize: 15),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

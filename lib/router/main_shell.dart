@@ -1,0 +1,912 @@
+/// Tab 导航外壳组件
+///
+/// 从 main.dart 的 MainScreen 提取，使用 StatefulNavigationShell
+/// 实现 Tab 切换并保持各 Tab 状态。
+library;
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../l10n/app_localizations.dart';
+import '../models/app_update_info.dart';
+import '../models/learning_progress.dart';
+import '../models/reminder_settings.dart';
+import '../analytics/analytics_providers.dart';
+import '../analytics/models/event_names.dart';
+import '../services/runtime_endpoint_router.dart';
+import '../database/providers.dart';
+import '../features/podcast/podcast_refresh_controller.dart';
+import '../features/remote_config/remote_config_providers.dart';
+import '../features/user_region/user_region_providers.dart';
+import '../providers/app_update_provider.dart';
+import '../providers/audio_library_provider.dart';
+import '../providers/collection_provider.dart';
+import '../providers/learning_progress_provider.dart';
+import '../providers/learning_session/favorite_review_due_count_provider.dart';
+import '../providers/notification_permission_provider.dart';
+import '../providers/reminder_settings_provider.dart';
+import '../providers/review_reminder_provider.dart';
+import '../providers/settings_provider.dart';
+import '../providers/startup_bootstrap_provider.dart';
+import '../providers/listening_practice/listening_practice_provider.dart';
+import '../providers/media_playback/media_playback_provider.dart';
+import '../providers/study_stats_provider.dart';
+import '../providers/study_duration_provider.dart';
+import '../providers/study_task_provider.dart';
+import '../providers/tag_provider.dart';
+import '../providers/time_provider.dart';
+import '../services/app_logger.dart';
+import '../services/startup_trace.dart';
+import '../services/app_update_launcher.dart';
+import '../services/review_reminder_service.dart';
+import '../services/review_reminder_time_calculator.dart';
+import '../screens/log_viewer_screen.dart';
+import '../providers/new_user_guide_provider.dart';
+import '../features/subscription/widgets/member_tab_badge.dart';
+import '../theme/app_theme.dart';
+import '../widgets/app_update_dialog.dart';
+import '../widgets/notification_permission_dialog.dart';
+import '../widgets/common/prewarm_visibility.dart';
+import '../widgets/startup_splash_screen.dart';
+import 'app_router.dart' show rootNavigatorKey, rootRouteObserver;
+import 'widgets/main_shell_navigation_rail.dart';
+
+/// 主导航壳组件 — 包含 NavigationRail / NavigationBar + 内容区域
+class MainShell extends ConsumerStatefulWidget {
+  /// go_router 提供的 StatefulNavigationShell
+  final StatefulNavigationShell navigationShell;
+
+  const MainShell({super.key, required this.navigationShell});
+
+  @override
+  ConsumerState<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends ConsumerState<MainShell>
+    with RouteAware, WidgetsBindingObserver {
+  ModalRoute<void>? _observedRoute;
+  ProviderSubscription<int>? _pendingTaskCountSubscription;
+  ProviderSubscription<Map<String, LearningProgress>>? _progressMapSubscription;
+  ProviderSubscription<AppUpdateState>? _appUpdateSubscription;
+  ProviderSubscription<ReminderSettings>? _reminderSettingsSubscription;
+  ProviderSubscription<Locale?>? _appLocaleSubscription;
+  ProviderSubscription<int>? _notificationPromptSubscription;
+  ProviderSubscription<GuideControllerState>? _guideWaitSubscription;
+  ProviderSubscription<AsyncValue<StartupReport>>? _localStartupSubscription;
+  late final RemoteConfigController _remoteConfigController;
+  late final AppLifecycleListener _lifecycleListener;
+  bool _didStartPostLocalTasks = false;
+  bool _rootRouteVisible = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route == null || identical(route, _observedRoute)) return;
+    if (_observedRoute != null) {
+      rootRouteObserver.unsubscribe(this);
+    }
+    _observedRoute = route;
+    rootRouteObserver.subscribe(this, route);
+  }
+
+  @override
+  void didPushNext() {
+    if (!mounted || !_rootRouteVisible) return;
+    AppLogger.log(
+      'PrewarmVisibility',
+      'MainShell covered by root route: rootRouteVisible=false',
+    );
+    setState(() => _rootRouteVisible = false);
+  }
+
+  @override
+  void didPopNext() {
+    if (!mounted || _rootRouteVisible) return;
+    AppLogger.log(
+      'PrewarmVisibility',
+      'MainShell uncovered by root route: rootRouteVisible=true',
+    );
+    setState(() => _rootRouteVisible = true);
+    if (widget.navigationShell.currentIndex == 1) {
+      unawaited(_finishFreePlayerSessionsThenRefreshStudyData());
+    }
+  }
+
+  /// 返回 Study 前等待随心听页面完成后台收尾，再刷新统计数据。
+  ///
+  /// 播放器路由不能使用异步 [GoRoute.onExit]，否则 iOS 交互式返回手势会被
+  /// Navigator 判定为取消。页面销毁会启动同一幂等收尾，这里只负责在返回后
+  /// 等待已有 Future，确保 Study 首次刷新不会读到旧统计。
+  Future<void> _finishFreePlayerSessionsThenRefreshStudyData() async {
+    final finishers = <({String name, Future<void> Function() finish})>[
+      (
+        name: 'audio',
+        finish: () =>
+            ref.read(listeningPracticeProvider.notifier).finishStudyPage(),
+      ),
+      (
+        name: 'media',
+        finish: () =>
+            ref.read(mediaPlaybackProvider.notifier).finishStudyPage(),
+      ),
+    ];
+
+    for (final finisher in finishers) {
+      if (!mounted) return;
+      try {
+        await finisher.finish();
+      } catch (error, stackTrace) {
+        AppLogger.log(
+          'StudyExit',
+          '${finisher.name} finish before Study refresh failed: '
+              '$error\n$stackTrace',
+        );
+      }
+    }
+
+    if (!mounted) return;
+    await _refreshStudyData(source: 'root-route-resume');
+  }
+
+  /// 打开不依赖数据库的日志页，确保本地数据启动失败时仍可上报根因。
+  void _openStartupLogs() {
+    unawaited(
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(builder: (_) => const LogViewerScreen()),
+      ),
+    );
+  }
+
+  /// 按社区入口的相同规则打开联系我们页面。
+  Future<void> _openContactUs() async {
+    ref.read(analyticsServiceProvider).track(Events.communityInviteTapped);
+    final isZh = Localizations.localeOf(context).languageCode == 'zh';
+    final path = isZh ? '/zh-CN/social' : '/en/social';
+    final uri = runtimeEndpointRouter.apiUri(path);
+    await launchUrl(uri);
+  }
+
+  /// 预热学习页首屏所需数据：音频列表 + 学习进度。
+  Future<void> _bootstrapStudyLandingData() {
+    return Future.wait<void>([
+      ref.read(audioLibraryProvider.notifier).loadLibrary(),
+      ref.read(learningProgressProvider.notifier).loadAll(),
+    ]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    activeStartupTrace?.mark('main_shell_init_state');
+    // 缓存 controller，避免 dispose 阶段从已卸载的 ConsumerState ref 读取 provider。
+    _remoteConfigController = ref.read(remoteConfigProvider.notifier);
+    _lifecycleListener = AppLifecycleListener(
+      onResume: _onAppResume,
+      onHide: _onAppBackground,
+      onPause: _onAppBackground,
+    );
+
+    // 所有依赖本地数据的后台任务只观察标准 startup provider；首次失败后
+    // 用户重试成功时监听器仍会收到 data，避免一次性 Future 等待遗漏恢复流程。
+    _localStartupSubscription = ref.listenManual<AsyncValue<StartupReport>>(
+      localStartupProvider,
+      (_, next) {
+        if (next.hasValue) _startPostLocalTasks();
+      },
+      fireImmediately: true,
+    );
+  }
+
+  void _startPostLocalTasks() {
+    if (!mounted || _didStartPostLocalTasks) return;
+    _didStartPostLocalTasks = true;
+    // AppUpdate 读取 storefront，必须晚于第三方 SDK 初始化。
+    unawaited(_startPostThirdPartyTasks());
+  }
+
+  /// 等第三方启动 gate 完成后，再启动所有依赖商店 storefront 的任务。
+  Future<void> _startPostThirdPartyTasks() async {
+    try {
+      await ref.read(thirdPartyStartupProvider.future);
+    } catch (error, stackTrace) {
+      AppLogger.log('Startup', '第三方启动 gate 失败: $error\n$stackTrace');
+    }
+    if (!mounted) return;
+    _startAppUpdateListening();
+  }
+
+  /// 注册版本更新结果监听，并让 provider 在首帧后的后台阶段检查更新。
+  void _startAppUpdateListening() {
+    _appUpdateSubscription = ref.listenManual<AppUpdateState>(appUpdateProvider, (
+      previous,
+      next,
+    ) {
+      if (next is! AppUpdateResult || next.type == AppUpdateType.none) return;
+      if (previous is AppUpdateResult &&
+          previous.type == next.type &&
+          previous.info?.latestVersion == next.info?.latestVersion) {
+        AppLogger.log(
+          'AppUpdate',
+          'listener skipped: same version ${next.info?.latestVersion}',
+        );
+        return;
+      }
+      AppLogger.log(
+        'AppUpdate',
+        'listener show dialog: ${next.info?.latestVersion} (${next.type.name})',
+      );
+      _showUpdateDialog(next);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      // 启动时同步系统通知权限状态到 SP，防止已授权设备误弹 pre-prompt
+      ref
+          .read(notificationPermissionServiceProvider)
+          .syncSystemAuthorizationStatus();
+      final regionResult = ref.read(userRegionBootstrapProvider).value;
+      final startupConfigResolved = regionResult?.configFetched ?? false;
+      _remoteConfigController.startPeriodicRefresh(
+        forceFirst: !startupConfigResolved,
+        skipInitialRequest: startupConfigResolved,
+      );
+
+      AppLogger.log('StartupLoad', 'study bootstrap start');
+      activeStartupTrace?.mark('study_bootstrap_start');
+      try {
+        // 学习页是默认落地 tab，先并发预热其首屏必需数据：
+        // 资源库音频列表 + 学习进度。其它非首屏关键数据继续后置，避免启动路径膨胀。
+        final startupTrace = activeStartupTrace;
+        if (startupTrace == null) {
+          await _bootstrapStudyLandingData();
+        } else {
+          await startupTrace.run(
+            'study_audio_library_and_progress_bootstrap',
+            _bootstrapStudyLandingData,
+          );
+        }
+
+        final audioState = ref.read(audioLibraryProvider);
+        AppLogger.log(
+          'StartupLoad',
+          'study bootstrap ready: '
+              'audioItems=${audioState.audioItems.length}, '
+              'progressItems='
+              '${ref.read(learningProgressProvider).progressMap.length}',
+        );
+        activeStartupTrace?.mark('study_audio_library_and_progress_ready');
+
+        if (startupTrace == null) {
+          await ref.read(collectionListProvider.notifier).loadCollections();
+        } else {
+          await startupTrace.run('study_collections_bootstrap', () {
+            return ref.read(collectionListProvider.notifier).loadCollections();
+          });
+        }
+        final collectionState = ref.read(collectionListProvider);
+        AppLogger.log(
+          'StartupLoad',
+          'library bootstrap collections done: '
+              'stateCollections=${collectionState.rawCollections.length}',
+        );
+        activeStartupTrace?.mark('study_collections_ready');
+        unawaited(_refreshSubscribedPodcastsInBackground());
+
+        ref.read(tagListProvider.notifier).loadTags();
+        ref.read(audioLibraryProvider.notifier).backfillDurations();
+        // 先把旧字幕文件内容 backfill 进 DB 列，再补统计（统计优先读列）。
+        await ref.read(audioLibraryProvider.notifier).backfillTranscriptSrt();
+        ref.read(audioLibraryProvider.notifier).backfillTranscriptStats();
+        activeStartupTrace?.mark('study_bootstrap_success');
+      } catch (e, st) {
+        // 启动预热失败：先落盘日志（崩溃/异常排查重度依赖落盘日志），再给用户反馈。
+        AppLogger.log('StartupLoad', 'study bootstrap failed: $e');
+        AppLogger.log('StartupLoad', st.toString());
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.learningProgressLoadFailed),
+            action: SnackBarAction(
+              label: l10n.retry,
+              onPressed: () => unawaited(_retryStudyBootstrap()),
+            ),
+          ),
+        );
+      }
+
+      // 启动时调度收藏复习提醒 + per-audio 提醒
+      await _syncSavedReviewReminder();
+
+      _pendingTaskCountSubscription = ref.listenManual<int>(
+        pendingStudyTaskCountProvider,
+        (_, __) {
+          // 任务数变化时重新同步 per-audio 提醒
+          final service = ref.read(reviewReminderServiceProvider);
+          _syncPerAudioReminders(service);
+        },
+        fireImmediately: true,
+      );
+
+      // 监听学习进度变化，确保完成复习阶段后重新调度 per-audio 通知。
+      // pendingStudyTaskCountProvider 只监听任务数量，完成复习后任务数
+      // 可能不变（reviewReady → reviewUpcoming），导致通知不会被调度。
+      _progressMapSubscription = ref.listenManual(
+        learningProgressProvider.select((s) => s.progressMap),
+        (_, __) {
+          final service = ref.read(reviewReminderServiceProvider);
+          _syncPerAudioReminders(service);
+        },
+      );
+
+      // 监听提醒设置变更，触发重新同步通知调度
+      _reminderSettingsSubscription = ref.listenManual<ReminderSettings>(
+        reminderSettingsProvider,
+        (_, next) {
+          _onReminderSettingsChanged(next);
+        },
+      );
+
+      // 界面语言变化时，按新语言重新调度收藏 / 音频复习提醒的通知文案
+      _appLocaleSubscription = ref.listenManual<Locale?>(
+        appSettingsProvider.select((s) => s.locale),
+        (_, __) => unawaited(_resyncReminderTexts()),
+      );
+
+      // 监听通知权限 pre-prompt 触发器：价值锚点（首次完成 sub_stage / 收藏）
+      // 调用 `maybeTriggerPrompt()` 通过判定后会把计数 +1，本监听弹出对话框。
+      // 用根 navigator context 弹，保证覆盖所有子路由。
+      //
+      // **延迟 500ms**：锚点常在子页面里触发（如 BlindListenPlayerScreen
+      // 完成对话框确认后 `completeCurrentSubStage` 紧接 `exitLearningMode` +
+      // `context.pop()`）。若立即 push dialog 到 root navigator，紧随其后的
+      // pop 会把 dialog 当作栈顶给关掉。给 in-flight 导航 500ms 落定再弹。
+      //
+      // **等 guide flow 结束**：sub_stage 完成回到学习计划页同时会触发新手引导
+      // showcase（如 `learning_plan_pause_learning`），两个 modal 同时出现会
+      // 互相挡住、抢占用户注意力。polling 等 `guideControllerProvider.isActive`
+      // 转为 false 后再弹 pre-prompt。
+      _notificationPromptSubscription = ref.listenManual<int>(
+        notificationPromptTriggerProvider,
+        (previous, next) async {
+          AppLogger.log(
+            'NotifPerm',
+            'MainShell listener: previous=$previous next=$next',
+          );
+          if (previous == null || previous == next) return;
+
+          await Future<void>.delayed(const Duration(milliseconds: 500));
+          if (!mounted) {
+            AppLogger.log(
+              'NotifPerm',
+              'MainShell listener: unmounted during delay, skip',
+            );
+            ref
+                .read(notificationPromptTriggerProvider.notifier)
+                .onDialogClosed();
+            return;
+          }
+
+          // 等待所有正在显示的 guide flow（showcase tooltip 等）结束。
+          // 事件驱动：通过 listen guideControllerProvider，active 转 inactive
+          // 的瞬间触发；如果 guide 永远不结束，dialog 也不弹——那是 guide 系统的 bug。
+          await _waitForGuideToFinish();
+          if (!mounted) {
+            ref
+                .read(notificationPromptTriggerProvider.notifier)
+                .onDialogClosed();
+            return;
+          }
+
+          final ctx = rootNavigatorKey.currentContext;
+          if (ctx == null) {
+            AppLogger.log(
+              'NotifPerm',
+              'MainShell listener: rootNavigatorKey.currentContext is null, skip',
+            );
+            ref
+                .read(notificationPromptTriggerProvider.notifier)
+                .onDialogClosed();
+            return;
+          }
+          if (!ctx.mounted) {
+            ref
+                .read(notificationPromptTriggerProvider.notifier)
+                .onDialogClosed();
+            return;
+          }
+          AppLogger.log('NotifPerm', 'MainShell listener: showing dialog');
+          try {
+            await maybeShowBookmarkNotificationPrompt(ctx, ref);
+            AppLogger.log('NotifPerm', 'MainShell listener: dialog closed');
+          } finally {
+            ref
+                .read(notificationPromptTriggerProvider.notifier)
+                .onDialogClosed();
+          }
+        },
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_observedRoute != null) {
+      rootRouteObserver.unsubscribe(this);
+    }
+    _remoteConfigController.stopPeriodicRefresh();
+    _lifecycleListener.dispose();
+    _pendingTaskCountSubscription?.close();
+    _progressMapSubscription?.close();
+    _appUpdateSubscription?.close();
+    _reminderSettingsSubscription?.close();
+    _appLocaleSubscription?.close();
+    _notificationPromptSubscription?.close();
+    _guideWaitSubscription?.close();
+    _localStartupSubscription?.close();
+    super.dispose();
+  }
+
+  /// 等待 guide flow 结束（事件驱动）。如果当前没有 active guide 立刻 return；
+  /// 否则监听 [guideControllerProvider]，active 转 inactive 时 complete。
+  ///
+  /// 竞态防护：listenManual 注册后二次检查 isActive，防止 guide 在检查和注册
+  /// 之间转为 inactive 导致 completer 永远不完成。
+  Future<void> _waitForGuideToFinish() {
+    final controller = ref.read(guideControllerProvider);
+    if (!controller.isActive) {
+      return Future.value();
+    }
+    final completer = Completer<void>();
+    late ProviderSubscription<GuideControllerState> sub;
+    sub = ref.listenManual<GuideControllerState>(guideControllerProvider, (
+      previous,
+      next,
+    ) {
+      if (!next.isActive && !completer.isCompleted) {
+        sub.close();
+        _guideWaitSubscription = null;
+        AppLogger.log(
+          'NotifPerm',
+          'MainShell listener: guide finished, resuming pre-prompt',
+        );
+        completer.complete();
+      }
+    });
+    _guideWaitSubscription = sub;
+
+    // 二次检查：防止 guide 在 listenManual 注册前瞬间转为 inactive
+    if (!ref.read(guideControllerProvider).isActive) {
+      if (!completer.isCompleted) {
+        sub.close();
+        _guideWaitSubscription = null;
+        AppLogger.log(
+          'NotifPerm',
+          'MainShell listener: guide already finished after listen, '
+              'resuming pre-prompt',
+        );
+        completer.complete();
+      }
+      return completer.future;
+    }
+
+    AppLogger.log(
+      'NotifPerm',
+      'MainShell listener: guide active '
+          '(${controller.activeFlowId}), '
+          'waiting via listener…',
+    );
+    return completer.future;
+  }
+
+  /// 显示版本更新对话框
+  void _showUpdateDialog(AppUpdateResult result) {
+    if (!mounted || result.info == null) return;
+    final isForce = result.type == AppUpdateType.forceUpdate;
+    final downloadUrl = AppUpdate.getDownloadUrl(result.info!);
+    final launcher = AppUpdateLauncher();
+    showAppUpdateDialog(
+      context: context,
+      info: result.info!,
+      isForceUpdate: isForce,
+      downloadUrl: downloadUrl,
+      onUpdate: () =>
+          launcher.launch(info: result.info!, primaryUrl: downloadUrl),
+      onDismiss: () => ref.read(appUpdateProvider.notifier).dismiss(),
+    );
+  }
+
+  /// Tab 切换埋点：StatefulShellRoute 的 Tab 切换不经过 Navigator，
+  /// AnalyticsObserver 无法自动捕获，需手动上报。
+  static const _tabScreenNames = [
+    'collections',
+    'study',
+    'favorites',
+    'settings',
+  ];
+
+  /// 切换 tab 时调用，切到学习 tab 时刷新数据
+  void _onTabSelected(int index) {
+    // Tab 切换埋点
+    final screenName = _tabScreenNames[index];
+    ref.read(analyticsServiceProvider).track(Events.screenView, {
+      EventParams.screenName: screenName,
+    });
+
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
+
+    // 切换到学习 tab 时刷新数据
+    if (index == 1) {
+      unawaited(_refreshStudyData(source: 'study-tab-select'));
+    }
+    // StatefulShell 保留收藏页实例；重新进入时强制刷新两个待复习入口。
+    if (index == 2) {
+      refreshFavoriteReviewDueCounts(ref);
+    }
+  }
+
+  /// 刷新学习页数据，确保时间相关计算和统计使用最新值。
+  Future<void> _refreshStudyData({required String source}) async {
+    AppLogger.log('StudyRefresh', 'start source=$source');
+    ref.invalidate(studyTaskProvider);
+    ref.invalidate(completedAudioProvider);
+    ref.invalidate(studyDurationRecordsProvider);
+    try {
+      await ref.read(studyStatsProvider.notifier).refresh();
+      final stats = ref.read(studyStatsProvider).value;
+      AppLogger.log(
+        'StudyRefresh',
+        'complete source=$source '
+            'todayInputWords=${stats?.todayInputWords ?? 'unknown'}',
+      );
+    } catch (error, stackTrace) {
+      AppLogger.log(
+        'StudyRefresh',
+        'failed source=$source error=$error\n$stackTrace',
+      );
+      rethrow;
+    }
+  }
+
+  /// App 回到前台回调：刷新学习数据 + 后台检查版本更新 + 同步通知权限
+  void _onAppResume() {
+    AppLogger.log('AppUpdate', 'onAppResume: trigger checkInBackground');
+    unawaited(_refreshStudyData(source: 'app-resume'));
+    if (ref.read(thirdPartyStartupProvider).hasValue) {
+      unawaited(ref.read(appUpdateProvider.notifier).checkInBackground());
+    } else {
+      AppLogger.log(
+        'AppUpdate',
+        'onAppResume skipped: third-party startup pending',
+      );
+    }
+    unawaited(_refreshSubscribedPodcastsInBackground());
+    ref.read(remoteConfigProvider.notifier).startPeriodicRefresh();
+    // 回前台时同步系统通知权限状态，覆盖用户在系统设置中手动变更的情况
+    unawaited(
+      ref
+          .read(notificationPermissionServiceProvider)
+          .syncSystemAuthorizationStatus(),
+    );
+  }
+
+  /// App 离开前台时停止 remote config 前台定时刷新。
+  void _onAppBackground() {
+    ref.read(remoteConfigProvider.notifier).stopPeriodicRefresh();
+  }
+
+  /// 使用统一控制器静默刷新已订阅播客。
+  Future<void> _refreshSubscribedPodcastsInBackground() async {
+    try {
+      await ref.read(podcastRefreshControllerProvider).refreshIfStale();
+    } catch (error, stackTrace) {
+      AppLogger.log(
+        'PodcastRefresh',
+        'MainShell background refresh failed: $error',
+      );
+      AppLogger.log('PodcastRefresh', stackTrace.toString());
+    }
+  }
+
+  Future<void> _retryStudyBootstrap() async {
+    try {
+      await _bootstrapStudyLandingData();
+    } catch (_) {
+      /* 重试失败不再嵌套提示 */
+    }
+  }
+
+  /// 提醒设置变更回调：重新同步收藏复习提醒和音频复习提醒
+  ///
+  /// 先手动同步 timeCalculator（避免与 ref.listen 的执行顺序竞争），
+  /// 再根据开关状态调度或取消通知。
+  Future<void> _onReminderSettingsChanged(ReminderSettings settings) async {
+    AppLogger.log(
+      'ReviewReminder',
+      'settings changed savedEnabled=${settings.savedReviewReminderEnabled} '
+          'time=${settings.formattedTime} '
+          'perAudioEnabled=${settings.perAudioReminderEnabled}',
+    );
+    final service = ref.read(reviewReminderServiceProvider);
+
+    // 确保 service 使用最新时间，不依赖 ref.listen 的执行顺序
+    service.updateTimeCalculator(
+      FixedTimeReminderCalculator(
+        hour: settings.savedReviewReminderHour,
+        minute: settings.savedReviewReminderMinute,
+      ),
+    );
+
+    // 收藏复习提醒：开关关闭时 cancel，开启时重新调度
+    if (!settings.savedReviewReminderEnabled) {
+      await service.cancelSavedReviewReminder();
+    } else {
+      await _syncSavedReviewReminder();
+    }
+
+    // per-audio 提醒：开关关闭时全量 cancel，开启时重新调度
+    if (!settings.perAudioReminderEnabled) {
+      await service.cancelAllPerAudioReminders();
+    } else {
+      await _syncPerAudioReminders(service);
+    }
+    AppLogger.log(
+      'ReviewReminder',
+      'settings changed resync complete time=${settings.formattedTime}',
+    );
+  }
+
+  /// 系统语言变化时同步提醒文案：仅「跟随系统」时系统语言才影响提醒文案。
+  ///
+  /// iOS 切换语言时通常会结束 App；Android 进程可能仍存活，此时需要这里的监听来刷新。
+  @override
+  void didChangeLocales(List<Locale>? locales) {
+    super.didChangeLocales(locales);
+    if (!mounted) return;
+    if (ref.read(appSettingsProvider).locale != null) return;
+    unawaited(_resyncReminderTexts());
+  }
+
+  /// 按当前界面语言重新同步收藏与音频复习提醒的通知文案。
+  ///
+  /// 收藏提醒关闭时 [_syncSavedReviewReminder] 会提前返回，因此这里总是再同步一次音频提醒；
+  /// 收藏提醒开启时第二次调用因快照去重而跳过，不会重复调度。
+  Future<void> _resyncReminderTexts() async {
+    final service = ref.read(reviewReminderServiceProvider);
+    await _syncSavedReviewReminder();
+    await _syncPerAudioReminders(service);
+  }
+
+  /// 查询收藏数据并调度收藏复习提醒
+  ///
+  /// 收藏句子或单词任一不为空时才调度，否则取消。
+  Future<void> _syncSavedReviewReminder() async {
+    final settings = ref.read(reminderSettingsProvider);
+    final service = ref.read(reviewReminderServiceProvider);
+
+    if (!settings.savedReviewReminderEnabled) {
+      await service.cancelSavedReviewReminder();
+      return;
+    }
+
+    // 轻量查询，只在 App 启动和设置变更时执行
+    final sentenceCount = await ref.read(bookmarkDaoProvider).countAll();
+    final words = await ref.read(savedWordDaoProvider).getAll();
+    final hasSaved = sentenceCount > 0 || words.isNotEmpty;
+
+    await service.syncSavedReviewReminder(hasSavedContent: hasSaved);
+    await _syncPerAudioReminders(service);
+  }
+
+  /// 收集当前处于复习阶段且 nextReviewAt 在未来的音频，调度单条通知
+  Future<void> _syncPerAudioReminders(ReviewReminderService service) async {
+    final settings = ref.read(reminderSettingsProvider);
+    if (!settings.perAudioReminderEnabled) {
+      await service.cancelAllPerAudioReminders();
+      return;
+    }
+
+    final progressMap = ref.read(
+      learningProgressProvider.select((s) => s.progressMap),
+    );
+    final audioItems = ref.read(audioLibraryProvider).audioItems;
+
+    // 按 id 建索引以便快速查找名称
+    final audioNameById = {for (final a in audioItems) a.id: a.name};
+
+    final now = ref.read(nowProvider)();
+    final reminders = <PerAudioReminderInfo>[];
+
+    for (final entry in progressMap.entries) {
+      final progress = entry.value;
+      if (!progress.isInReviewStage) continue;
+      if (progress.isPaused) continue;
+      final reviewAt = progress.nextReviewAt;
+      if (reviewAt == null || !reviewAt.isAfter(now)) continue;
+
+      final name = audioNameById[entry.key];
+      if (name == null) continue;
+
+      reminders.add(
+        PerAudioReminderInfo(
+          audioId: entry.key,
+          audioName: name,
+          triggerAt: reviewAt,
+          reviewRound: progress.completedReviewStages + 1,
+        ),
+      );
+    }
+
+    // 按 triggerAt 升序，取前 60 条（iOS 64 限制留余量）
+    reminders.sort((a, b) => a.triggerAt.compareTo(b.triggerAt));
+    final capped = reminders.length > 60 ? reminders.sublist(0, 60) : reminders;
+
+    await service.syncPerAudioReminders(capped);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final startup = ref.watch(localStartupProvider);
+
+    // 本地数据初始化仍在加载时暂缓导航，避免与 Drift schema upgrade 并发。
+    if (startup.isLoading) {
+      return const StartupSplashScreen();
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideScreen = constraints.maxWidth > 600;
+
+        return Scaffold(
+          body: Column(
+            children: [
+              if (startup.hasError) _buildStartupDegradedBanner(context, l10n),
+              Expanded(
+                child: Row(
+                  children: [
+                    if (isWideScreen)
+                      MainShellNavigationRail(
+                        selectedIndex: widget.navigationShell.currentIndex,
+                        onDestinationSelected: _onTabSelected,
+                      ),
+                    Expanded(
+                      child: MainTabVisibilityScope(
+                        currentIndex: widget.navigationShell.currentIndex,
+                        rootRouteVisible: _rootRouteVisible,
+                        child: widget.navigationShell,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          bottomNavigationBar: isWideScreen
+              ? null
+              : NavigationBar(
+                  selectedIndex: widget.navigationShell.currentIndex,
+                  onDestinationSelected: _onTabSelected,
+                  labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                  destinations: [
+                    NavigationDestination(
+                      icon: const Icon(Icons.library_music_outlined),
+                      selectedIcon: const Icon(
+                        Icons.library_music,
+                        color: AppTheme.navActiveColor,
+                      ),
+                      label: l10n.library,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.school_outlined),
+                      selectedIcon: const Icon(
+                        Icons.school,
+                        color: AppTheme.navActiveColor,
+                      ),
+                      label: l10n.study,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.bookmark_border),
+                      selectedIcon: const Icon(
+                        Icons.bookmark,
+                        color: AppTheme.navActiveColor,
+                      ),
+                      label: l10n.favorites,
+                    ),
+                    NavigationDestination(
+                      icon: const MemberTabBadge(
+                        child: Icon(Icons.person_outline),
+                      ),
+                      selectedIcon: const MemberTabBadge(
+                        child: Icon(
+                          Icons.person,
+                          color: AppTheme.navActiveColor,
+                        ),
+                      ),
+                      label: l10n.profile,
+                    ),
+                  ],
+                ),
+        );
+      },
+    );
+  }
+
+  /// 本地数据失败只影响依赖数据库的功能，首页和诊断入口保持可用。
+  Widget _buildStartupDegradedBanner(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.error_outline, color: colors.onErrorContainer),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.startupLocalDataErrorTitle,
+                        style: Theme.of(context).textTheme.titleSmall
+                            ?.copyWith(color: colors.onErrorContainer),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        l10n.startupLocalDataErrorMessage,
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: colors.onErrorContainer),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 8,
+              children: [
+                TextButton.icon(
+                  onPressed: () => unawaited(
+                    ref.read(localStartupProvider.notifier).retry(),
+                  ),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(l10n.retry),
+                ),
+                TextButton.icon(
+                  onPressed: _openContactUs,
+                  icon: const Icon(Icons.group_outlined),
+                  label: Text(l10n.startupLocalDataContactUs),
+                ),
+                TextButton.icon(
+                  onPressed: _openStartupLogs,
+                  icon: const Icon(Icons.description_outlined),
+                  label: Text(l10n.startupLocalDataViewLogs),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

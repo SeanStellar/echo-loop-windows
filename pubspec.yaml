@@ -1,0 +1,281 @@
+name: echo_loop
+description: "Best English Listening & Speaking Practice App"
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.46
+
+environment:
+  sdk: ^3.13.0
+  flutter: '^3.47.9'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  collection: ^1.19.0
+  font_awesome_flutter: ^11.0.0
+  just_audio: ^0.10.5
+  # Windows/Linux 用 media_kit 实现 just_audio 平台接口；与现有 media_kit libs 共用。
+  just_audio_media_kit: ^2.1.0
+  media_kit: 1.2.6
+  media_kit_video: 2.0.1
+  # 全 App 统一 video 版 libs，禁止与 media_kit_libs_audio 混用。
+  media_kit_libs_video: 1.0.7
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  audio_session: ^0.2.2
+  audio_service: ^0.18.18
+  subtitle: ^0.2.0
+  file_picker: ^10.3.3
+  audio_video_progress_bar: ^2.0.3
+  path_provider: ^2.1.1
+  shared_preferences: ^2.2.2
+  path: ^1.8.3
+  # sherpa-onnx 的 whisper segment 时间戳需读原生 result JSON（Pointer<Utf8>→String），
+  # 用 package:ffi 的 toDartString；ffi 本是 sherpa_onnx 传递依赖，此处显式声明直接使用。
+  ffi: ^2.1.0
+  intl: ^0.20.2
+  clock: ^1.1.1
+  fsrs: 2.0.1
+  drift: ^2.35.3
+  scrollable_positioned_list: ^0.3.8
+  package_info_plus: ^9.0.0
+  in_app_review: ^2.0.12
+  universal_io: ^2.2.2
+  go_router: ^17.1.0
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
+  crypto: ^3.0.7
+  dio: ^5.9.0
+  background_downloader: ^9.6.5
+  dio_http2_adapter: ^2.7.1
+  # 网络图片磁盘缓存：官方合集封面冷启动后无需重下，离线浏览有图。
+  # 用 JsonCacheInfoRepository 替代默认 sqflite 仓库，避免 sqflite 全局 factory 警告
+  cached_network_image: ^3.4.1
+  sqlite3: ^3.8.0
+  lemmatizerx: ^1.0.0
+  flutter_tts: ^4.2.0
+  wakelock_plus: ^1.4.0
+  url_launcher: ^6.3.1
+  app_links: ^7.0.0
+  # LLM 流式 markdown 渲染（专为未闭合/流式 markdown 设计；纯 Dart）。
+  gpt_markdown: ^1.1.8
+  flutter_inappwebview: ^6.1.5
+  permission_handler: ^12.0.1
+  uuid: ^4.5.3
+  flutter_secure_storage: ^10.0.0
+  firebase_core: ^3.9.0
+  firebase_analytics: ^11.6.0
+  umeng_common_sdk: ^1.3.0
+  posthog_flutter: ^5.23.1
+  archive: ^4.0.4
+  share_plus: ^10.1.4
+  table_calendar: ^3.2.0
+  timeago: ^3.7.1
+  sherpa_onnx: ^1.13.4
+  showcaseview: ^5.0.1
+  # 认证：复用 fluency-frontend 的 Supabase 项目（auth.users 共享），
+  # mobile 端走 native ID Token 流（Apple/Google）+ 邮箱密码。详见 docs / plan。
+  supabase_flutter: ^2.18.0
+  sign_in_with_apple: ^7.0.1
+  google_sign_in: ^7.2.0
+  just_waveform: ^0.0.7
+  # 注意：该插件的 ProGuard keep 规则用的是 proguardFiles 而非 consumerProguardFiles，
+  # 不会传播到宿主 app。release（R8）构建必须在 android/app/proguard-rules.pro 保留
+  # com.antonkarpenko.ffmpegkit.**，否则 R8 会裁掉仅由 JNI_OnLoad 注册的 native 方法
+  # （AbiDetect.getNativeCpuAbi 等），导致插件注册整体失败、App 卡在启动 splash。
+  ffmpeg_kit_flutter_new_min: ^3.1.0
+  xml: ^6.5.0
+  # PDF 导出：Dart 端生成结构化 PDF（学习材料导出 PDF，见 lib/services/pdf_export/）。
+  # 注意：3.13.0 起要求 Dart >=3.12，当前 SDK 下固定解析到 3.12.0
+  pdf: ^3.12.0
+  # PDF 预览：PdfPreview 组件把 PDF 栅格化在 App 内展示（导出预览页），与 pdf 同作者
+  printing: ^5.14.2
+  purchases_flutter: ^10.3.0
+  in_app_purchase: ^3.3.0
+  charset_converter: ^2.4.0
+  flutter_svg: ^2.3.0
+  fl_chart: ^1.2.0
+  lottie: ^3.3.3
+  # 持久化文件日志：使用成熟的大小轮转输出，避免手写截断逻辑。
+  logger: ^2.7.0
+  window_manager: ^0.5.2
+  # 默认 TTS 引擎（Edge 在线 Neural 音色，免下载模型）。依赖非公开的 Edge「大声朗读」
+  # 端点，协议变更可能需随包升级；包很新，锁定精确版本，仅在 edge_tts_engine.dart 引用。
+  # 注意：其 lib/src/utils/edge_tts_utils.dart 为 LGPL-3.0-or-later（其余 MIT）。
+  flutter_edge_tts: 0.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  fake_async: ^1.3.2
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+  riverpod_generator: ^4.0.9
+  build_runner: ^2.4.14
+  drift_dev: ^2.35.2
+  riverpod_lint: ^3.1.9
+  wakelock_plus_platform_interface: ^1.3.0
+  # 供 app_update_launcher_test 注入假 url_launcher 平台实现
+  url_launcher_platform_interface: ^2.3.2
+  # 供日志页测试注入假 path_provider 平台实现
+  path_provider_platform_interface: ^2.1.2
+  plugin_platform_interface: ^2.1.8
+
+dependency_overrides:
+  charset_converter:
+    path: third_party/charset_converter
+  # Dart 3.13 的 ZLibDecoder 没有 decodeLazy；image 4.11 使用了该 API。
+  image: 4.10.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  generate: true
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  assets:
+    - assets/demo/
+    # 只打包运行时真正用到的图标（封面图/登录页经 rootBundle 读取）。
+    # 目录内其余文件（app-icon-1024-rounded 仅构建期生成 launcher icon、
+    # ic_stat_logo 仅作 Android 通知图标源文件）不进包；订阅页透明底品牌图单独显式打包。
+    - assets/icon/app-icon-1024.png
+    - assets/icon/app-icon-1024-alpha.png
+    - assets/icon/app-icon.svg
+    - assets/icon/apple-podcasts.svg
+    - assets/icon/artist-palette.svg
+    - assets/icon/baidu-netdisk.svg
+    - assets/icon/bar-chart.svg
+    - assets/icon/bell.svg
+    - assets/icon/book.svg
+    - assets/icon/book-shelf.svg
+    - assets/icon/reading.svg
+    - assets/icon/refresh.svg
+    - assets/icon/check-circle-3.svg
+    - assets/icon/calendar-2.svg
+    - assets/icon/china_flag.svg
+    - assets/icon/diamond.svg
+    - assets/icon/diskette.svg
+    - assets/icon/documents.svg
+    - assets/icon/eye.svg
+    - assets/icon/feedback.svg
+    - assets/icon/help.svg
+    - assets/icon/group.svg
+    - assets/icon/locale-1.svg
+    - assets/icon/locale.svg
+    - assets/icon/lock.svg
+    - assets/icon/microphone.svg
+    - assets/icon/account-1.svg
+    - assets/icon/play-pause.svg
+    - assets/icon/speak.svg
+    - assets/icon/speaker.svg
+    - assets/icon/text-decrease.svg
+    - assets/icon/text-increase.svg
+    - assets/icon/text-size.svg
+    - assets/icon/trash-bin.svg
+    - assets/icon/unlock.svg
+    # 视频条目左侧媒体图标（资源库卡片区分音/视频）
+    - assets/icon/video-2.svg
+    # PDF 导出品牌角标（96px 小图，1024 原图 190KB 直接嵌会撑大每份 PDF）
+    - assets/icon/app-icon-96.png
+    # chatbot 气泡操作栏图标（复刻 ChatGPT 线条风格，currentColor 随主题着色）
+    - assets/icon/chat/
+    - assets/animation/confetti.lottie
+    - assets/animation/done-check.lottie
+    # 后台静音保活轨：停顿期间循环播放以保持 iOS 音频会话活跃（见 background_audio_handler）
+    - assets/audio/silence_2s.m4a
+    # PDF 导出内嵌字体（TrueType 轮廓；pdf 包不支持 CFF/OTF，也无法读系统 CJK 字体）。
+    # 不注册进 fonts: 段——仅经 rootBundle 读原始字节喂 pw.Font.ttf，生成时自动子集化。
+    - assets/fonts/pdf/
+    - test/fixtures/audio_transcode/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
+
+# Flutter Launcher Icons configuration
+flutter_launcher_icons:
+  # Android 配置
+  android: true
+  # iOS 配置（移除 alpha 通道以符合 App Store 要求）
+  ios: true
+  remove_alpha_ios: true
+  # 主图标路径
+  image_path: "assets/icon/app-icon-1024.png"
+  # 桌面平台配置
+  macos:
+    generate: true
+    image_path: "assets/icon/app-icon-1024-rounded.png"
+  windows:
+    generate: true
+    image_path: "assets/icon/app-icon-1024-rounded.png"
+  linux:
+    generate: true
+    image_path: "assets/icon/app-icon-1024-rounded.png"
+  # Web 平台配置
+  web:
+    generate: true
+    image_path: "assets/icon/app-icon-1024-rounded.png"

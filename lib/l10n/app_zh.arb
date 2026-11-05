@@ -1,0 +1,2312 @@
+{
+  "startupLocalDataErrorTitle": "抱歉，出错了",
+  "startupLocalDataErrorMessage": "数据暂时无法正常加载。请重试；如果问题持续，请联系我们。",
+  "startupLocalDataContactUs": "联系我们",
+  "startupLocalDataViewLogs": "查看日志",
+  "playbackFailedTitle": "播放失败",
+  "playbackFailedMessage": "请稍后重试。",
+  "@@locale": "zh",
+  "appTitle": "Echo Loop",
+  "premiumTitle": "Echo Loop 会员",
+  "premiumTagline": "无限 AI，学习更高效。",
+  "aiQuotaExceededGenericTitle": "本月 AI 免费额度已用完",
+  "aiQuotaExceededTitle": "本月 {feature}免费额度已用完",
+  "@aiQuotaExceededTitle": {
+    "placeholders": {
+      "feature": { "type": "String" }
+    }
+  },
+  "aiQuotaFeatureTranslation": "AI 翻译",
+  "aiQuotaFeatureAnalysis": "AI 句子解析",
+  "aiQuotaFeatureSenseGroup": "AI 句子意群拆分",
+  "aiQuotaFeatureWordAnalysis": "AI 词汇解析",
+  "aiQuotaFeatureTranscription": "AI 转录",
+  "aiQuotaFeatureChat": "AI 助手",
+  "aiQuotaFeatureRetellReview": "AI 复述评估",
+  "aiQuotaExceededMessage": "升级会员，获得无限 AI 额度和 AI 功能。",
+  "aiQuotaUnsupportedGenericTitle": "免费版暂不支持此 AI 功能",
+  "aiQuotaUnsupportedTitle": "免费版暂不支持 {feature}",
+  "@aiQuotaUnsupportedTitle": {
+    "placeholders": {
+      "feature": { "type": "String" }
+    }
+  },
+  "aiQuotaUnsupportedMessage": "升级会员，解锁该功能和更多 AI 功能。",
+  "aiQuotaExceededCta": "升级会员",
+  "aiQuotaExceededDismiss": "知道了",
+  "aiQuotaExceededSubscribe": "立即升级",
+  "premiumEntryTitle": "会员与订阅",
+  "premiumUnavailableOnPlatform": "当前平台暂不支持订阅",
+  "premiumEntryBadgeActive": "会员",
+  "premiumEntryBadgeUpgrade": "升级",
+  "premiumActive": "你已是会员",
+  "premiumBenefitTranslation": "无限 AI 翻译",
+  "premiumBenefitAnalysis": "无限 AI 句子解析",
+  "premiumBenefitWordAnalysis": "无限 AI 词汇解析",
+  "premiumBenefitTranscription": "更多 AI 字幕转录",
+  "premiumBenefitAiAssistant": "无限 AI 助手对话",
+  "premiumBenefitPrioritySupport": "优先客户支持",
+  "premiumBenefitSenseGroups": "无限 AI 句子意群拆分",
+  "premiumBenefitRetellReview": "无限 AI 复述评估",
+  "premiumSubscribe": "订阅",
+  "premiumBuyOneYear": "购买一年会员",
+  "premiumStartTrial": "开始 {days} 天免费试用",
+  "@premiumStartTrial": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "premiumRestore": "恢复购买",
+  "premiumManage": "管理订阅",
+  "premiumCurrentPlan": "当前套餐",
+  "premiumPlanMonthly": "月度会员",
+  "premiumPlanYearly": "年度会员",
+  "premiumPlanYearlyOneTime": "一年期会员",
+  "premiumPlanLifetime": "终身会员",
+  "premiumPlanGeneric": "会员",
+  "premiumStatusActive": "有效",
+  "premiumStatusExpiring": "即将到期",
+  "premiumStatusFixedTerm": "一次性购买",
+  "premiumStatusLifetime": "永久",
+  "premiumRenewsOn": "{date} 自动续订",
+  "@premiumRenewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "premiumExpiresOn": "{date} 到期",
+  "@premiumExpiresOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "premiumValidUntil": "有效期至 {date}",
+  "@premiumValidUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "premiumLifetimeAccessNote": "永久有效，无需续订",
+  "premiumNoPlans": "暂无可用套餐，请稍后再试。",
+  "premiumLoginRequired": "订阅前请先登录。",
+  "premiumPurchaseLoginRequired": "购买前请先登录。",
+  "premiumRestoreLoginRequired": "恢复购买前请先登录。",
+  "premiumPurchaseFailed": "购买失败，请重试。",
+  "premiumRestoreAccountMismatch": "此订阅已绑定到另一个 Echo Loop 账号。请登录原账号后重试。",
+  "premiumRestoreNone": "未找到可恢复的购买。",
+  "premiumRestored": "已恢复购买。",
+  "premiumWebCheckoutCta": "查看订阅方案",
+  "premiumUseWebCheckoutFallback": "中国用户请使用 Paddle 支付",
+  "premiumUseStoreCheckout": "继续使用商店支付",
+  "premiumWebVerifying": "正在等待支付结果确认…",
+  "premiumWebOpenFailed": "无法打开结账页面，请重试。",
+  "premiumRefresh": "刷新",
+  "premiumRefreshStatus": "刷新会员状态",
+  "premiumPurchasePendingSync": "购买成功，会员权益同步中，稍后自动生效。",
+  "premiumCheckingEntitlement": "正在确认会员状态…",
+  "premiumEntitlementCheckFailed": "暂时无法确认会员状态，请重试。确认完成前无法购买。",
+  "premiumEntitlementUpdated": "会员状态已更新。",
+  "premiumAlreadyEntitledSyncFailed": "检测到已有有效订阅，但同步失败，请点击右上角恢复购买。",
+  "premiumPeriodMonthly": "月付",
+  "premiumPeriodYearly": "年付",
+  "premiumPeriodYearlyOneTime": "一年期 · 一次性购买",
+  "premiumPeriodLifetime": "终身",
+  "premiumPriceSuffixMonth": "/月",
+  "premiumPriceSuffixYear": "/年",
+  "premiumPriceSuffixFirstYear": "/首年",
+  "premiumPriceSuffixFirstMonth": "/首月",
+  "premiumPriceSuffixLifetime": "一次性",
+  "premiumOneTimeYearAccess": "一次付款，享受 1 年会员，不自动续费",
+  "premiumSavePercent": "立省 {percent}%",
+  "@premiumSavePercent": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "premiumPerMonthEquivalent": "≈ {price}/月",
+  "@premiumPerMonthEquivalent": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumIntroFirstYear": "首年 {price}",
+  "@premiumIntroFirstYear": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumIntroFirstMonth": "首月 {price}",
+  "@premiumIntroFirstMonth": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumRenewalPricePerYear": "{price}/年",
+  "@premiumRenewalPricePerYear": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumRenewalPricePerMonth": "{price}/月",
+  "@premiumRenewalPricePerMonth": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumRenewalPricePerPeriod": "{price}",
+  "@premiumRenewalPricePerPeriod": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumTryFreeThen": "免费试用 {days} 天，之后 {renewal}",
+  "@premiumTryFreeThen": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "renewal": { "type": "String" }
+    }
+  },
+  "premiumOfferThen": "{intro}，之后 {renewal}",
+  "@premiumOfferThen": {
+    "placeholders": {
+      "intro": { "type": "String" },
+      "renewal": { "type": "String" }
+    }
+  },
+  "premiumSpecialOfferPercent": "早鸟优惠：首{period}立减 {percent}%",
+  "@premiumSpecialOfferPercent": {
+    "placeholders": {
+      "percent": { "type": "int" },
+      "period": { "type": "String" }
+    }
+  },
+  "premiumSpecialOfferIntro": "早鸟优惠：{intro}，之后 {renewal}",
+  "@premiumSpecialOfferIntro": {
+    "placeholders": {
+      "intro": { "type": "String" },
+      "renewal": { "type": "String" }
+    }
+  },
+  "premiumOfferPeriodYear": "年",
+  "premiumOfferPeriodMonth": "月",
+  "premiumTermsShort": "服务条款",
+  "premiumPrivacyShort": "隐私政策",
+  "practiceControlModeAuto": "自动",
+  "practiceControlModeManual": "手动",
+  "player": "播放器",
+  "account": "账户",
+  "chinaRoutingIndicatorTooltip": "当前使用中国区服务路由",
+  "settings": "设置",
+  "addAudio": "添加音频",
+  "noAudioYet": "还没有音频文件",
+  "tapToAdd": "点击 + 添加第一个音频",
+  "added": "添加于",
+  "transcript": "字幕",
+  "playing": "上次",
+  "delete": "删除",
+  "deleteAudio": "删除音频",
+  "deleteConfirm": "确定要删除「{name}」吗？",
+  "cancel": "取消",
+  "add": "添加",
+  "importAction": "导入",
+  "selectAudioFile": "选择音频文件",
+  "subtitlePairedBadge": "已匹配字幕，将一并导入",
+  "audioFilePickerCloudDriveHint": "从网盘选择前，请先安装并登录对应网盘。少部分网盘可能不支持从文件选择器中直接选择。",
+  "selectTranscript": "选择字幕（可选）",
+  "noTranscript": "无字幕",
+  "noBookmarked": "没有收藏的句子",
+  "tapToBookmark": "点击 ⭐ 收藏句子",
+  "playbackMode": "播放模式",
+  "fullArticle": "全文播放",
+  "singleSentence": "单句播放",
+  "bookmarkedOnly": "仅播放收藏",
+  "playbackSettings": "播放设置",
+  "waveformZoom": "缩放",
+  "waveformLoading": "正在加载波形 {progress}%",
+  "waveformLoadFailed": "波形生成失败，仍可在下方编辑字幕。",
+  "waveformAudioMissing": "没有找到音频，仍可在下方编辑字幕。",
+  "waveformRetry": "重试",
+  "playbackSpeed": "播放速度",
+  "loopPlayback": "循环播放",
+  "loopCount": "循环次数",
+  "pauseInterval": "暂停间隔",
+  "applySettings": "应用设置",
+  "play": "播放",
+  "pause": "暂停",
+  "stop": "停止",
+  "previousSentence": "上一句",
+  "nextSentence": "下一句",
+  "removeBookmark": "取消收藏",
+  "addBookmark": "添加收藏",
+  "appearance": "外观",
+  "readingTextSettings": "文字大小",
+  "readingTextPreview": "预览",
+  "readingFontSize": "字号",
+  "readingFontSizeDecrease": "缩小字号",
+  "readingFontSizeIncrease": "放大字号",
+  "themeMode": "主题",
+  "themeModeSystem": "跟随系统",
+  "themeModeLight": "浅色模式",
+  "themeModeDark": "深色模式",
+  "language": "应用语言",
+  "languageDescription": "应用界面使用的语言",
+  "languageSystem": "跟随系统",
+  "languageEnglish": "English",
+  "languageChinese": "简体中文",
+  "nativeLanguage": "母语",
+  "nativeLanguageDescription": "翻译和解析使用的语言",
+  "about": "关于",
+  "version": "版本",
+  "save": "保存",
+  "enableLoop": "启用循环",
+  "loopSettings": "循环设置",
+  "wholeTextLoop": "整篇循环",
+  "singleSentenceLoop": "单句循环",
+  "displaySettings": "显示设置",
+  "showTranscript": "显示字幕",
+  "shortcutKey": "快捷键",
+  "seconds": "秒",
+  "infinite": "无限",
+  "singleSentenceMode": "精听模式",
+  "singleSentenceModeDesc": "只展示当前播放的句子",
+  "autoPlayNextSentence": "自动播放下一句",
+  "repeatCount": "重复次数",
+  "infiniteRepeat": "无限 ∞",
+  "intervalTime": "间隔时长",
+  "times": "次",
+  "loopCountValue": "{count} 次",
+  "loopIntervalValue": "{seconds} 秒",
+  "sleepTimer": "定时停止",
+  "sleepTimerMinutes": "{count} 分钟",
+  "sleepTimerRemaining": "剩余时间",
+  "sleepTimerOff": "关闭定时",
+  "sleepTimerA11yActive": "定时停止，剩余 {time}，点击调整",
+  "fullText": "全文",
+  "bookmarked": "收藏",
+  "noSubtitle": "无字幕",
+  "noSentenceSelected": "未选择句子",
+  "noBookmarkedSentences": "没有收藏的句子",
+  "tapBookmarkIcon": "点击句子旁的书签图标收藏",
+  "noBookmarksHint": "还没有收藏句子，可点击句子右侧书签添加",
+  "bookmarksEmptyReturned": "已无收藏句子，已切回全文",
+  "removeBookmarkTip": "取消收藏",
+  "addBookmarkTip": "收藏",
+  "listMode": "列表模式",
+  "copy": "复制",
+  "copied": "已复制到剪贴板",
+  "sentenceMenuSave": "收藏句子",
+  "sentenceMenuUnsave": "取消收藏",
+  "sentenceMenuExplain": "AI 讲解",
+  "sentenceMenuSaved": "已收藏",
+  "sentenceMenuUnsaved": "已取消收藏",
+  "sentenceMenuActionFailed": "操作失败，请重试。",
+  "hotkeyReplay": "R：重播",
+  "hotkeyPlayPause": "空格：播放/暂停",
+  "hotkeyToggleTranscript": "↑：显示/隐藏字幕",
+  "hotkeyNavigation": "←/→：上一句/下一句",
+  "noAudioLoaded": "未加载音频",
+  "enableAutoScroll": "启用自动滚动",
+  "disableAutoScroll": "禁用自动滚动",
+  "audioFileNotFound": "音频文件未找到。文件可能已被删除。",
+  "pickAudioFileFailed": "选择音频文件失败",
+  "addAudioFailed": "添加音频失败",
+  "audioUnsupportedFormat": "不支持的音频格式：{ext}。仅支持 MP3、WAV、M4A、AAC、FLAC。",
+  "@audioUnsupportedFormat": {
+    "placeholders": {
+      "ext": {
+        "type": "String"
+      }
+    }
+  },
+  "audioErrorUnsupportedTitle": "不支持的音频格式",
+  "audioErrorNoAudioTitle": "未选择音频文件",
+  "audioNoAudioSelected": "字幕需要和音频一起导入，请把音频文件也选上：MP3、WAV、M4A、AAC、FLAC。",
+  "audioErrorGenericTitle": "添加音频失败",
+  "pickTranscriptFileFailed": "选择字幕文件失败",
+  "subtitleUnsupportedFormat": "不支持 .{ext} 格式的字幕，仅支持 SRT 和 VTT 文件。",
+  "@subtitleUnsupportedFormat": {
+    "placeholders": {
+      "ext": {
+        "type": "String"
+      }
+    }
+  },
+  "subtitleFormatInvalid": "字幕格式无效，仅支持标准的 SRT 或 VTT 文件。",
+  "subtitleFileEmpty": "字幕文件为空或已损坏，未发现任何字幕条目。",
+  "subtitleErrorUnsupportedTitle": "不支持的字幕格式",
+  "subtitleErrorInvalidTitle": "字幕格式无效",
+  "subtitleErrorEmptyTitle": "未发现字幕内容",
+  "subtitleErrorGenericTitle": "上传失败",
+  "fileExists": "文件已存在",
+  "fileExistsMessage": "已存在名为「{name}」的音频文件，请先删除原音频后再导入。",
+  "back": "返回",
+  "ok": "确定",
+  "addedOn": "添加于：{date}",
+  "updatedOn": "更新于 {date}",
+  "collections": "合集",
+  "collection": "合集",
+  "createCollection": "创建合集",
+  "newCollectionOptionTitle": "新建合集",
+  "newCollectionOptionDescription": "添加音频或视频",
+  "collectionName": "合集名称",
+  "enterCollectionName": "请输入合集名称",
+  "noCollectionsYet": "还没有合集",
+  "tapToCreateCollection": "点击 + 创建第一个合集",
+  "deleteCollection": "删除合集",
+  "deleteCollectionConfirm": "确定要删除「{name}」吗？",
+  "deleteCollectionAlsoDeleteAudio": "同时删除音频文件",
+  "deleteCollectionKeepAudioHint": "合集中共 {count} 个音频文件，将保留。",
+  "deleteCollectionDeleteAudioHint": "合集中共 {count} 个音频文件，将一并删除。",
+  "renameCollection": "重命名",
+  "pinCollection": "置顶",
+  "unpinCollection": "取消置顶",
+  "pinAudio": "置顶",
+  "unpinAudio": "取消置顶",
+  "sortByNameAsc": "名称 (A-Z)",
+  "sortByNameDesc": "名称 (Z-A)",
+  "sortByDateAsc": "最早创建",
+  "sortByDateDesc": "最近创建",
+  "sortDefault": "默认",
+  "sortByOriginalDateAsc": "最早发布",
+  "sortByOriginalDateDesc": "最新发布",
+  "publishedOn": "发布于 {date}",
+  "@publishedOn": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "discoverEntryTitleA": "发现资源",
+  "discoverEntrySubtitleA": "播客、托福、雅思、四六级、口译...",
+  "communityCollectionEmpty": "该合集暂无文件",
+  "communityCollectionAuthor": "作者：{nickname}",
+  "@communityCollectionAuthor": {
+    "placeholders": {
+      "nickname": {"type": "String"}
+    }
+  },
+  "communityCollectionUnknownAuthor": "未知作者",
+  "communityCollectionUploader": "上传者：{nickname}",
+  "@communityCollectionUploader": {
+    "placeholders": {
+      "nickname": {"type": "String"}
+    }
+  },
+  "communityCollectionUnknownUploader": "未知上传者",
+  "communityCollectionUnknownPublishDate": "日期未知",
+  "communityCollectionCover": "{name}封面",
+  "@communityCollectionCover": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "communityCollectionShowMore": "展开",
+  "communityCollectionShowLess": "收起",
+  "sortCollections": "排序",
+  "gridView": "文件夹视图",
+  "listView": "列表视图",
+  "audioCount": "{count} 个素材",
+  "collectionNameEmpty": "合集名称不能为空",
+  "collectionNameExists": "已存在同名合集",
+  "addAudioToCollection": "添加音频或视频",
+  "removeFromCollection": "从合集中移除",
+  "removeFromCollectionConfirm": "确定要将「{name}」从合集中移除吗？",
+  "permanentlyDeleteAudio": "彻底删除该音频",
+  "permanentlyDeleteAudioHint": "将删除音频文件，并从所有合集中移除。",
+  "audioBelongsToCollections": "此音频还在以下合集：{names}",
+  "audioNotInOtherCollections": "未被其它合集引用，可放心删除。",
+  "selectedCount": "已选 {count} 项",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "全选",
+  "deselectAll": "取消全选",
+  "removeFromCollectionBatch": "从合集移除 {count} 项",
+  "@removeFromCollectionBatch": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "permanentlyDeleteBatch": "彻底删除 {count} 项音频",
+  "@permanentlyDeleteBatch": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "permanentlyDeleteBatchHint": "将删除音频文件，并从所有合集移除。",
+  "removeFromCollectionBatchHint": "仅从当前合集移除，音频文件保留。",
+  "emptyCollection": "合集暂无内容",
+  "renameAudio": "重命名",
+  "audioName": "音频名称",
+  "audioAlreadyInCollection": "音频重复",
+  "audioAlreadyInCollectionMessage": "合集中已存在名为「{name}」的音频。",
+  "audioAlreadyInLibrary": "音频重复",
+  "audioAlreadyInLibraryMessage": "音频库中已存在名为「{name}」的音频。",
+  "study": "学习",
+  "favorites": "收藏",
+  "profile": "我的",
+  "studyComingSoon": "学习功能即将上线",
+  "favoritesComingSoon": "收藏功能即将上线",
+  "firstStudy": "首次学习",
+  "review": "复习",
+  "stepProgress": "{completed}/{total}",
+  "stepBlindListening": "全文盲听",
+  "stepBlindListeningDesc": "挑战一下：盲听全文，抓住大意",
+  "stepIntensiveListening": "逐句精听",
+  "stepIntensiveListeningDesc": "逐句听，理解并标记难句",
+  "stepShadowing": "难句跟读",
+  "stepShadowingDesc": "针对弱项句子反复跟读",
+  "stepRetelling": "段落复述",
+  "stepRetellingDesc": "挑战一下：用自己的话复述每段大意",
+  "stepFullTextRetelling": "全文复述",
+  "warmUpCardTitle": "听前预热",
+  "@warmUpCardTitle": {
+    "description": "学习计划页「首次学习」上方的听前预热卡标题，引导用户精听前先随心听熟悉内容"
+  },
+  "warmUpCardSubtitle": "先听一遍，抓住大意，不必听懂每句",
+  "@warmUpCardSubtitle": {
+    "description": "听前预热卡描述，说明先泛听抓大意即可"
+  },
+  "warmUpCardBadge": "推荐先做",
+  "@warmUpCardBadge": {
+    "description": "听前预热卡右上角徽章，标示推荐先做"
+  },
+  "reviewRound0": "首轮复习",
+  "reviewRound1": "第二轮复习",
+  "reviewRound2": "第三轮复习",
+  "reviewRound4": "第四轮复习",
+  "reviewRound7": "第五轮复习",
+  "reviewRound14": "第六轮复习",
+  "reviewRound28": "第七轮复习",
+  "reviewUnlockIn": "{days}天后解锁",
+  "reviewUnlockInHours": "{hours}小时后解锁",
+  "reviewUnlocked": "已解锁",
+  "unlockReviewNow": "立即解锁",
+  "startLearning": "开始学习",
+  "continueLearning": "继续学习",
+  "learningInProgress": "学习中",
+  "learningCompleted": "已完成",
+  "reviewReady": "可以复习了",
+  "reviewCountdown": "{days} 天后可复习",
+  "reviewCountdownHours": "{hours} 小时后可复习",
+  "blindListenBriefingTitle": "全文盲听",
+  "blindListenBriefingSubtitle": "首次学习 - 全文盲听",
+  "blindListenBriefingReviewSubtitle": "第{round}轮复习 - 全文盲听",
+  "blindListenBriefingTip": "挑战盲听全文，尝试抓住大意",
+  "startPractice": "开始练习",
+  "blindListenAppBarTitle": "全文盲听",
+  "blindListenPassLabel": "第 {count} 遍",
+  "blindListenComplete": "盲听完成",
+  "blindListenPassInfo": "已听 {count} 遍",
+  "selectDifficulty": "感觉如何？",
+  "selectDifficultyRequired": "请选择难度后继续",
+  "listenAgain": "再听一遍",
+  "practiceAgain": "再练一遍",
+  "nextStage": "下一步",
+  "difficultyVeryEasy": "很简单",
+  "difficultyEasy": "简单",
+  "difficultyMedium": "中等",
+  "difficultyHard": "困难",
+  "difficultyVeryHard": "很困难",
+  "countdownNextPlay": "即将开始下一遍",
+  "skipCountdown": "跳过",
+  "audioDuration": "时长：{duration}",
+  "estimatedMinutes": "预计 {minutes} 分钟",
+  "estimatedLessThanOneMinute": "预计不到 1 分钟",
+  "exitBlindListenTitle": "退出盲听？",
+  "exitBlindListenMessage": "音频正在播放中，确定要退出吗？",
+  "confirmExit": "退出",
+  "library": "资源库",
+  "myLibrary": "我的资源库",
+  "libraryShowAll": "全部",
+  "collectionsTab": "合集",
+  "audioTab": "音频",
+  "uncategorized": "未归类",
+  "manageCollections": "管理合集",
+  "noAudioItems": "还没有添加音频",
+  "noAudioItemsHint": "导入音频文件开始学习吧",
+  "audioWillBeKept": "合集中的 {count} 个音频将保留在资源库中",
+  "done": "完成",
+  "sortAudio": "排序",
+  "deleteAudioConfirm": "确定要永久删除「{name}」吗？",
+  "deleteAudioConfirmKeepFile": "确定要删除「{name}」吗？",
+  "uploadTranscript": "上传字幕",
+  "replaceTranscriptTitle": "替换字幕",
+  "replaceTranscriptMessage": "字幕已存在，是否替换？",
+  "replace": "替换",
+  "sentenceCountLabel": "{count} 句",
+  "wordCountLabel": "{count} 词",
+  "noTranscriptWarning": "这个音频还没有字幕",
+  "intensiveListenAppBarTitle": "逐句精听",
+  "intensiveListenProgress": "第 {current}/{total} 句",
+  "intensiveListenPlayCount": "第 {current}/{total} 遍",
+  "intensiveListenPeek": "偷看字幕",
+  "intensiveListenHideSubtitle": "隐藏字幕",
+  "intensiveListenUnclear": "听不太懂",
+  "intensiveListenAutoMarkedDifficult": "已自动收藏",
+  "intensiveListenMarkedDifficult": "取消收藏",
+  "intensiveListenNotDifficult": "收藏",
+  "aiTranslation": "翻译",
+  "aiAnalysis": "解析",
+  "aiLoadFailed": "加载失败，点击重试",
+  "aiTranslationFailed": "翻译失败，请重试",
+  "aiAnalysisFailed": "解析失败，请重试",
+  "aiRetry": "重试",
+  "aiGrammar": "语法",
+  "aiVocabulary": "重点词汇",
+  "aiListening": "听力提示",
+  "intensiveListenWordDictNotFound": "未收录该单词",
+  "intensiveListenContinue": "继续",
+  "intensiveListenReplayingWithSubtitle": "再听一遍，巩固记忆",
+  "intensiveListenPauseBetweenPlays": "{seconds}秒后播放下一遍",
+  "@intensiveListenPauseBetweenPlays": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "intensiveListenPauseBetweenSentences": "{seconds}秒后播放下一句",
+  "@intensiveListenPauseBetweenSentences": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "intensiveListenCompleteTitle": "精听完成",
+  "intensiveListenCompleteHint": "坚持间隔复习，就能彻底掌握这些难句。",
+  "intensiveListenCompleteNext": "下一步",
+  "statSentences": "句子",
+  "statDifficultSentences": "难句",
+  "statParagraphs": "段落",
+  "exitIntensiveListenTitle": "退出精听？",
+  "exitIntensiveListenMessage": "进度已保存，下次可从断点继续。",
+  "intensiveListenBriefingTitle": "逐句精听",
+  "intensiveListenBriefingTip": "逐句盲听，听不懂时点击「听不懂」查看文本和讲解。",
+  "intensiveListenBriefingSentenceCount": "共 {count} 个句子",
+  "intensiveListenNoSubtitle": "无字幕",
+  "intensiveListenNoSubtitleMessage": "该音频没有字幕，请先上传字幕文件。",
+  "intensiveListenSettings": "精听设置",
+  "intensiveListenRepeatCount": "每句循环次数",
+  "intensiveListenAnnotationReplayUsesRepeatCount": "讲解页按循环次数播放",
+  "intensiveListenRepeatCountValue": "{count} 次",
+  "@intensiveListenRepeatCountValue": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "intensiveListenPauseLabel": "句间停顿",
+  "intensiveListenPauseSmart": "自动",
+  "intensiveListenPauseFixed": "固定间隔",
+  "intensiveListenPauseMultiplierMode": "句长倍数",
+  "intensiveListenSettingsTemporaryHint": "设置会被记住，下次自动沿用",
+  "intensiveListenPauseSmartDesc": "根据难度、句子长度和学习阶段自动调整",
+  "intensiveListenControlModeAutoDesc": "自动循环、自动停顿、自动下一句",
+  "intensiveListenControlModeManualDesc": "按设置循环，手动下一句",
+  "intensiveListenPauseFixedUnit": "{seconds}秒",
+  "@intensiveListenPauseFixedUnit": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "intensiveListenPauseMultiplierValue": "{value}x",
+  "@intensiveListenPauseMultiplierValue": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "intensiveListenPauseMultiplierLabel": "倍数",
+  "blindListenCountdown": "{seconds}秒后播放下一遍",
+  "@blindListenCountdown": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "difficultyLabel": "难度: {difficulty}",
+  "@difficultyLabel": {
+    "placeholders": {
+      "difficulty": { "type": "String" }
+    }
+  },
+  "continueToStep": "继续：{step}",
+  "@continueToStep": {
+    "placeholders": {
+      "step": { "type": "String" }
+    }
+  },
+  "completeFirstStudy": "完成首次学习",
+  "completeReview": "完成本轮复习",
+  "stepProgressLabel": "步骤进度：{current}/{total}（{stage}）",
+  "@stepProgressLabel": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" },
+      "stage": { "type": "String" }
+    }
+  },
+  "manageTags": "管理标签",
+  "noTagsYet": "还没有创建标签",
+  "createTag": "创建标签",
+  "tagName": "标签名称",
+  "enterTagName": "输入标签名称",
+  "selectColor": "选择颜色",
+  "deleteTag": "删除标签",
+  "deleteTagConfirm": "确定要删除「{name}」吗？将从所有音频中移除。",
+  "listenAndRepeatAppBarTitle": "难句跟读",
+  "listenAndRepeatProgress": "第 {current}/{total} 句",
+  "@listenAndRepeatProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "listenAndRepeatPlayCount": "第 {current}/{total} 遍",
+  "@listenAndRepeatPlayCount": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "listenAndRepeatPauseBetweenPlays": "跟读时间 {seconds}秒",
+  "@listenAndRepeatPauseBetweenPlays": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "listenAndRepeatPauseBetweenSentences": "{seconds}秒后播放下一句",
+  "@listenAndRepeatPauseBetweenSentences": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "listenAndRepeatListenHint": "先听再跟读",
+  "listenAndRepeatYourTurnHint": "请跟读",
+  "listenAndRepeatRecordButton": "录音",
+  "listenAndRepeatStopRecordingButton": "停止",
+  "listenAndRepeatPlayRecordingButton": "播放我的录音",
+  "listenAndRepeatRecordingInProgress": "录音中...",
+  "listenAndRepeatStartSpeaking": "请开口跟读",
+  "listenAndRepeatAnalyzing": "分析中...",
+  "listenAndRepeatTapToRecord": "点击开始录音",
+  "listenAndRepeatRatingPerfect": "完美!",
+  "listenAndRepeatRatingExcellent": "非常棒",
+  "listenAndRepeatRatingGood": "不错",
+  "listenAndRepeatRatingFair": "还行",
+  "listenAndRepeatRatingKeepGoing": "继续加油",
+  "listenAndRepeatAwaitingFinalTranscript": "正在确认最终转录...",
+  "listenAndRepeatYourTakeLabel": "你的转录",
+  "listenAndRepeatRecognitionInProgress": "正在识别录音...",
+  "listenAndRepeatRecognitionPassed": "匹配了目标词的 {percent}%。",
+  "@listenAndRepeatRecognitionPassed": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "listenAndRepeatRecognitionBelowThreshold": "匹配了目标词的 {percent}%。",
+  "@listenAndRepeatRecognitionBelowThreshold": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "listenAndRepeatRecognitionNoEnglish": "未检测到英语",
+  "listenAndRepeatRecognitionPermissionDenied": "需要麦克风和语音识别权限。",
+  "listenAndRepeatRecognitionUnavailable": "当前设备暂不支持语音识别。",
+  "listenAndRepeatRecognitionError": "识别错误",
+  "listenAndRepeatRecordingOnly": "录音",
+  "listenAndRepeatCompleteTitle": "跟读完成",
+  "exitListenAndRepeatTitle": "退出跟读？",
+  "exitListenAndRepeatMessage": "进度已保存，下次可从断点继续。",
+  "listenAndRepeatBriefingTitle": "难句跟读",
+  "listenAndRepeatBriefingTip": "先听原句，在停顿期间跟读。",
+  "listenAndRepeatScopeLabel": "跟读范围",
+  "listenAndRepeatScopeFullText": "全文",
+  "listenAndRepeatScopeDifficultOnly": "仅收藏",
+  "listenAndRepeatNoSavedSentencesNoNeed": "没有收藏句",
+  "listenAndRepeatBriefingSentenceCount": "{count} 句",
+  "@listenAndRepeatBriefingSentenceCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "listenAndRepeatBriefingDifficultCount": "{count} 个难句",
+  "@listenAndRepeatBriefingDifficultCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "listenAndRepeatBriefingPlayCount": "每句 {count} 遍",
+  "@listenAndRepeatBriefingPlayCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "listenAndRepeatRemoveDifficult": "已标记难句，点此取消收藏",
+  "listenAndRepeatSettings": "跟读设置",
+  "listenAndRepeatSettingsTemporaryHint": "设置仅对本次跟读有效",
+  "listenAndRepeatControlModeLabel": "控制模式",
+  "listenAndRepeatControlModeAuto": "自动",
+  "listenAndRepeatControlModeManual": "手动",
+  "listenAndRepeatControlModeAutoDesc": "自动录音、自动停止、自动下一句",
+  "listenAndRepeatControlModeManualDesc": "手动录音、手动停止、手动下一句",
+  "listenAndRepeatPauseSmartDesc": "根据难度、句子长度和学习阶段自动调整",
+  "sentenceDuration": "{duration}秒",
+  "@sentenceDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "difficultSentenceCount": "{count} 个难句",
+  "@difficultSentenceCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "intensiveListenPassInfo": "已练习 {count} 遍",
+  "@intensiveListenPassInfo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "shadowingPassInfo": "已练习 {count} 遍",
+  "@shadowingPassInfo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "retellBriefingTitle": "段落复述",
+  "retellBriefingSubtitle": "先盲听一段，再用英语复述大意。",
+  "retellBriefingTargetDuration": "段落时长",
+  "retellBriefingParagraphCount": "将分为 {count} 个段落",
+  "@retellBriefingParagraphCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "retellBriefingSeconds": "{seconds}s",
+  "@retellBriefingSeconds": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "retellBriefingSentenceLevel": "逐句",
+  "retellBriefingSentenceCount": "共 {count} 个句子",
+  "@retellBriefingSentenceCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "retellTitle": "段落复述",
+  "retellParagraphProgress": "第 {current}/{total} 段",
+  "@retellParagraphProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "retellParagraphDuration": "{duration}秒",
+  "@retellParagraphDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "durationMinutesSeconds": "{minutes}分{seconds}秒",
+  "@durationMinutesSeconds": {
+    "placeholders": {
+      "minutes": { "type": "int" },
+      "seconds": { "type": "int" }
+    }
+  },
+  "retellPreListenHint": "先听再复述",
+  "retellListeningPhase": "认真听...",
+  "retellPromptToRetell": "用自己的话复述",
+  "retellRetellingCountdown": "请复述 {seconds}s",
+  "@retellRetellingCountdown": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "retellRepeatInfo": "第 {current}/{total} 遍",
+  "@retellRepeatInfo": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "retellCompleteFirstStudy": "完成首次学习",
+  "retellCompleteReview": "完成复习",
+  "retellCompleteFreePlay": "练习完成",
+  "retellCompleteTitle": "复述完成",
+  "retellPracticeAgain": "再来一遍",
+  "retellExitConfirmTitle": "退出复述？",
+  "retellExitConfirmMessage": "当前段落进度将被保存。",
+  "retellDisplayKeywordsOnly": "仅可见词",
+  "retellDisplayShowAll": "全部显示",
+  "retellDisplayHideAll": "全部隐藏",
+  "retellSettingsTitle": "复述设置",
+  "retellAutoPlaybackPromptTitle": "复述后自动回听？",
+  "retellAutoPlaybackPromptMessage": "开启后，复述后会自动播放录音，方便你及时纠正发音。你也可以随时在设置中修改。",
+  "retellAutoPlaybackKeepOff": "暂不开启",
+  "retellAutoPlaybackEnable": "开启",
+  "retellRepeatCount": "每段重复次数",
+  "retellPauseMode": "段间停顿",
+  "retellPassInfo": "已练习 {count} 遍",
+  "@retellPassInfo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "retellNoDifficultSentences": "没有可复述的句子。请先完成逐句精听。",
+
+  "retellKeywordMethod": "可见词生成方式",
+  "retellKeywordMethodOff": "关闭",
+  "retellKeywordMethodRandom": "随机",
+  "retellKeywordMethodAi": "AI",
+  "retellKeywordMethodAiComingSoon": "即将推出",
+  "retellKeywordRatio": "可见词比例",
+
+  "pauseModeSmart": "自动",
+  "pauseModeFixed": "固定",
+  "pauseModeMultiplier": "倍数",
+  "fixedPauseSeconds": "固定间隔",
+  "pauseMultiplier": "倍数",
+  "settingsSessionOnly": "设置仅对本次会话生效",
+
+  "reviewDifficultPracticeTitle": "难句补练",
+  "reviewBlindListenDesc": "再次盲听，感受理解力的变化",
+  "reviewDifficultPracticeDesc": "重听难句，听不懂就跟读补练",
+  "reviewRetellParagraphDesc": "再次复述，提升理解和表达能力",
+  "reviewRetellSummaryDesc": "概述全文，梳理整体脉络，检验学习效果",
+  "reviewBriefingTipDifficultPractice": "先盲听难句，听不懂再跟读加练。",
+  "reviewBriefingTipRetellSummary": "用 3-5 句话总结全文大意。",
+  "reviewDifficultPracticeProgress": "第 {current}/{total} 句",
+  "@reviewDifficultPracticeProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "reviewDifficultPracticeBlindListen": "正在播放…",
+  "reviewDifficultPracticeCompleteTitle": "难句补练完成",
+  "reviewDifficultPracticeNone": "无需补练的难句，已自动完成",
+  "exitReviewDifficultPracticeTitle": "退出补练？",
+  "exitReviewDifficultPracticeMessage": "当前步骤的进度不会保存。",
+  "exitReviewDifficultPracticeConfirmMessage": "进度会保存，下次可继续。",
+  "reviewDifficultPracticeAdvancing": "{seconds}秒后进入下一句",
+  "@reviewDifficultPracticeAdvancing": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+
+  "aiSectionTitle": "AI",
+  "speechRecognition": "语音识别",
+  "speechRecognitionNotConfigured": "未设置",
+  "speechRecognitionEnabled": "已开启",
+  "speechRecognitionDisabled": "已关闭",
+  "speechRecognitionDescription": "语音识别用于练习评分和后续本地转录。你可以选择适合当前设备的模型。",
+  "asrEngine": "语音引擎",
+  "asrBackendPlatform": "Apple AI",
+  "asrBackendPlatformDescription": "使用系统自带的语音识别，无需下载",
+  "asrBackendOffline": "Echo Loop AI",
+  "asrBackendOfflineDescription": "使用应用自带的 AI 模型，支持离线使用，需下载",
+  "asrModelTier": "模型：{tier}（根据设备性能自动选择）",
+  "@asrModelTier": {
+    "placeholders": {
+      "tier": { "type": "String" }
+    }
+  },
+  "asrModelFastDescription": "速度最快，适合低端设备。",
+  "asrModelBalancedDescription": "准确率和速度平衡。",
+  "asrModelAccurateDescription": "准确率更高，但体积更大、速度更慢。",
+  "localSpeechRecognition": "本地语音识别",
+  "speechModelSize": "模型大小：约 {size}",
+  "speechModelApproxSize": "约 {size}",
+  "speechModelReady": "就绪 · {size}",
+  "speechModelStatusReady": "就绪",
+  "speechModelStatusNeedsDownload": "需下载",
+  "speechModelDownloading": "正在下载... {progress}",
+  "speechModelDownloadFailed": "下载失败，点击重试。",
+  "downloadErrorStorage": "存储空间不足，请清理后重试。",
+  "downloadErrorNetwork": "网络异常，请检查网络后重试。",
+  "downloadErrorCorrupted": "下载文件校验失败，请重试。",
+  "deleteModel": "删除模型（{size}）",
+  "deleteModelAction": "删除模型",
+  "deleteModelConfirmTitle": "确认删除模型？",
+  "deleteModelConfirmMessage": "删除后将释放 {size} 存储空间。",
+  "disableSpeechRecognitionTitle": "关闭语音识别？",
+  "disableSpeechRecognitionMessage": "关闭后语音练习将无法评分。",
+  "alsoDeleteModel": "同时删除已下载的模型",
+  "disableAction": "关闭",
+  "speechRecognitionRequiredMessage": "语音识别用于自动评估跟读和复述效果，开始前需要先下载模型。",
+  "asrModelDownloadRequiredTitle": "需要下载语音识别模型",
+  "asrModelDownloadEstimate": "预计下载量：约 {size}",
+  "@asrModelDownloadEstimate": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "asrModelDownloadSettingsHint": "你也可以前往设置选择其他语音识别模型。",
+  "asrModelDownloadingTitle": "正在下载语音识别模型",
+  "asrModelDownloadingMessage": "预计下载量：约 {size}",
+  "@asrModelDownloadingMessage": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "asrModelDownloadProgress": "已完成 {progress}",
+  "@asrModelDownloadProgress": {
+    "placeholders": {
+      "progress": { "type": "String" }
+    }
+  },
+  "asrModelDownloadFailedTitle": "语音识别模型下载失败",
+  "asrModelDownloadFailedMessage": "下载未完成。预计下载量：约 {size}",
+  "@asrModelDownloadFailedMessage": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "asrDownloadModel": "下载模型",
+  "downloadNow": "立即下载",
+  "later": "稍后",
+  "speechRecognitionNotEnabled": "语音识别未启用，可在设置中开启",
+  "retryDownload": "重试",
+
+  "developer": "开发者",
+  "developerOptionsEnabled": "开发者选项已开启",
+  "developerOptionsDisable": "关闭开发者选项",
+  "timeMachine": "时光机",
+  "timeMachineUseSystemTime": "使用系统时间",
+  "timeMachineCurrentTime": "当前调试时间",
+  "timeMachineSelectDate": "选择日期",
+  "timeMachineSelectTime": "选择时间",
+  "timeMachineReset": "恢复系统时间",
+
+  "manageSubtitles": "管理字幕",
+  "localUpload": "本地上传",
+  "aiTranscription": "云端转录",
+  "aiTranscriptionSubtitle": "精度高，速度快，需联网登录",
+  "offlineTranscription": "本地转录",
+  "offlineTranscriptionSubtitle": "离线、隐私，无需登录",
+  "transcriptionModelTier": "识别模型",
+  "localTranscriptionDecoding": "正在解码音频…",
+  "localTranscriptionForegroundHint": "转录完成前请保持应用在前台，切到后台或锁屏会中断转录。",
+  "localTranscriptionProgressPercent": "已完成 {percent}%",
+  "@localTranscriptionProgressPercent": {
+    "placeholders": { "percent": { "type": "int" } }
+  },
+  "localTranscriptionModelRequiredTitle": "需要语音模型",
+  "localTranscriptionModelRequiredMessage": "本地转录需先下载 {modelName} 语音模型（仅一次，之后完全离线）。",
+  "@localTranscriptionModelRequiredMessage": {
+    "placeholders": { "modelName": { "type": "String" } }
+  },
+  "deleteSubtitle": "删除字幕",
+  "startTranscription": "开始转录",
+  "alreadyTranscribedWithOption": "已使用该选项转录",
+  "transcriptionUploading": "上传中…",
+  "transcriptionCompressing": "音频压缩中…",
+  "transcriptionProcessing": "转录中…",
+  "transcriptionComplete": "完成！",
+  "transcriptionFailed": "转录失败",
+  "transcriptionErrorConnection": "无法连接服务器",
+  "transcriptionErrorTimeout": "请求超时，请重试",
+  "transcriptionErrorServer": "请检查音频是否正常，稍后再试",
+  "transcriptionErrorUnknown": "请检查音频是否正常，稍后再试",
+  "transcriptionErrorCompression": "音频压缩失败，请检查音频后重试",
+  "transcriptionErrorCompressedFileTooLarge": "压缩后文件仍超过 25MB",
+  "transcriptionErrorAudioNotFound": "未找到已上传的音频，请重试。",
+  "transcriptionErrorAudioExpired": "已上传的音频已过期，请重试。",
+  "transcriptionErrorRequestInvalid": "转录请求无效，请更新应用后重试。",
+  "transcriptionErrorApiDeprecated": "当前应用版本已不再受支持，请更新应用。",
+  "transcriptionEmptyResult": "未检测到语音",
+  "transcriptionEmptyResultHint": "音频可能包含过多背景噪音。",
+  "transcriptionErrorFileTooLarge": "文件过大（最大 {maxMb}MB）",
+  "transcriptionErrorTooLong": "音频过长（最长 {maxMin} 分钟）",
+  "deleteSubtitleConfirm": "确定删除字幕？",
+  "deleteSubtitleWarning": "删除字幕将同时清空该音频的所有收藏句子和学习进度。",
+  "languageAutoDetect": "自动检测",
+  "mixedLanguageNotSupported": "暂不支持混合语言音频",
+  "selectLanguage": "选择语言",
+  "autoMergeShortSentences": "自动合并短句",
+  "autoMergeShortSentencesHint": "目标 4-7 秒，关闭后保留更短的句子",
+  "overwriteExistingSubtitle": "覆盖现有字幕？",
+  "overwriteExistingSubtitleMessage": "这将替换当前字幕，确定继续吗？",
+  "overwrite": "覆盖",
+  "downloadPodcastSubtitle": "下载播客字幕",
+  "downloadPodcastSubtitleSubtitle": "播客已提供字幕，无需转录",
+  "podcastTranscriptReminderTitle": "播客字幕可能不准确",
+  "podcastTranscriptReminderMessage": "播客提供的字幕质量参差不齐，可能与音频对不上。如果不准确，可以改用云端转录重新生成字幕。",
+  "podcastTranscriptReminderConfirm": "知道了",
+  "downloadSubtitle": "下载字幕",
+  "downloadSubtitleFailed": "下载字幕失败",
+  "audioContentEmptyWarning": "疑似空音频",
+  "audioContentDamagedWarning": "音频异常",
+  "audioContentSilentWarning": "疑似静音音频",
+  "transcriptionDamagedConfirmTitle": "音频可能损坏",
+  "transcriptionDamagedConfirmMessage": "该音频可能已损坏或格式不兼容，仍要转录吗？",
+  "transcriptionSilentConfirmTitle": "音频疑似为空",
+  "transcriptionSilentConfirmMessage": "该音频疑似全程静音、无人声，仍要转录吗？",
+  "transcriptionSilentConfirmProceed": "仍要转录",
+  "transcriptionAudioFileSize": "文件大小：{size}",
+  "@transcriptionAudioFileSize": {
+    "placeholders": {
+      "size": {}
+    }
+  },
+  "transcriptionAudioDuration": "时长：{duration}",
+  "@transcriptionAudioDuration": {
+    "placeholders": {
+      "duration": {}
+    }
+  },
+  "transcriptionAudioUnknown": "未检测到",
+  "currentSubtitleExists": "当前：已有字幕",
+  "currentSubtitleLocal": "当前：本地上传",
+  "currentSubtitleAi": "当前：AI 转录（{language}）",
+  "@currentSubtitleAi": {
+    "placeholders": {
+      "language": { "type": "String" }
+    }
+  },
+  "noSubtitleYet": "暂无字幕",
+  "addSubtitlePromptTitle": "添加字幕？",
+  "addSubtitlePromptMessage": "现在添加字幕用于学习吗？",
+  "selectCollection": "合集（可选）",
+  "noCollection": "无",
+  "addSubtitle": "添加字幕",
+  "retryTranscription": "重试",
+  "transcriptionFailedMessage": "错误：{message}",
+  "@transcriptionFailedMessage": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+
+  "todayStudyTime": "今日：{time}",
+  "studyTimeMinutes": "{minutes} 分钟",
+  "studyTimeHoursMinutes": "{hours}小时{minutes}分钟",
+
+  "studyTasks": "学习任务",
+  "continueLearningHero": "继续学习",
+  "startButton": "开始",
+  "continueButton": "继续",
+  "streakDays": "连续 {count} 天",
+  "todayStudyTimeShort": "今日",
+  "weekStudyTimeShort": "本周",
+  "readyToReview": "待复习 ({count})",
+  "upcomingReviews": "待解锁 ({count})",
+  "upcomingReviewsSummary": "{count} 个复习任务将在稍后解锁",
+  "recommendedForYou": "为你推荐",
+  "completedSection": "已学完的材料 ({count})",
+  "noStudyTasks": "暂无学习任务",
+  "noStudyTasksHint": "导入音频后即可开始学习。",
+  "goToLibrary": "去导入音频",
+  "allDoneTitle": "今日任务完成！",
+  "allDoneHint": "做得不错，稍后回来复习吧。",
+  "overdueDays": "{count}天前到期",
+  "overdueHours": "{count}小时前到期",
+  "reviewDue": "待复习",
+  "availableInDays": "{count} 天后",
+  "availableInHours": "{count} 小时后",
+  "subStageLabelFirstLearn": "首次学习 - {subStage}",
+  "subStageLabelReview": "{reviewName} - {subStage}",
+
+  "favoritesSentences": "句子",
+  "favoritesVocabulary": "词汇",
+  "favoritesNoSentences": "暂无收藏句子",
+  "favoritesNoSentencesHint": "在精听或跟读中标记难句",
+  "favoritesNoVocabulary": "暂无收藏词汇",
+  "favoritesNoVocabularyHint": "在学习中点击单词查词并收藏",
+  "favoritesBookmarkCount": "{count} 个句子",
+  "favoritesVocabularySaved": "已收藏",
+  "favoritesVocabularyRemoved": "再次收藏",
+  "favoritesBookmarkRemoved": "再次收藏",
+  "undo": "撤销",
+  "favoritesSaveVocabulary": "收藏",
+  "favoritesUnsaveVocabulary": "取消收藏",
+
+  "bookmarkReviewTitle": "收藏句复习",
+  "bookmarkReviewStart": "开始复习",
+  "bookmarkReviewStartCount": "开始复习 ({count})",
+  "bookmarkReviewComplete": "复习完成",
+  "bookmarkReviewAgain": "再来一遍",
+  "bookmarkReviewAudioSkipped": "音频不可用，跳过该句",
+  "bookmarkReviewFromAudio": "来自：{name}",
+  "favoriteSourceMaterialNotFound": "来源材料未找到",
+  "bookmarkReviewUnsave": "取消收藏",
+  "bookmarkReviewTapReplay": "听一遍，想一想",
+  "bookmarkReviewLoadingAudio": "正在加载音频…",
+  "bookmarkReviewPlaying": "正在播放",
+  "bookmarkReviewPlayOriginal": "再听一遍",
+  "bookmarkReviewTapRetry": "点按重试",
+  "bookmarkReviewListenPrompt": "点按可从头重播",
+  "bookmarkReviewReadyTitle": "想好后翻面",
+  "bookmarkReviewRevealHint": "点按查看答案",
+  "bookmarkReviewCompleted": "全部完成！",
+  "bookmarkReviewUnsaveFailed": "取消收藏失败，请重试。",
+  "bookmarkReviewSettingsPlaceholderTitle": "复习设置",
+  "bookmarkReviewSettingsPlaceholderBody": "更多复习控制将在后续版本中开放。",
+  "bookmarkReviewSettingsTitle": "复习设置",
+  "bookmarkReviewShowNextReviewTime": "显示下次复习时间",
+  "favoriteReviewAutoPlayFront": "自动播放正面",
+  "favoriteReviewAutoPlayBack": "自动播放背面",
+  "favoriteReviewShowVocabularyOnFront": "正面显示词汇",
+  "bookmarkReviewDailyGoal": "每日复习目标",
+  "favoriteReviewSentenceSettings": "收藏句子复习",
+  "favoriteReviewVocabularySettings": "收藏词汇复习",
+  "favoriteReviewSentenceDailyGoal": "每日句子复习目标",
+  "favoriteReviewVocabularyDailyGoal": "每日词汇复习目标",
+  "bookmarkReviewUnlimited": "不限制",
+  "bookmarkReviewOrder": "复习顺序",
+  "bookmarkReviewOrderSmart": "自动",
+  "bookmarkReviewOrderDueAt": "最早到期优先",
+  "bookmarkReviewOrderRandom": "随机",
+  "bookmarkReviewRatingAgain": "听不懂",
+  "bookmarkReviewRatingGood": "听懂了",
+  "bookmarkReviewRatingEasy": "轻松听懂",
+
+  "favoriteVocabularyReviewTitle": "收藏词汇复习",
+  "favoriteVocabularyReviewCompleted": "全部完成！",
+  "favoriteVocabularyReviewTapReplay": "点按重播",
+  "favoriteVocabularyReviewLoadingAudio": "正在加载音频…",
+  "favoriteVocabularyReviewPlaying": "正在播放",
+  "favoriteVocabularyReviewTapRetry": "点按重试",
+  "favoriteVocabularyReviewAudioSkipped": "音频不可用，点按重试",
+  "favoriteVocabularyReviewReadyTitle": "想好后翻面",
+  "favoriteVocabularyReviewRevealHint": "点按查看反面",
+  "favoriteVocabularyReviewBackPlaceholder": "反面正在开发中",
+
+  "difficultPracticeSettings": "练习设置",
+  "difficultPracticeSettingsHint": "设置仅对本次练习有效",
+  "difficultPracticeBlindListenRepeat": "盲听循环次数",
+  "difficultPracticeShadowReadingRepeat": "跟读循环次数",
+
+  "inputWordsShort": "输入",
+  "outputWordsShort": "输出",
+  "listenTimeWords": "听: {time} · {words}词",
+  "@listenTimeWords": {
+    "placeholders": {
+      "time": { "type": "String" },
+      "words": { "type": "String" }
+    }
+  },
+  "bookmarkReviewDueCount": "待复习 {count} 个",
+  "@bookmarkReviewDueCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "bookmarkReviewNothingToReview": "暂无待复习内容",
+  "favoriteVocabularyReviewDueCount": "待复习 {count} 个",
+  "@favoriteVocabularyReviewDueCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "favoriteReviewNothingToReview": "暂无待复习内容",
+  "speakTimeWords": "说: {time} · {words}词",
+  "@speakTimeWords": {
+    "placeholders": {
+      "time": { "type": "String" },
+      "words": { "type": "String" }
+    }
+  },
+  "learnedWordFormsShort": "词汇量",
+  "todayNewShort": "今日",
+  "learnedWordsEmptyHint": "还没有记录到已学词汇，先完成一些学习内容吧。",
+  "learnedWordsSortTimeAsc": "最早学习",
+  "learnedWordsSortTimeDesc": "最近学习",
+
+  "bookmarkReviewProgress": "第 {current}/{total} 句",
+
+  "flashcardTitle": "单词卡片",
+  "flashcardViewAnswer": "想好了，查看答案",
+  "flashcardTapToFlip": "点击翻回正面",
+  "flashcardUnsaveHint": "掌握了就取消收藏",
+  "flashcardProgress": "{current}/{total}",
+  "flashcardComplete": "复习完成",
+  "flashcardWordsReviewed": "已复习 {count} 个单词",
+  "flashcardWordsRemoved": "已取消收藏 {count} 个",
+  "flashcardPracticeAgain": "再来一遍",
+  "flashcardFinish": "完成",
+  "flashcardSettingsTitle": "卡片设置",
+  "flashcardSettingsSubtitle": "设置会自动保存",
+  "flashcardControlModeLabel": "控制模式",
+  "flashcardControlModeAuto": "自动",
+  "flashcardControlModeManual": "手动",
+  "flashcardControlModeAutoDesc": "自动翻转、自动切换下一张",
+  "flashcardControlModeManualDesc": "手动翻转、手动切换下一张",
+  "flashcardTimerMode": "单词切换时长",
+  "flashcardTimerSmart": "自动",
+  "flashcardTimerSmartDesc": "根据单词难度和练习次数自动调整",
+  "flashcardTimerFixed": "固定时长",
+  "flashcardTimerFixedDesc": "正面和背面分别设置固定时长",
+  "flashcardTimerFrontDuration": "正面时长",
+  "flashcardTimerBackDuration": "背面时长",
+  "flashcardSortMode": "单词排序方式",
+  "flashcardSortAlphaAsc": "A → Z",
+  "flashcardSortAlphaDesc": "Z → A",
+  "flashcardSortTimeAsc": "最早收藏",
+  "flashcardSortTimeDesc": "最近收藏",
+  "flashcardSortRandom": "随机",
+  "flashcardSortSmart": "自动",
+  "flashcardSortSmartDesc": "根据记忆规律自动决定顺序",
+  "flashcardSortRandomDesc": "每次随机打乱顺序",
+  "flashcardSortAlphaAscDesc": "按字母 A 到 Z 排列",
+  "flashcardSortAlphaDescDesc": "按字母 Z 到 A 排列",
+  "flashcardSortTimeAscDesc": "最早收藏的排在前面",
+  "flashcardSortTimeDescDesc": "最近收藏的排在前面",
+  "flashcardNoDefinition": "暂无释义",
+  "flashcardStartQuiz": "开始复习",
+  "flashcardTts": "发音",
+  "flashcardAutoPlaySentence": "自动播放例句",
+  "flashcardAutoPlayWord": "自动播放单词发音",
+  "freePlay": "随心听",
+  "wordAiAnalysis": "AI 解析",
+  "wordAiContextMeaning": "语境释义",
+  "wordAiCollocations": "常见搭配",
+  "wordAiUsage": "用法要点",
+  "wordAiWordFamily": "词族扩展",
+  "storage": "其它",
+  "clearCache": "清除缓存",
+  "clearCacheConfirm": "将清理临时缓存以释放空间，不影响学习记录和收藏，需要时自动重新生成。是否继续？",
+  "clearCacheSuccess": "缓存已清除",
+  "clearCacheSuccessWithSize": "缓存已清除，释放了 {size}",
+  "@clearCacheSuccessWithSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "clearCacheEmpty": "缓存已为空",
+  "confirm": "确认",
+  "autoCompletedNoDifficultReview": "0 个难句，已跳过",
+  "termsOfService": "服务条款",
+  "privacyPolicy": "隐私政策",
+  "writeFeedback": "意见反馈",
+  "rateUs": "评价我们",
+  "joinCommunity": "加入学习社群",
+  "aboutCommunity": "加入社区",
+  "joinCommunityInviteSubtitle": "找资源，找搭子，反馈建议",
+  "networkError": "无法连接，请检查网络后重试",
+  "viewSourceCode": "开源项目",
+
+  "updateAvailable": "发现新版本 v{version}",
+  "@updateAvailable": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "updateNow": "立即更新",
+  "updateLater": "稍后提醒",
+  "forceUpdateTitle": "需要更新",
+  "forceUpdateMessage": "当前版本已不再受支持，请更新以继续使用。",
+  "releaseNotesTitle": "更新内容",
+  "copyDownloadLink": "复制下载链接",
+  "linkCopied": "已复制",
+  "checkForUpdate": "检查更新",
+  "alreadyLatest": "已是最新版本",
+  "checkUpdateFailed": "检查失败，请检查网络",
+  "demoMode": "演示模式",
+  "demoModeSubtitle": "开启后使用演示数据，方便截图展示",
+  "practiceRemoveMark": "取消收藏",
+  "practiceAddMark": "重新收藏",
+
+  "blindListenSegmentProgress": "第 {current}/{total} 段",
+  "blindListenSegmentDuration": "{duration}秒",
+  "blindListenListeningHint": "认真听...",
+  "blindListenPreListenHint": "先听再回忆",
+  "blindListenRepeatInfo": "第 {current}/{total} 遍",
+  "blindListenSettingsTitle": "盲听设置",
+  "blindListenPauseBetween": "段间停顿",
+  "blindListenTargetDuration": "段落时长",
+  "blindListenDisplayHideAll": "隐藏字幕",
+  "blindListenDisplayShowAll": "显示字幕",
+  "blindListenRecallHint": "回想刚才听到的内容",
+  "blindListenControlModeAutoDesc": "自动重复、自动停顿、自动下一段",
+  "blindListenControlModeManualDesc": "手动重听、手动下一段",
+  "blindListenNoParagraph": "不分段",
+  "blindListenParagraphCount": "{count} 个段落",
+
+  "resetLearningProgress": "重置学习进度",
+  "resetLearningProgressConfirmTitle": "重置学习进度？",
+  "resetLearningProgressConfirmMessage": "将清除「{name}」的所有学习进度，此操作不可撤销。",
+  "resetLearningProgressDone": "学习进度已重置",
+
+  "pauseLearning": "暂停学习",
+  "resumeLearning": "恢复学习",
+  "pausedChipLabel": "已暂停",
+  "pauseLearningConfirmTitle": "暂停学习？",
+  "pauseLearningConfirmMessage": "该音频将停止复习调度，可随时恢复学习。",
+
+  "reviewReminderBody": "{audioName} · 第{round}轮复习时间到了",
+  "@reviewReminderBody": {
+    "placeholders": {
+      "audioName": { "type": "String" },
+      "round": { "type": "int" }
+    }
+  },
+
+  "reviewReminderSavedBody1": "复习一下收藏的句子和单词吧",
+  "reviewReminderSavedBody2": "听一遍收藏的句子，巩固记忆",
+  "reviewReminderSavedBody3": "碎片时间听几句，积少成多",
+  "reviewReminderSavedBody4": "收藏的句子在等你，来复习一下",
+  "reviewReminderSavedBody5": "反复听才能记住，来复习吧",
+  "reviewReminderSavedBody6": "收藏的好句子，多听几遍才是你的",
+  "reviewReminderSavedBody7": "间隔重复是记忆的关键，来听一轮",
+  "reviewReminderSavedBody8": "熟悉的句子再听一遍，会有新感觉",
+  "reviewReminderSavedBody9": "收藏了就要复习，不然会忘",
+  "reviewReminderSavedBody10": "听力靠积累，来复习收藏的句子",
+
+  "stageBlindListen": "盲听",
+  "stageIntensiveListen": "精听",
+  "stageListenAndRepeat": "跟读",
+  "stageRetell": "复述",
+  "stageReviewDifficultPractice": "难句补练",
+  "stageBookmarkReview": "句子复习",
+  "stageFlashcard": "词汇复习",
+
+  "stageBreakdownTitle": "{date}",
+  "@stageBreakdownTitle": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "stageBreakdownToday": "（今天）",
+  "stageBreakdownTotal": "合计",
+  "stageBreakdownLessThanOneMin": "<1分",
+  "stageBreakdownListenShort": "听",
+  "stageBreakdownSpeakShort": "说",
+  "stageBreakdownNoStageData": "详细分布数据从此版本开始记录",
+  "stageBreakdownNoRecord": "当天没有学习记录",
+  "chartLegendListening": "听",
+  "chartLegendSpeaking": "说",
+  "chartLegendOther": "其它",
+  "chartLegendOtherHint": "思考、停顿等",
+
+  "reminderSectionTitle": "提醒",
+  "reminderSettings": "复习提醒",
+  "savedReviewReminderSection": "收藏复习提醒",
+  "savedReviewReminderToggle": "收藏内容提醒",
+  "savedReviewReminderTime": "每日提醒时间",
+  "savedReviewReminderDescription": "通勤或睡前复习收藏内容，效果更好",
+  "audioReviewReminderSection": "音频复习提醒",
+  "audioReviewReminderToggle": "音频到期提醒",
+  "audioReviewReminderDescription": "到复习时间时通知你，帮你保持复习节奏",
+
+  "notificationPromptTitle": "开启提醒，让记忆更牢",
+  "notificationPromptBody": "记得牢的关键是适时回顾。我们只在关键节点轻轻提醒。",
+  "notificationPromptTitleLearning": "记得及时复习",
+  "notificationPromptBodyLearning": "开启提醒，我们会在合适的时间提醒你巩固刚学过的内容。",
+  "notificationPromptTitleBookmark": "收藏后别忘复习",
+  "notificationPromptBodyBookmark": "开启提醒，帮你定时回顾收藏内容。",
+  "notificationPromptCtaGrant": "开启提醒",
+  "notificationPromptCtaDismiss": "稍后再说",
+  "notificationDisabledBanner": "通知已关闭，将无法接收复习提醒。",
+  "notificationDisabledBannerCta": "前往设置",
+  "notificationNotGrantedBanner": "允许通知，按时收到每日复习提醒。",
+  "notificationNotGrantedBannerCta": "开启",
+
+  "recentCompletions": "最近完成任务 ({count})",
+  "recentCompletionsSummary": "过去24小时",
+  "timeAgoJustNow": "刚刚",
+  "timeAgoMinutes": "{minutes}分钟前",
+  "timeAgoHours": "{hours}小时前",
+  "timeFromNowSeconds": "{seconds}秒后",
+  "@timeFromNowSeconds": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "exportAudio": "导出音频",
+  "exportAudioFile": "音频",
+  "exportVideo": "导出视频",
+  "exportVideoFile": "视频",
+  "exportSubtitleFile": "字幕",
+  "exportSelectFiles": "选择要导出的文件",
+  "exportPdf": "导出 PDF",
+  "pdfExporting": "正在生成 PDF…",
+  "pdfExportFailed": "导出 PDF 失败：{error}",
+  "@pdfExportFailed": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "pdfMetaDuration": "时长 {duration}",
+  "pdfMetaSentences": "{count} 句",
+  "pdfMetaWords": "{count} 词",
+  "pdfAppendixTitle": "附录 · 句子解析",
+  "pdfPreviewTitle": "导出预览",
+  "pdfShare": "分享",
+  "pdfOptionTranslation": "难句译文",
+  "pdfOptionVocab": "收藏词汇释义",
+  "pdfOptionAnalysis": "难句讲解",
+  "pdfExportReminderTitle": "PDF 是你的复习笔记",
+  "pdfExportReminderMessage": "建议完成首次学习后再导出 PDF。\n\n精听、跟读、盲听帮助你掌握内容，PDF 会整理你的翻译、解析和收藏词汇，方便之后复习。",
+  "pdfExportReminderConfirm": "知道了",
+
+  "exportData": "导出数据",
+  "exportDataSubtitle": "导出全部数据到 ZIP 文件",
+  "importData": "导入数据",
+  "importDataSubtitle": "从备份文件恢复数据",
+  "exporting": "正在导出...",
+  "importing": "正在导入...",
+  "exportSuccess": "导出完成",
+  "downloadSuccess": "下载完成",
+  "importSuccess": "导入完成",
+  "importConfirmTitle": "确认导入",
+  "importConfirmMessage": "这将替换当前所有数据，包括学习进度、收藏和音频文件。此操作不可撤销。",
+  "backupTime": "备份时间",
+  "backupVersion": "应用版本",
+  "backupFileCount": "媒体文件",
+  "backupSize": "总大小",
+  "importIncompatible": "此备份由更新版本的应用创建，请先更新应用。",
+  "importInvalidFile": "无效的备份文件",
+  "exportingDatabase": "正在导出数据库...",
+  "exportingPreferences": "正在导出设置...",
+  "exportingMedia": "正在导出媒体文件...",
+  "exportingPacking": "正在打包备份文件...",
+  "importingExtracting": "正在解压备份...",
+  "importingMedia": "正在恢复媒体文件...",
+  "importingDatabase": "正在恢复数据库...",
+  "importingPreferences": "正在恢复设置...",
+  "backupAndRestore": "备份与恢复",
+  "backupAndRestoreSubtitle": "换手机或重装后恢复学习数据",
+  "backupData": "备份",
+  "backupDataSubtitle": "备份学习数据、媒体文件和离线词典",
+  "restoreData": "恢复",
+  "restoreDataSubtitle": "从本地备份文件恢复全部数据",
+  "backupReadyTitle": "备份文件已准备好",
+  "backupFileName": "文件名",
+  "restoreOverwriteTitle": "覆盖并恢复全部数据？",
+  "restoreOverwriteMessage": "恢复后将覆盖当前设备上的学习数据、设置、音频、字幕和词典，且无法撤销。",
+  "restoreOverwriteAction": "覆盖并恢复",
+  "exportingResources": "正在备份离线词典...",
+  "importingResources": "正在恢复离线词典...",
+  "backupFailed": "备份失败：{error}",
+  "@backupFailed": {"placeholders": {"error": {"type": "String"}}},
+  "restoreFailed": "恢复失败：{error}",
+  "@restoreFailed": {"placeholders": {"error": {"type": "String"}}},
+
+  "activityCalendar": "学习日历",
+  "noActivityThisMonth": "本月暂无学习记录",
+  "studyDurationNoRecords": "暂无学习记录",
+  "monthlySummaryTitle": "{month}月统计",
+  "@monthlySummaryTitle": {
+    "placeholders": {
+      "month": { "type": "String" }
+    }
+  },
+  "monthlyTotal": "总计",
+  "monthlyActiveDays": "学习天数",
+  "monthlyAvgPerDay": "日均",
+  "monthlyBestStreak": "最长连续",
+  "daysSuffix": "{days}天",
+  "activeDaysFraction": "{active}/{total}天",
+  "senseGroupSplit": "拆分意群",
+  "senseGroupLoading": "拆分中...",
+  "senseGroupSingleGroup": "此句为单个意群",
+  "senseGroupSave": "收藏",
+  "senseGroupSaved": "已收藏",
+  "annotationBtnSenseGroup": "意群",
+  "annotationBtnSenseGroupMedium": "大意群",
+  "annotationBtnSenseGroupFine": "小意群",
+  "annotationBtnTranslation": "翻译",
+  "annotationBtnAnalysis": "解析",
+  "senseGroupLoadFailed": "意群拆分失败，请重试",
+  "senseGroupSignInRequiredTitle": "登录后使用 AI 功能",
+  "senseGroupSignInRequiredMessage": "使用 AI 功能前，请先登录。",
+  "senseGroupSyntheticTimingNoticeTitle": "意群时间可能不准",
+  "senseGroupSyntheticTimingNoticeMessage": "这个意群播放时间是从你上传的字幕推测出来的，可能不准确。",
+  "transcriptionSignInRequiredTitle": "登录后使用 AI 转录",
+  "transcriptionSignInRequiredMessage": "AI 转录需要使用云端转录服务。登录后可以继续用 AI 生成字幕。",
+  "senseGroupNotAvailable": "当前音频暂不支持意群播放",
+  "wordTimestampsNotFound": "词级字幕未找到，请重启应用重试",
+
+  "recycleBinTitle": "回收站",
+  "reviewStatisticsTitle": "复习统计",
+  "reviewStatisticsAll": "全部",
+  "reviewStatisticsSentences": "收藏句子",
+  "reviewStatisticsVocabulary": "收藏词汇",
+  "reviewStatisticsTodayOverview": "今日概览",
+  "reviewStatisticsTodayReviewed": "今日复习",
+  "reviewStatisticsTodayCompleted": "今日已复习",
+  "reviewCompletionReviewed": "复习条数",
+  "reviewStatusRemaining": "剩余",
+  "reviewStatisticsDuration": "复习时长",
+  "reviewStatisticsDue": "现在可复习",
+  "reviewStatisticsCurrentDue": "现在可复习 {count}",
+  "@reviewStatisticsCurrentDue": {
+    "placeholders": {"count": {"type": "String"}}
+  },
+  "reviewStatisticsCurrentDueExplanation": "已到期，可立即开始复习",
+  "reviewStatisticsCurrentDueBreakdown": "其中 {overdue} 项逾期，{today} 项今天已到期",
+  "reviewStatisticsStreak": "连续复习",
+  "reviewStatisticsStreakExplanation": "连续 {count} 天都有复习记录",
+  "@reviewStatisticsStreakExplanation": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "reviewStatisticsLearningRhythm": "学习节奏",
+  "reviewStatisticsTrend": "近 30 天复习趋势",
+  "reviewStatisticsTrendExplanation": "每天完成的不同收藏内容",
+  "reviewStatisticsReviewPlan": "复习安排",
+  "reviewStatisticsUpcoming": "未来 7 天复习安排（含今天）",
+  "reviewStatisticsUpcomingExplanation": "每天到期的收藏内容",
+  "reviewStatisticsTodayShort": "今天",
+  "reviewStatisticsRecentPerformance": "近期表现",
+  "reviewStatisticsRatings": "近 30 天记忆保持率",
+  "reviewStatisticsRetentionRate": "保持率",
+  "reviewStatisticsRetentionExplanation": "每项内容仅统计首次复习结果。\n保持率 = (听懂了 + 轻松听懂) / 总数",
+  "reviewStatisticsEmptyRatings": "暂无评分记录",
+  "reviewStatisticsContent": "累计复习内容",
+  "reviewStatisticsContentExplanation": "至少完成过一次复习",
+  "reviewStatisticsHistory": "历史足迹",
+  "reviewStatisticsItemCount": "{count} 项",
+  "@reviewStatisticsItemCount": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "reviewStatisticsLoadError": "统计加载失败",
+  "recycleBinEmpty": "没有已移除的内容",
+  "recycleBinClearAll": "清空",
+  "recycleBinClearAllConfirm": "永久删除全部 {count} 条内容？此操作不可撤销。",
+  "recycleBinRestore": "恢复",
+  "recycleBinDelete": "删除",
+  "recycleBinSortTimeDesc": "最近移除",
+  "recycleBinSortTimeAsc": "最早移除",
+  "recycleBinItemCount": "{count} 条",
+  "filesSelected": "已选择 {count} 个文件",
+  "processingFileOf": "正在处理 {current}/{total}...",
+  "importingFileProgress": "正在导入 {current}/{total}：{name}",
+  "@importingFileProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"},
+      "name": {"type": "String"}
+    }
+  },
+  "multipleAudioAdded": "已添加 {count} 个素材",
+  "audioImportedCount": "成功导入 {count} 个素材",
+  "audioImportedWithSubtitleCount": "其中 {count} 个包含字幕",
+  "duplicatesSkipped": "跳过 {count} 个重复项",
+  "importFailedCount": "失败 {count} 个",
+  "@importFailedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "duplicatesSkippedDetail": "以下素材与本合集中已有素材内容完全相同，已跳过：",
+  "duplicateExistingFileName": "重复文件名: {name}",
+  "@duplicateExistingFileName": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "duplicateOfExisting": "与「{name}」内容相同",
+  "@duplicateOfExisting": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "removeFile": "移除",
+  "goToSettings": "前往设置",
+  "dictionaryDownloading": "词典下载中...",
+  "dictionaryDownloadFailed": "词典下载失败",
+  "dictionaryNotDownloaded": "词典尚未下载",
+  "dictionaryBaseFormHint": "以下为原形「{lemma}」的查词结果",
+  "@dictionaryBaseFormHint": {
+    "placeholders": {
+      "lemma": {
+        "type": "String"
+      }
+    }
+  },
+  "download": "下载",
+  "retry": "重试",
+  "mediaPreparingHint": "正在下载音频和字幕…",
+  "guideNext": "下一步",
+  "guideDone": "知道了",
+  "guideSkip": "跳过",
+  "guideLibraryCreateCollectionDescription": "点击这里，可以创建新的合集。",
+  "guideCollectionAudioMenuDescription": "点击这里，可以管理该音频的字幕、所属合集、标签等信息。",
+  "guideCollectionUploadDescription": "点击这里，可以上传你自己的音频。",
+  "guidePlanAddSubtitleTitle": "添加字幕",
+  "guidePlanAddSubtitleDescription": "可以用 AI 一键生成字幕，或上传本地字幕文件。完成后即可开始学习这段音频。",
+  "guidePlanFreePlayTitle": "随心听",
+  "guidePlanFreePlayDescription": "这是一个全能、灵活的音频播放器，你可以按照自己的节奏随心听、随心练。",
+  "guidePlanStartLearningTitle": "按计划学习",
+  "guidePlanStartLearningDescription": "点击这里即可按照学习计划逐步学习。Echo Loop 会自动引导你学习，并及时提醒你复习。",
+  "guidePlanPauseLearningTitle": "暂停学习",
+  "guidePlanPauseLearningDescription": "如果你不想继续学这段音频，可以随时在这里暂停。该音频将停止复习提醒，之后可一键恢复。",
+  "guideRetellSkipTitle": "跳过本次复述",
+  "guideRetellSkipDescription": "复述能快速提升口语；如果当前更想专注练听力，可以点这里跳过本次复述。",
+  "learningProgressLoadFailed": "学习进度加载失败，请稍后重试",
+  "guideStudyStatsHeaderTitle": "今日学习统计",
+  "guideStudyStatsHeaderDescription": "今天的听力时长、口语练习时长和新学词汇量都汇总在这里。点击卡片或柱状图，可查看更详细的数据分布。",
+  "guideStudyStreakDescription": "点击这里查看学习日历",
+  "guideFavoritesSentencesListDescription": "这里是你收藏的句子，并按来源分组展示。",
+  "guideFavoritesVocabularyListDescription": "这里是你收藏的单词、词组、意群。",
+  "guideSentenceTileBodyDescription": "点击句子从这里开始播放。",
+  "guideSentenceTileExplanationDescription": "点击左侧讲解图标查看这句话的讲解。",
+  "viewSentenceExplanation": "查看句子讲解",
+  "guideSubtitleEditorBoundaryHandleDescription": "拖动波形图上的红绿手柄，可以调整当前句子的起止时间。",
+  "guideSubtitleEditorSentencePlayDescription": "点击左侧播放按钮，可以播放这一句。",
+  "guideSubtitleEditorSentenceMenuDescription": "点击右侧菜单，可以合并或删除这一句。",
+  "guideSentenceAnnotationSentenceDescription": "点击或长按选中文本，即可查看词典释义。",
+  "guideSentenceAnnotationSenseGroupDescription": "按意群切分，帮你轻松听懂长难句。",
+  "guideSentenceAnnotationAnalysisDescription": "查看这句话的语法、重点短语、听力要点。",
+  "resetNewUserGuide": "重置新手引导",
+  "resetNewUserGuideSubtitle": "清除所有引导已看过状态，方便测试",
+  "resetNewUserGuideDone": "新手引导已重置",
+  "resetOnboarding": "重置 Onboarding 问卷",
+  "resetOnboardingDone": "Onboarding 已重置，请重启 App 以重新进入问卷",
+
+  "discoverCommunityCollections": "发现资源",
+  "discoverEmpty": "暂无精选合集",
+  "discoverLoadFailed": "加载失败，点击重试",
+  "discoverRetry": "重试",
+  "discoverPodcastEntryTitle": "Apple 播客",
+  "discoverPodcastEntrySubtitle": "共 {count} 个播客，订阅后可自动获取最新单集",
+  "@discoverPodcastEntrySubtitle": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "discoverPodcastTitle": "精选播客",
+  "discoverPodcastEmpty": "暂无精选播客",
+  "podcastSignInRequiredMessage": "登录后可以将精选播客添加到我的合集，并继续学习后续单集。",
+  "podcastPreviewSubscribeFailed": "添加失败。部分 RSS 或 Apple Podcasts 在当前网络环境下可能不可访问，请稍后重试或切换网络。",
+  "podcastEnrollNeededTitle": "需要先添加播客",
+  "podcastEnrollNeededMessage": "添加到我的合集后，就可以下载并学习这期节目。",
+  "podcastPreviewNetworkFailed": "无法获取播客内容。Apple Podcasts 或部分 RSS 源在当前网络下可能不可访问，请稍后重试或切换网络。",
+  "podcastPreviewAppleFailed": "无法解析 Apple Podcasts 链接。当前网络可能无法访问 Apple 播客查询服务，请稍后重试或切换网络。",
+  "podcastPreviewParseFailed": "播客源格式暂不支持，无法读取单集列表。",
+  "podcastFeedBlocked": "该播客源在当前网络下拦截了自动访问。请稍后重试，或切换到其他网络。",
+  "podcastPreviewEmpty": "暂未获取到单集。",
+  "localCollectionBadge": "本地",
+  "communityBadge": "共享",
+  "communityDeprecatedBadge": "已下架",
+  "podcastCollectionBadge": "播客",
+  "addToMyCollections": "添加到我的合集",
+  "communityCollectionSignInRequiredTitle": "登录后添加合集",
+  "communityCollectionSignInRequiredMessage": "登录后可以将共享合集添加到我的合集，并同步后续内容。",
+  "goLearn": "去学习",
+  "communityCollectionAdded": "已添加",
+  "removeFromMyCollections": "从我的合集移除",
+  "enrollNeededTitle": "需要先添加合集",
+  "enrollNeededMessage": "添加到我的合集后，就可以开始学习这条音频。",
+  "enrollSucceeded": "已添加到我的合集",
+  "enrollFailed": "添加失败，请检查网络后重试",
+  "removeCommunityConfirmTitle": "移除《{name}》？",
+  "@removeCommunityConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "removeCommunityConfirmMessage": "将删除本合集所有媒体、字幕和相关学习记录，此操作不可恢复。",
+  "removeCommunityConfirmConfirm": "确认移除",
+  "communityCollectionDeprecated": "该合集已移除，本地副本仍可继续使用。",
+  "communityCollectionRefreshFailed": "同步失败，下拉重试",
+  "communityFileUnavailable": "该文件已从共享合集中移除",
+  "communityFilesRemoved": "共享合集中有 {count} 个文件已移除",
+  "@communityFilesRemoved": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "downloadCancel": "取消下载",
+  "downloadLater": "先不管",
+  "downloadCompleted": "《{name}》下载完成",
+  "@downloadCompleted": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "downloadFailed": "《{name}》下载失败，请重试",
+  "@downloadFailed": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "updateCommunitySubtitle": "更新字幕",
+  "updateCommunitySubtitleConfirm": "确定更新字幕？",
+  "updateCommunitySubtitleWarning": "更新字幕将替换本地字幕，并清空该媒体的所有收藏句子和学习进度。",
+  "communitySubtitleUpdated": "字幕已更新",
+  "communitySubtitleUpdateFailed": "字幕更新失败，请重试",
+  "downloadLoading": "加载中",
+  "backgroundDownloadRunningTitle": "正在下载",
+  "backgroundDownloadCompleteTitle": "下载完成",
+  "backgroundDownloadFailedTitle": "下载失败",
+  "audioListColumnName": "名称",
+  "audioListColumnDuration": "时长",
+  "onboardingTitle": "先聊两句",
+  "onboardingSubtitle": "10 秒帮你定制学习节奏",
+  "onboardingBack": "上一步",
+  "onboardingContinue": "继续",
+  "onboardingExamPrompt": "你当前在备考哪一类考试？",
+  "onboardingExamGaokao": "中高考",
+  "onboardingExamCet": "大学四六级",
+  "onboardingExamTem": "专四专八",
+  "onboardingExamIelts": "雅思 IELTS",
+  "onboardingExamToefl": "托福 TOEFL",
+  "onboardingExamOther": "其他",
+  "onboardingProgress": "第 {current} 题 / 共 {total} 题",
+  "@onboardingProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "onboardingNext": "下一题",
+  "onboardingDone": "完成",
+  "onboardingFinishedTitle": "记下了，准备好出发",
+  "onboardingFinishedHint": "我们会按你的目标和节奏来安排练习。",
+  "onboardingSummaryEyebrow": "你知道么？",
+  "onboardingSummaryHeadline": "提升英语听说，\n关键不在听得更多，\n而在练得更透",
+  "onboardingSummaryPoint1": "选择适合你水平的音频反复练习",
+  "onboardingSummaryPoint2": "按意群理解内容，在语境中掌握词汇",
+  "onboardingSummaryPoint3": "通过大量精听和跟读积累输入与语感",
+  "onboardingSummaryPoint4": "通过复述练习口语，把听懂变成会说",
+  "onboardingStart": "开始学习",
+  "onboardingQ1Prompt": "你练习英语听说的主要目标是什么？",
+  "onboardingQ1OptionExam": "应对考试",
+  "onboardingQ1OptionDaily": "日常交流",
+  "onboardingQ1OptionWork": "工作沟通",
+  "onboardingQ1OptionTravel": "出国旅行",
+  "onboardingQ1OptionContent": "听懂影视播客",
+  "onboardingQ1OptionOther": "其他",
+  "onboardingQ2Prompt": "你计划每天练习多久？",
+  "onboardingQ2Option5": "约 5 分钟",
+  "onboardingQ2Option10": "约 10 分钟",
+  "onboardingQ2Option20": "约 20 分钟",
+  "onboardingQ2Option30": "30 分钟以上",
+  "onboardingQ2OptionFlexible": "不固定",
+  "onboardingQ3Prompt": "你是从哪里知道我们的？",
+  "onboardingQ3OptionAppStore": "应用商店",
+  "onboardingQ3OptionYoutube": "YouTube",
+  "onboardingQ3OptionReddit": "Reddit",
+  "onboardingQ3OptionXTwitter": "X",
+  "onboardingQ3OptionXiaohongshu": "小红书",
+  "onboardingQ3OptionWechat": "微信",
+  "onboardingQ3OptionBilibili": "B 站",
+  "onboardingQ3OptionGoogleSearch": "Google 搜索",
+  "onboardingQ3OptionGithub": "GitHub",
+  "onboardingQ3OptionFriend": "朋友推荐",
+  "onboardingQ3OptionOther": "其他",
+  "onboardingQ3OptionShortVideo": "短视频",
+  "onboardingQ3OptionSearchEngine": "搜索引擎",
+  "onboardingQ3OptionTeacherSchool": "老师 / 学校",
+  "onboardingQ3OtherHint": "可选，告诉我们具体是从哪里知道的",
+  "onboardingPermissionsHint": "为了保证体验我们将请求以下权限",
+  "onboardingPermissionsNotification": "系统通知",
+  "onboardingPermissionsMicrophone": "录音",
+  "onboardingPermissionsSpeech": "语音识别",
+  "playbackSection": "播放",
+  "playbackSettings": "播放设置",
+  "learningSection": "学习",
+  "learningSettings": "学习设置",
+  "displaySettings": "显示设置",
+  "showRecommendationToggle": "显示推荐卡片",
+  "showRecommendationSubtitle": "在学习页显示「为你推荐」卡片",
+  "hideRecommendationTooltip": "关闭推荐",
+  "hideRecommendationTitle": "隐藏推荐卡片？",
+  "hideRecommendationMessage": "隐藏后学习页将不再显示推荐。如需恢复，可在「设置 › 学习 › 显示设置」中重新开启。",
+  "speakingPracticeSection": "口语练习",
+  "autoSkipRetellToggle": "自动跳过复述",
+  "autoSkipRetellSubtitle": "学习计划遇到复述任务时自动跳过",
+  "autoExpandCachedAnnotationToggle": "自动展开句子讲解",
+  "autoExpandCachedAnnotationSubtitle": "自动展示查看过的翻译、解析和意群",
+  "autoShowAiExplanationToggle": "自动显示 AI 讲解",
+  "autoShowAiExplanationSubtitle": "进入句子讲解时自动显示选中的 AI 辅助内容",
+  "autoShowAiAnalysisToggle": "AI 解析",
+  "autoShowAiTranslationToggle": "AI 翻译",
+  "autoShowAiSenseGroupsToggle": "AI 意群分割",
+  "autoPlayRetellRecordingToggle": "自动播放复述录音",
+  "autoPlayRetellRecordingSubtitle": "复述结束后自动回听自己的录音，用于对照和纠音",
+  "listenAndRepeatRatingToggle": "跟读时显示评分",
+  "listenAndRepeatRatingSubtitle": "关闭后保留录音回听，但不再识别和评分",
+  "retellRatingToggle": "复述时显示评分",
+  "retellRatingSubtitle": "关闭后只保留录音回听，不再显示评分",
+  "autoSaveOnUnclearToggle": "听不懂时自动收藏",
+  "autoSaveOnUnclearSubtitle": "精听时点击「听不太懂」，自动把该句加入收藏",
+  "unclearAutoSaveDialogTitle": "自动收藏听不懂的句子",
+  "unclearAutoSaveDialogMessage": "点「听不太懂」时，会自动收藏本句，方便你之后集中复习。",
+  "unclearAutoSaveSwitchOn": "开启",
+  "unclearAutoSaveSwitchOff": "关闭",
+  "unclearAutoSaveDialogHint": "随时可在「我的 → 学习设置」中修改。",
+  "unclearAutoSaveDialogConfirm": "知道了",
+  "retellSkip": "跳过",
+  "retellSkippedSuffix": "已跳过",
+  "skipSilenceTitle": "自动跳过静音",
+  "skipSilenceDescription": "跳过句子之间较长的静音部分",
+  "wordHighlightTitle": "逐词高亮",
+  "wordHighlightDescription": "播放原音时高亮当前读到的单词",
+  "resumeFromSentenceStartTitle": "重播时从句首开始",
+  "resumeFromSentenceStartEnabledDescription": "重播当前句子时将从句首开始播放",
+  "resumeFromSentenceStartDisabledDescription": "重播当前句子时将从暂停位置继续播放。",
+  "silenceThreshold": "静音阈值",
+  "silenceThresholdValue": "{seconds} 秒",
+  "@silenceThresholdValue": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "silenceSkipped": "已跳过 {seconds} 秒静音部分",
+  "@silenceSkipped": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "speechPermDialogTitleRequest": "需要授权",
+  "speechPermDialogTitleDenied": "权限已被拒绝",
+  "speechPermDialogTitleRestricted": "设备已限制",
+  "speechPermItemMic": "麦克风",
+  "speechPermItemMicDesc": "录制你的朗读用于发音评估",
+  "speechPermItemSpeech": "语音识别",
+  "speechPermItemSpeechDesc": "对比朗读内容，逐字标注错误",
+  "speechPermStatusPending": "待授权",
+  "speechPermStatusDenied": "已拒绝",
+  "speechPermDeniedHint": "你曾拒绝过权限，需要在系统设置中手动开启",
+  "speechPermRestrictedHint": "当前设备被家长控制或 MDM 限制，无法使用录音",
+  "speechPermActionGrant": "授权",
+  "speechPermActionOpenSettings": "前往设置",
+  "speechPermUnsupportedToast": "当前平台不支持录音",
+  "authSignInTitle": "登录 Echo Loop",
+  "authChooseMethod": "选择一种方式继续。",
+  "authContinueWithEmail": "使用邮箱验证码继续",
+  "authContinueWithApple": "使用 Apple 继续",
+  "authContinueWithGoogle": "使用 Google 继续",
+  "authProviderComingSoon": "即将支持",
+  "authGoogleUnavailable": "当前设备无法使用 Google 登录，请改用邮箱验证码登录。",
+  "authGoogleServicesOutdated": "当前设备的 Google 服务版本过低，暂不可用。",
+  "authPasswordlessHint": "无需密码，我们会向你的邮箱发送一次性验证码。",
+  "authEmailTitle": "邮箱登录",
+  "authEmailOtpTitle": "继续使用邮箱",
+  "authEmailOtpDescription": "输入你的邮箱，我们会发送一次性验证码。",
+  "authEmailOtpAutoCreateHint": "首次使用会自动创建账号。",
+  "authEmailLabel": "邮箱",
+  "authOtpLabel": "6 位验证码",
+  "authOtpRequired": "请输入 6 位验证码",
+  "authOtpInvalid": "请输入有效的 6 位验证码",
+  "authOtpIncorrectOrExpired": "验证码不正确或已过期。",
+  "authEnterOtpTitle": "输入验证码",
+  "authOtpHelpText": "如果没有收到邮件，请检查垃圾邮件箱。",
+  "authSendOtpButton": "发送验证码",
+  "authSendingOtp": "发送中",
+  "authVerifyOtpButton": "继续",
+  "authVerifyingOtp": "验证中",
+  "authResendOtpButton": "重新发送验证码",
+  "authResendOtpCountdown": "{seconds} 秒后可重发",
+  "@authResendOtpCountdown": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "authOtpResent": "已重新发送验证码。",
+  "authPasswordLabel": "密码",
+  "authSignInButton": "登录",
+  "authSigningIn": "登录中",
+  "authCreateAccount": "创建账号",
+  "authCreateAccountTitle": "创建你的账号",
+  "authCreatingAccount": "创建中",
+  "authAlreadyHaveAccount": "已有账号？登录",
+  "authForgotPassword": "忘记密码？",
+  "authForgotPasswordTitle": "重置密码",
+  "authForgotPasswordDescription": "输入你的邮箱，我们会发送一封重置密码邮件。",
+  "authResetPasswordTitle": "设置新密码",
+  "authResetPasswordDescription": "输入你的新密码，完成密码找回。",
+  "authNewPasswordLabel": "新密码",
+  "authConfirmNewPasswordLabel": "确认新密码",
+  "authUpdatePasswordButton": "更新密码",
+  "authUpdatingPassword": "更新中",
+  "authSendResetLink": "发送重置链接",
+  "authSendingResetLink": "发送中",
+  "authBackToSignIn": "返回登录",
+  "authCheckEmailTitle": "请查收邮件",
+  "authCheckEmailMessage": "我们已向 {email} 发送 6 位验证码。",
+  "@authCheckEmailMessage": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "authResetEmailSent": "如果账号存在，我们已发送重置链接。",
+  "authEmailRequired": "请输入邮箱",
+  "authEmailInvalid": "请输入有效邮箱",
+  "authPasswordRequired": "请输入密码",
+  "authPasswordTooShort": "密码至少 6 位",
+  "authConfirmPasswordLabel": "确认密码",
+  "authConfirmPasswordRequired": "请再次输入密码",
+  "authConfirmPasswordMismatch": "两次输入的密码不一致",
+  "authShowPassword": "显示密码",
+  "authHidePassword": "隐藏密码",
+  "authUnavailable": "认证服务尚未配置，请稍后再试。",
+  "authUnknownError": "操作失败，请稍后重试。",
+  "authAgreeRequired": "请先同意服务条款和隐私政策",
+  "authTermsAgreementPrefix": "我已阅读并同意",
+  "authTermsContinuationPrefix": "继续即表示你同意",
+  "authTermsJoiner": "和",
+  "authTermsOfService": "服务条款",
+  "authPrivacyPolicy": "隐私政策",
+  "authSignedInStatus": "已登录",
+  "authSignedOutStatus": "未登录",
+  "authSignedInWithApple": "已通过 Apple 登录",
+  "authSignedInWithGoogle": "已通过 Google 登录",
+  "authAppleAccount": "Apple 账号",
+  "authEmailUnavailable": "邮箱暂不可用",
+  "authGoogleAccount": "Google 账号",
+  "authSignOut": "退出登录",
+  "editSubtitles": "编辑字幕",
+  "mergeWithNextSentence": "合并下一句",
+  "deleteSentence": "删除句子",
+  "sentenceDeleted": "已删除句子",
+  "playSentence": "播放句子",
+  "stopPlayback": "停止播放",
+  "editWord": "编辑单词",
+  "splitSentenceHere": "从此处分句",
+  "wordEditAction": "编辑",
+  "wordSplitBeforeAction": "断句",
+  "saveSubtitleEdits": "保存字幕修改",
+  "subtitleStructureChangedWarning": "这会清除该音频的学习进度和收藏句子。",
+  "subtitleEditsSaved": "字幕修改已保存。",
+  "discardSubtitleEditsTitle": "放弃修改？",
+  "discardSubtitleEditsMessage": "当前字幕修改尚未保存。",
+  "discard": "放弃",
+  "importAudio": "导入音频",
+  "importAudioFromFile": "从本地文件导入",
+  "importAudioFromFileDescription": "选择手机或网盘中的素材文件",
+  "importAudioFromUrl": "从链接导入",
+  "importAudioFromUrlDescription": "粘贴音频直链，下载后加入资源库",
+  "importAudioFromCloudDrive": "从网盘导入",
+  "importAudioFromBaiduNetdisk": "从百度网盘导入",
+  "cloudDriveSourceShort": "网盘",
+  "baiduNetdisk": "百度网盘",
+  "baiduNetdiskAllFiles": "全部文件",
+  "baiduNetdiskWaitingAuthorization": "等待百度授权...",
+  "baiduNetdiskLoadingFiles": "正在加载百度网盘文件...",
+  "baiduNetdiskImportFailed": "百度网盘导入失败。",
+  "baiduNetdiskConnectTitle": "连接百度网盘",
+  "baiduNetdiskConnectDescription": "授权 Echo Loop 浏览你的百度网盘，并导入选中的素材文件。",
+  "baiduNetdiskConnectAction": "连接百度网盘",
+  "baiduNetdiskLogoutTooltip": "退出百度网盘登录",
+  "baiduNetdiskSelectAllAction": "全选",
+  "baiduNetdiskClearSelectionAction": "取消",
+  "baiduNetdiskLogoutTitle": "退出百度网盘登录？",
+  "baiduNetdiskLogoutMessage": "Echo Loop 会清除当前设备上保存的百度网盘授权。",
+  "baiduNetdiskLogoutConfirm": "退出登录",
+  "baiduNetdiskAccountTooltip": "百度网盘账户",
+  "baiduNetdiskAccountTitle": "百度网盘账户",
+  "baiduNetdiskUsername": "百度用户名",
+  "baiduNetdiskNetdiskName": "网盘昵称",
+  "baiduNetdiskMembership": "会员状态",
+  "baiduNetdiskUserId": "用户 ID",
+  "baiduNetdiskUnavailable": "未提供",
+  "baiduNetdiskDisconnect": "断开百度网盘连接",
+  "baiduNetdiskNoSupportedAudio": "此文件夹中没有支持的素材文件。",
+  "importAudioShort": "导入",
+  "cancelImport": "取消导入",
+  "cancelingImport": "正在取消导入…",
+  "importAudioSelectedCount": "导入 {count} 个",
+  "@importAudioSelectedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "importAudioAndSubtitleCount": "导入（{audioCount, plural, =0{} other{{audioCount} 个素材}}{subtitleCount, plural, =0{} other{，{subtitleCount} 个字幕}}）",
+  "@importAudioAndSubtitleCount": {
+    "placeholders": {
+      "audioCount": {"type": "int"},
+      "subtitleCount": {"type": "int"}
+    }
+  },
+  "baiduNetdiskImportingFile": "正在导入 {name}...",
+  "@baiduNetdiskImportingFile": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "baiduNetdiskImportedCount": "已从百度网盘导入 {count} 个",
+  "@baiduNetdiskImportedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "baiduNetdiskSkippedSummary": "跳过重复项：{duplicates} · 失败：{failures}",
+  "@baiduNetdiskSkippedSummary": {
+    "placeholders": {
+      "duplicates": {"type": "int"},
+      "failures": {"type": "int"}
+    }
+  },
+  "audioUrlLabel": "音频链接",
+  "audioUrlHint": "https://example.com/audio.mp3",
+  "pasteAudioLink": "粘贴链接",
+  "audioClipboardNoValidLink": "剪切板中没有可用链接",
+  "downloadAndImportAudio": "下载并导入",
+  "audioUrlInvalid": "请输入有效的音频链接",
+  "audioUrlUnsupported": "链接不是支持的音频格式",
+  "audioUrlNotDirectAudio": "该链接不是可直接下载的音频文件",
+  "audioUrlDuplicate": "已存在同名音频",
+  "audioDownloadFailed": "下载音频失败",
+  "audioDownloadInProgress": "正在下载",
+  "audioQueued": "排队中",
+  "baiduImportedToLibrary": "已导入到资源库",
+  "baiduImportedToCollections": "已导入到：{names}",
+  "@baiduImportedToCollections": {"placeholders": {"names": {"type": "String"}}},
+  "baiduImportDuplicate": "已存在",
+  "baiduSubtitleUnmatched": "没有匹配到同名音频",
+  "baiduDisconnectActiveTitle": "有文件正在导入",
+  "baiduDisconnectActiveMessage": "{count} 个文件正在下载或排队，断开连接后这些导入会被取消。",
+  "@baiduDisconnectActiveMessage": {"placeholders": {"count": {"type": "int"}}},
+  "mediaQueued": "排队中...",
+  "audioImportComplete": "导入完成",
+  "audioImportCanceled": "已取消音频导入",
+  "cancelDownload": "取消下载",
+
+  "subscribePodcast": "订阅 Podcast",
+  "subscribePodcastOptionDescription": "通过 Apple Podcasts 或 RSS 添加",
+  "podcastUrlLabel": "Apple Podcasts 或 RSS 链接",
+  "podcastUrlHint": "https://podcasts.apple.com/... 或 https://…/feed.xml",
+  "podcastSearchHint": "搜索播客或粘贴链接",
+  "podcastSearchEmpty": "没有找到相关播客",
+  "podcastSearchFailed": "搜索失败，请重试",
+  "podcastSubscribeThisLink": "订阅此链接",
+  "podcastSubscribing": "正在获取 Podcast Feed…",
+  "podcastSubscribeFailed": "订阅失败：{error}",
+  "@podcastSubscribeFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "podcastRefreshFailed": "刷新失败：{error}",
+  "@podcastRefreshFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "podcastAlreadySubscribed": "已订阅该播客，合集名为「{name}」",
+  "@podcastAlreadySubscribed": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "podcastRefreshFeed": "刷新 Feed",
+  "podcastUnsubscribe": "退订",
+  "podcastUnsubscribeConfirmTitle": "退订「{name}」？",
+  "@podcastUnsubscribeConfirmTitle": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "podcastUnsubscribeConfirmMessage": "该合集内所有单集及已下载的音频文件将被删除。",
+  "podcastFeedInfo": "Feed 信息",
+  "podcastDetails": "详情",
+  "podcastEpisodeMeta": "单集信息",
+  "podcastShowMore": "更多",
+  "podcastShowLess": "收起",
+  "podcastTitle": "标题",
+  "podcastAuthor": "作者",
+  "podcastFeedUrl": "RSS 链接",
+  "podcastAppleLink": "Apple 播客",
+  "podcastOriginalLink": "链接",
+  "podcastAudioType": "音频类型",
+  "podcastOpenLinkFailed": "无法打开链接",
+  "podcastLastRefreshed": "上次刷新：{time}",
+  "@podcastLastRefreshed": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "podcastEpisodeGuid": "GUID",
+  "podcastEnclosureUrl": "音频链接",
+  "ttsSettings": "语音合成",
+  "ttsSettingsDescription": "选择朗读单词和例句时使用的语音引擎与口音。",
+  "ttsEngine": "语音引擎",
+  "ttsEnginePlatform": "系统语音",
+  "ttsEnginePlatformApple": "Apple AI",
+  "ttsEnginePlatformDescription": "设备自带，速度快、无需下载，但音质一般。",
+  "ttsEngineEchoLoop": "Echo Loop AI (Advanced)",
+  "ttsEngineComingSoon": "即将推出",
+  "ttsEngineEchoLoopDescription": "音质最好，需下载模型，推荐高性能设备使用。",
+  "ttsEnginePiper": "Echo Loop AI (Balanced)",
+  "ttsEnginePiperDescription": "音质自然流畅，需下载模型，推荐中等配置设备使用。",
+  "ttsEngineEdge": "Edge TTS",
+  "ttsEngineEdgeDescription": "采用微软 Neural 音色，语音自然，需联网使用。",
+  "edgeTtsUnavailableTitle": "Edge 在线语音暂时不可用",
+  "edgeTtsUnavailableNetworkMessage": "网络不可用，Edge 在线语音需要联网。请检查网络后重试，或到设置中选择其他语音引擎。",
+  "edgeTtsUnavailableServiceMessage": "Edge 在线语音服务暂时无法使用，可以到设置中选择其他语音引擎。",
+  "edgeTtsUnavailableDismiss": "知道了",
+  "ttsModel": "模型",
+  "ttsModelHighQuality": "高质量",
+  "ttsModelHighQualityDescription": "音质最佳，速度可接受。约 300 MB。",
+  "ttsModelLite": "轻量",
+  "ttsModelLiteDescription": "体积小、速度慢，适合低端设备。约 100 MB。",
+  "ttsModelRecommended": "推荐",
+  "ttsModelNotDownloaded": "未下载",
+  "ttsModelDownloadRequiredTitle": "需要下载语音合成模型",
+  "ttsModelDownloadIntro": "首次使用此语音需要下载模型。",
+  "ttsModelDownloadEstimate": "预计下载量：约 {size}",
+  "ttsModelDownloadSettingsHint": "你也可以前往设置选择其他语音合成模型。",
+  "ttsModelDownloadingTitle": "正在下载语音合成模型",
+  "ttsModelDownloadingMessage": "预计下载量：约 {size}",
+  "ttsModelDownloadProgress": "已完成 {progress}",
+  "ttsModelDownloadFailedTitle": "语音合成模型下载失败",
+  "ttsModelDownloadFailedMessage": "下载未完成。预计下载量：约 {size}",
+  "ttsDownloadModel": "下载模型",
+  "ttsAccent": "口音",
+  "ttsAccentUs": "美音",
+  "ttsAccentUk": "英音",
+  "ttsAccentHint": "（部分机型不区分美音和英音）",
+  "ttsVoice": "音色",
+  "ttsVoiceFemale": "女",
+  "ttsVoiceMale": "男",
+  "ttsDeleteModel": "删除模型",
+  "ttsDeleteModelConfirm": "删除 Echo Loop 语音模型？可随时重新下载。",
+  "ttsCancelDownload": "取消",
+  "ttsDownloadedModelsTitle": "已下载的 Echo Loop 模型",
+  "ttsDownloadedModelsDesc": "未在使用 · 占用 {size}",
+  "asrDeleteAllModelsConfirm": "删除所有已下载的 Echo Loop 语音识别模型？可随时重新下载。",
+  "asrDownloadedModelsTitle": "已下载的语音识别模型",
+  "asrDownloadedModelsDesc": "未在使用 · 占用 {size}",
+  "dictionarySettings": "词典设置",
+  "dictionaryDefault": "默认词典",
+  "dictionaryDefaultDescription": "选择查词时默认展示的词典",
+  "dictionarySources": "词典源",
+  "dictionarySourcesDescription": "关闭的词典不会出现在查词切换器中",
+  "dictionaryAutoSpeakOnLookup": "查词时自动播放发音",
+  "dictionaryAdFilterTitle": "屏蔽网页词典广告",
+  "dictSourceLocal": "本地词典",
+  "dictSourceAi": "AI 词典",
+  "dictSourceCambridge": "Cambridge",
+  "dictSourceAlwaysOn": "始终启用",
+  "dictSourceCannotDisable": "{name}为基础词源，无法关闭",
+  "@dictSourceCannotDisable": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "dictDefaultBadge": "默认",
+  "dictSwitcherSemantics": "切换词典源，当前 {name}",
+  "@dictSwitcherSemantics": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "cambridgeNotFound": "Cambridge 未收录该词",
+  "dictTryOtherSource": "试试其它词典",
+  "dictCambridgeOpenInBrowser": "在浏览器中打开",
+  "aiNoAnalysis": "暂无 AI 解析",
+  "aiSignInRequired": "登录后可使用 AI 词典",
+  "dictPhraseTooLong": "词组过长，最多选择 8 个单词",
+  "ttsPlayUk": "播放英式发音",
+  "ttsPlayUs": "播放美式发音",
+  "dictAiSynonyms": "近义词",
+  "dictAiAntonyms": "反义词",
+  "dictAiExpressions": "常见搭配",
+  "dictAiWordFamily": "词族",
+  "dictAiForms": "词形变化",
+  "dictAiEtymology": "词源",
+  "dictAiTips": "学习提示",
+  "dictAiMultiKeyPoints": "学习要点",
+  "dictAiMultiMeanings": "含义与例句",
+  "dictAiMultiNaturalness": "纠错",
+  "dictAiMultiPronunciationTips": "发音提示",
+  "dictAiMultiSimilarExpressions": "相似表达",
+  "dictAiMultiBackground": "背景知识",
+  "chatOpenTooltip": "问 AI",
+  "chatSentenceTitle": "AI 助教",
+  "chatInputPlaceholder": "有问题尽管问…",
+  "chatSend": "发送",
+  "chatStop": "停止",
+  "chatClear": "清空对话",
+  "chatNewChat": "新建会话",
+  "chatRegenerate": "重新生成",
+  "chatEdit": "编辑",
+  "chatEditTitle": "编辑消息",
+  "chatCopy": "复制",
+  "chatCopied": "已复制",
+  "chatContextLabel": "正在讨论：{summary}",
+  "chatEmptyGreeting": "关于这句话，有什么想问的？",
+  "chatErrorNetwork": "网络不可用，点击重试。",
+  "chatErrorGenerate": "生成失败，点击重试。",
+  "chatUpgrade": "升级",
+  "chatSignInTitle": "需要登录",
+  "chatSignInMessage": "登录后即可使用 AI 助手。",
+  "chatScrollToBottom": "回到底部",
+  "chatThinking": "思考中…",
+  "chatFollowUp": "问 AI",
+  "chatFollowUpExplain": "详细解释",
+  "chatFollowUpTranslate": "翻译",
+  "chatFollowUpExample": "举个例子",
+  "chatFollowUpInstruction": "请仅根据下方引用的内容回答问题。",
+  "chatQuoteRemove": "移除引用",
+  "retellAiReviewTooltip": "AI 评估",
+  "retellAiReviewTitle": "AI 复述评估",
+  "retellAiReviewKeyPoints": "要点覆盖",
+  "retellAiReviewLabelOriginal": "原文",
+  "retellAiReviewLabelYouSaid": "你说",
+  "retellAiReviewLabelTip": "提示",
+  "retellAiReviewSuggestion": "建议",
+  "retellAiReviewStatusCovered": "一致",
+  "retellAiReviewStatusPartial": "片面",
+  "retellAiReviewStatusMissed": "遗漏",
+  "retellAiReviewStatusDistorted": "误解",
+  "retellAiReviewStatusAdded": "多说",
+  "retellAiReviewCorrections": "表达纠错",
+  "retellAiReviewCorrectionTypeGrammar": "语法",
+  "retellAiReviewCorrectionTypeWordChoice": "用词",
+  "retellAiReviewCorrectionTypeRedundancy": "冗余",
+  "retellAiReviewCorrectionTypePhrasing": "说法",
+  "retellAiReviewCorrectionTypeCohesion": "衔接",
+  "retellAiReviewEvaluating": "正在评估…",
+  "retellAiReviewGenerating": "正在生成…",
+  "retellAiReviewRetry": "重试",
+  "retellAiReviewError": "AI 评估未能完成，请重试。",
+  "retellAiReviewAudioPreparationError": "无法准备评估所需的录音文件。",
+  "retellAiReviewAudioTooLarge": "转换后的录音超过 2 MB 限制。",
+  "retellAiReviewSignInRequiredTitle": "登录后使用 AI 复述评估",
+  "retellAiReviewSignInRequiredMessage": "AI 复述评估使用云端 AI 服务，登录后即可获得复述反馈。",
+  "retellAiReviewPlayRecording": "播放录音",
+  "retellAiReviewStopRecording": "停止录音",
+  "videoHideTrack": "隐藏画面",
+  "mediaShowVisualTrack": "显示画面",
+  "mediaEnterFullscreen": "全屏",
+  "mediaExitFullscreen": "退出全屏",
+  "mediaHideVideoSubtitles": "隐藏视频内字幕",
+  "mediaShowVideoSubtitles": "显示视频内字幕",
+  "videoLoopWhole": "整篇循环",
+  "videoLoopSentence": "单句循环",
+  "videoLoading": "正在加载视频…",
+  "videoLoadFailed": "视频加载失败",
+  "videoNoTranscript": "无字幕",
+  "videoRetry": "重试",
+  "pronunciationPlay": "播放发音",
+  "redownload": "重新下载",
+  "collapseSidebar": "收起侧边栏",
+  "expandSidebar": "展开侧边栏",
+  "audioDetailTitle": "文件详情",
+  "audioDetailDescription": "简介",
+  "audioDetailDifficulty": "难度",
+  "audioDetailNoDescription": "暂无简介",
+  "learningPlanFromCollection": "来自：{collections}",
+  "@learningPlanFromCollection": {
+    "placeholders": {
+      "collections": {"type": "String"}
+    }
+  },
+  "aiService": "AI 服务",
+  "aiServiceDescription": "启用后，翻译、句子解析、意群、查词和 AI 助手将直接请求你配置的 OpenAI 兼容服务，无需登录，也不消耗云端额度。",
+  "aiServiceEnabled": "启用自定义 AI",
+  "aiServiceVendor": "厂商预设",
+  "aiServiceBaseUrl": "接口地址（Base URL）",
+  "aiServiceBaseUrlHint": "例如 https://api.openai.com/v1",
+  "aiServiceApiKey": "API Key",
+  "aiServiceApiKeyHint": "本地模型（Ollama / LM Studio）可留空",
+  "aiServiceModel": "模型名称",
+  "aiServiceModelHint": "例如 gpt-4o-mini",
+  "aiServiceSave": "保存",
+  "aiServiceTest": "测试连接",
+  "aiServiceSaved": "已保存",
+  "aiServiceTestSuccess": "连接成功",
+  "aiServiceTestFailed": "连接失败：{message}",
+  "@aiServiceTestFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "aiServiceSecurityNote": "API Key 仅保存在本机安全存储中，不会上传或参与同步。",
+  "aiServiceStatusConfigured": "已配置",
+  "aiServiceStatusNotConfigured": "未配置",
+  "aiServiceValidationUrl": "接口地址必须以 http:// 或 https:// 开头",
+  "aiServiceValidationModel": "请填写模型名称",
+  "aiServiceTesting": "测试中…",
+  "loginUnavailableOnPlatform": "当前版本不提供账号登录，云端账号功能暂不可用"
+}

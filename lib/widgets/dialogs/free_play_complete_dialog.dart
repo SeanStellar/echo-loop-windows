@@ -1,0 +1,226 @@
+/// 自由练习完成通用对话框
+///
+/// 合并了盲听、精听、跟读、难句补练等多个页面的自由练习完成对话框。
+/// 与步骤完成对话框共用「成就卡」视觉（顶部英雄区 + 统计 chip，见
+/// [CompletionHeroHeader] / [CompletionStatsRow]）。底部两按钮布局：
+/// 「完成」和「再来一遍」。
+///
+/// 使用 [showDialog] + `useRootNavigator: true` 显示弹窗，
+/// 弹窗挂到 root Navigator，与 GoRouter 路由栈隔离。
+/// `barrierDismissible: true`，点击外部或右上角关闭按钮返回 null。
+library;
+
+import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/app_theme.dart';
+import 'completion_dialog_parts.dart';
+
+/// 显示自由练习完成对话框
+///
+/// 返回 `true` 表示完成退出，`false` 表示再来一遍，`null` 表示关闭/dismiss。
+///
+/// [title] 对话框标题。
+/// [stats] 高亮统计项（可选）；非空时渲染为统计 chip 行。
+/// [message] 完成消息（可选，如鼓励语），居中显示。
+/// [replayLabel] 自定义"再来一遍"按钮文本（默认使用 l10n.listenAgain）。
+/// [doneLabel] 自定义"完成"按钮文本（默认使用 l10n.done）。
+Future<bool?> showFreePlayCompleteDialog({
+  required BuildContext context,
+  required String title,
+  List<CompletionStat>? stats,
+  String? message,
+  String? replayLabel,
+  String? doneLabel,
+}) {
+  debugPrint(
+    '[FreePlayDialog] showFreePlayCompleteDialog called, title=$title',
+  );
+  return showDialog<bool>(
+    context: context,
+    useRootNavigator: true,
+    barrierDismissible: true,
+    builder: (dialogContext) {
+      debugPrint('[FreePlayDialog] builder invoked, building dialog widget');
+      return FreePlayCompleteDialog(
+        onResult: (result) {
+          debugPrint('[FreePlayDialog] onResult called, result=$result');
+          Navigator.of(dialogContext).pop(result);
+          debugPrint('[FreePlayDialog] Navigator.pop($result) done');
+        },
+        title: title,
+        stats: stats,
+        message: message,
+        replayLabel: replayLabel,
+        doneLabel: doneLabel,
+      );
+    },
+  );
+}
+
+/// 显示自由练习完成弹窗并处理结果
+///
+/// - `null`（关闭/dismiss）→ 留在页面，不做任何操作
+/// - `false`（再来一遍）→ 调用 [onStudyAgain]
+/// - `true`（完成退出）→ 调用 [onExit]
+Future<void> handleFreePlayComplete({
+  required BuildContext context,
+  required String title,
+  List<CompletionStat>? stats,
+  String? message,
+  String? replayLabel,
+  String? doneLabel,
+  required Future<void> Function() onStudyAgain,
+  required Future<void> Function() onExit,
+}) async {
+  debugPrint('[FreePlayDialog] handleFreePlayComplete START');
+  final result = await showFreePlayCompleteDialog(
+    context: context,
+    title: title,
+    stats: stats,
+    message: message,
+    replayLabel: replayLabel,
+    doneLabel: doneLabel,
+  );
+  debugPrint(
+    '[FreePlayDialog] showDialog returned, result=$result, mounted=${context.mounted}',
+  );
+  if (!context.mounted || result == null) {
+    debugPrint(
+      '[FreePlayDialog] early return: mounted=${context.mounted}, result=$result',
+    );
+    return;
+  }
+  if (result == false) {
+    debugPrint('[FreePlayDialog] calling onStudyAgain...');
+    await onStudyAgain();
+    debugPrint('[FreePlayDialog] onStudyAgain done');
+  } else {
+    debugPrint('[FreePlayDialog] calling onExit...');
+    await onExit();
+    debugPrint('[FreePlayDialog] onExit done');
+  }
+  debugPrint('[FreePlayDialog] handleFreePlayComplete END');
+}
+
+/// 自由练习完成对话框组件
+class FreePlayCompleteDialog extends StatelessWidget {
+  /// 对话框标题
+  final String title;
+
+  /// 高亮统计项（null = 不显示统计行）
+  final List<CompletionStat>? stats;
+
+  /// 完成消息（可选）
+  final String? message;
+
+  /// 自定义"再来一遍"按钮文本
+  final String? replayLabel;
+
+  /// 自定义"完成"按钮文本
+  final String? doneLabel;
+
+  /// 结果回调，替代 Navigator.pop 传递结果
+  final void Function(bool?) onResult;
+
+  const FreePlayCompleteDialog({
+    super.key,
+    required this.onResult,
+    required this.title,
+    this.stats,
+    this.message,
+    this.replayLabel,
+    this.doneLabel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return Dialog(
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 顶部英雄区（徽章 + 标题）
+              CompletionHeroHeader(title: title),
+              // 主体内容（统计 + 鼓励语 + 按钮）
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.l,
+                  AppSpacing.l,
+                  AppSpacing.l,
+                  AppSpacing.m,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 统计行
+                    if (stats != null && stats!.isNotEmpty) ...[
+                      CompletionStatsRow(stats: stats!),
+                      const SizedBox(height: AppSpacing.m),
+                    ],
+                    // 消息（居中鼓励语）
+                    if (message != null) ...[
+                      Text(
+                        message!,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.l),
+                    ],
+                    // 按钮按内容宽度排列，避免英文操作文案在狭窄弹窗中折行。
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: AppSpacing.s,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => onResult(false),
+                          child: Text(
+                            replayLabel ?? l10n.listenAgain,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ),
+                        FilledButton(
+                          onPressed: () => onResult(true),
+                          child: Text(
+                            doneLabel ?? l10n.done,
+                            maxLines: 1,
+                            softWrap: false,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // 右上角关闭按钮（落在绿色色带上，用中性灰保证对比度且不抢眼）
+          Positioned(
+            right: AppSpacing.xs,
+            top: AppSpacing.xs,
+            child: IconButton(
+              onPressed: () {
+                debugPrint('[FreePlayDialog] close button tapped');
+                onResult(null);
+              },
+              icon: const Icon(Icons.close, size: 20),
+              color: cs.onSurfaceVariant,
+              style: IconButton.styleFrom(
+                minimumSize: const Size(40, 40),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

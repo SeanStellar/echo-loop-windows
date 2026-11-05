@@ -1,0 +1,121 @@
+/// 练习页面共享底部控制区
+///
+/// 统一渲染上一句/播放/下一句和遍数标签。
+library;
+
+import 'package:flutter/material.dart';
+
+import '../../l10n/app_localizations.dart';
+import '../../theme/app_theme.dart';
+import '../guide_flow.dart';
+import '../practice/practice_play_count_label.dart';
+import 'playback_controls.dart';
+
+const kPracticePlaybackFooterLabelKey = ValueKey(
+  'practice-playback-footer-label',
+);
+
+/// 练习页面共享底部控制区
+class PracticePlaybackFooter extends StatelessWidget {
+  /// 是否可以返回上一句
+  final bool canGoPrev;
+
+  /// 是否为最后一句
+  final bool isLast;
+
+  /// 中间按钮图标
+  final IconData centerIcon;
+
+  /// 上一句回调
+  final VoidCallback onPrevious;
+
+  /// 下一句回调
+  final VoidCallback onNext;
+
+  /// 播放/暂停回调
+  final VoidCallback onCenter;
+
+  /// 是否为手动模式
+  final bool isManualMode;
+
+  /// 预格式化的遍数文本
+  final String playCountText;
+
+  /// 可选状态后缀（如盲听播放速度）
+  final String? statusSuffixText;
+
+  /// 可选的右侧自定义控件；未提供时显示下一句/完成图标。
+  final Widget? nextControl;
+
+  /// 自定义右侧控件占用的布局宽度。
+  final double? nextControlWidth;
+
+  /// 本地化
+  final AppLocalizations l10n;
+
+  /// 主题
+  final ThemeData theme;
+
+  /// 可选：中间播放/暂停按钮的新手引导步骤
+  final GuideStep? centerGuideStep;
+
+  const PracticePlaybackFooter({
+    super.key,
+    required this.canGoPrev,
+    required this.isLast,
+    required this.centerIcon,
+    required this.onPrevious,
+    required this.onNext,
+    required this.onCenter,
+    required this.isManualMode,
+    required this.playCountText,
+    this.statusSuffixText,
+    this.nextControl,
+    this.nextControlWidth,
+    required this.l10n,
+    required this.theme,
+    this.centerGuideStep,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
+    // 播放按钮和遍数标签都属于底部固定控制区，必须整体避让 Android 导航栏和
+    // iOS Home Indicator。SafeArea 的 minimum 保留桌面端及无 inset 时的原有留白。
+    return SafeArea(
+      top: false,
+      bottom: true,
+      maintainBottomViewPadding: true,
+      minimum: EdgeInsets.only(bottom: isMobile ? AppSpacing.s : AppSpacing.m),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PlaybackControls(
+              canGoPrev: canGoPrev,
+              isLast: isLast,
+              centerIcon: centerIcon,
+              onPrevious: onPrevious,
+              onNext: onNext,
+              onCenter: onCenter,
+              nextControl: nextControl,
+              nextControlWidth: nextControlWidth,
+              centerGuideStep: centerGuideStep,
+            ),
+            const SizedBox(height: AppSpacing.s),
+            PracticePlayCountLabel(
+              key: kPracticePlaybackFooterLabelKey,
+              isManualMode: isManualMode,
+              playCountText: playCountText,
+              statusSuffixText: statusSuffixText,
+              l10n: l10n,
+              theme: theme,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
