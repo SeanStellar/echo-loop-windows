@@ -127,6 +127,11 @@ class SpeechPracticePlatform implements SpeechPracticeBackend {
     return old;
   }
 
+  /// 启动时安装当前平台的录音实现（Windows 桌面等）。
+  static void installPlatformBackend(SpeechPracticePlatform platform) {
+    _instance = platform;
+  }
+
   @override
   bool get isSupported =>
       !kIsWeb && (Platform.isIOS || Platform.isMacOS || Platform.isAndroid);

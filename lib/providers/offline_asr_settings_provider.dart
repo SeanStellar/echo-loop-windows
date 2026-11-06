@@ -8,7 +8,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -240,14 +241,21 @@ final offlineAsrSettingsProvider =
 final initialOfflineAsrSettingsStateProvider =
     Provider<OfflineAsrSettingsState>((ref) {
       final recommended = ref.read(recommendedAsrModelProvider);
-      final defaultBackend = !kIsWeb && Platform.isAndroid
+      final isWindows =
+          !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+      final defaultBackend = !kIsWeb && (Platform.isAndroid || isWindows)
           ? AsrBackend.offline
           : AsrBackend.platform;
-      return offlineAsrSettingsStateFromPrefs(
+      final state = offlineAsrSettingsStateFromPrefs(
         prefs: ref.read(sharedPreferencesProvider),
         recommendedModel: recommended,
         defaultBackend: defaultBackend,
       );
+      // Windows 没有平台 ASR，历史偏好若为 platform 也强制回到离线模型。
+      if (isWindows && state.backend != AsrBackend.offline) {
+        return state.copyWith(backend: AsrBackend.offline);
+      }
+      return state;
     });
 
 /// 设置页是否显示 AI 语音识别入口。

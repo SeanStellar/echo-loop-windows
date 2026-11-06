@@ -6,7 +6,8 @@ library;
 
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 import 'package:url_launcher/url_launcher.dart';
@@ -44,14 +45,21 @@ class PermissionHandlerSpeechPermissionService
     implements SpeechPermissionService {
   const PermissionHandlerSpeechPermissionService();
 
+  bool get _isWindows =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+
   @override
   bool get isSupported =>
-      !kIsWeb && (Platform.isIOS || Platform.isMacOS || Platform.isAndroid);
+      !kIsWeb &&
+      (Platform.isIOS || Platform.isMacOS || Platform.isAndroid || _isWindows);
 
   @override
   Future<SpeechPracticePermissionState> getStatus() async {
     if (Platform.isMacOS) {
       return _macStatus();
+    }
+    if (_isWindows) {
+      return _windowsStatus();
     }
     final mic = await _safeStatus(ph.Permission.microphone, 'microphone');
     final speech = await _safeStatus(ph.Permission.speech, 'speech');
@@ -68,6 +76,9 @@ class PermissionHandlerSpeechPermissionService
     if (Platform.isMacOS) {
       return _macRequest(onlyMic: onlyMic);
     }
+    if (_isWindows) {
+      return _windowsRequest(onlyMic: onlyMic);
+    }
     final mic = await _safeRequest(ph.Permission.microphone, 'microphone');
     final speech = onlyMic
         ? SpeechPracticePermissionStatus.granted
@@ -81,6 +92,15 @@ class PermissionHandlerSpeechPermissionService
 
   @override
   Future<void> openAppSettings() async {
+    if (_isWindows) {
+      try {
+        final ok = await launchUrl(Uri.parse('ms-settings:privacy-microphone'));
+        AppLogger.log('SpeechPerm', '● openAppSettings Windows ok=$ok');
+      } catch (e) {
+        AppLogger.log('SpeechPerm', '⚠ openAppSettings Windows error: $e');
+      }
+      return;
+    }
     if (Platform.isMacOS) {
       try {
         final ok = await launchUrl(
@@ -99,6 +119,43 @@ class PermissionHandlerSpeechPermissionService
       AppLogger.log('SpeechPerm', '● openAppSettings ok=$ok');
     } catch (e) {
       AppLogger.log('SpeechPerm', '● openAppSettings error: $e');
+    }
+  }
+
+  // ---------- Windows：复用 WindowsSpeechPracticeBackend ----------
+
+  Future<SpeechPracticePermissionState> _windowsStatus() async {
+    try {
+      final state = await SpeechPracticePlatform.instance.getPermissionStatus();
+      AppLogger.log(
+        'SpeechPerm',
+        '● Windows getStatus: mic=${state.microphone.name}',
+      );
+      return state;
+    } catch (e) {
+      AppLogger.log('SpeechPerm', '⚠ Windows getStatus failed: $e');
+      return const SpeechPracticePermissionState();
+    }
+  }
+
+  Future<SpeechPracticePermissionState> _windowsRequest({
+    required bool onlyMic,
+  }) async {
+    try {
+      final state = await SpeechPracticePlatform.instance.requestPermissions(
+        onlyMic: onlyMic,
+      );
+      AppLogger.log(
+        'SpeechPerm',
+        '└ Windows request: mic=${state.microphone.name}',
+      );
+      return state;
+    } catch (e) {
+      AppLogger.log('SpeechPerm', '⚠ Windows request failed: $e');
+      return const SpeechPracticePermissionState(
+        microphone: SpeechPracticePermissionStatus.denied,
+        speech: SpeechPracticePermissionStatus.denied,
+      );
     }
   }
 

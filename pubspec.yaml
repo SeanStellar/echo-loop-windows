@@ -42,6 +42,8 @@ dependencies:
   just_audio: ^0.10.5
   # Windows/Linux 用 media_kit 实现 just_audio 平台接口；与现有 media_kit libs 共用。
   just_audio_media_kit: ^2.1.0
+  # 跨平台录音；Windows 桌面用 record_windows（Media Foundation）。
+  record: ^7.1.2
   media_kit: 1.2.6
   media_kit_video: 2.0.1
   # 全 App 统一 video 版 libs，禁止与 media_kit_libs_audio 混用。

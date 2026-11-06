@@ -44,6 +44,8 @@ import 'services/app_window_service.dart';
 import 'services/startup_trace.dart';
 import 'services/app_update_migration.dart';
 import 'services/media_kit_debug_initializer.dart';
+import 'services/speech_practice_platform.dart';
+import 'services/windows_speech_practice_backend.dart';
 import 'services/user_id_service.dart';
 import 'widgets/app_notice_presenter.dart';
 import 'widgets/app_startup_gate.dart';
@@ -72,6 +74,10 @@ void main() async {
   // Windows 桌面没有官方 just_audio 实现，用 media_kit 提供播放后端。
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
     JustAudioMediaKit.ensureInitialized(windows: true);
+    // Windows 录音后端：record + 本地 WAV；转写由 OfflineAsrBackend 完成。
+    SpeechPracticePlatform.installPlatformBackend(
+      WindowsSpeechPracticeBackend(),
+    );
   }
   startupTrace.mark('flutter_binding_ready');
   final appWindowActivator = WindowManagerAppWindowActivator();

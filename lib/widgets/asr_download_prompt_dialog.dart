@@ -6,6 +6,8 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -52,7 +54,12 @@ Future<bool> ensureAsrReadyBeforeSpeechPractice(
   // 非 offline 后端不依赖本地 Whisper 模型。
   if (state.backend != AsrBackend.offline) return true;
   if (state.downloadStatus == AsrModelDownloadStatus.downloaded) {
-    unawaited(_ensureEngineLoaded(ref));
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      // Windows 只有离线后端；必须先等引擎就绪，否则首次录音会退化为纯录音。
+      await _ensureEngineLoaded(ref);
+    } else {
+      unawaited(_ensureEngineLoaded(ref));
+    }
     return true;
   }
 

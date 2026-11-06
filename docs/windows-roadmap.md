@@ -1,18 +1,18 @@
 # Windows 桌面版后续路线图（按优先级）
 
-> 最后更新：2026-11-06
+> 最后更新：2026-11-06（P0 录音 + 本地 ASR 已完成）
 > 当前基线：v1.0.46 非官方 Windows 本地优先版（`SeanStellar/echo-loop-windows`）
 > 关联文档：[WINDOWS.md](../WINDOWS.md) · [PLAN.md](../PLAN.md) · [TASKS.md](../TASKS.md)
 
 ## 当前已具备
 
-本地音频/视频/字幕导入、播放、精听、盲听、断点续学、收藏与复习、学习统计、本地词典、自定义 AI（翻译 / 解析 / 意群 / 查词 / 助手）、Edge TTS、单词发音、社区合集加入、播客订阅。
+本地音频/视频/字幕导入、播放、精听、盲听、断点续学、收藏与复习、学习统计、本地词典、自定义 AI（翻译 / 解析 / 意群 / 查词 / 助手）、Edge TTS、单词发音、社区合集加入、播客订阅、**Windows 录音 + 本地 ASR（P0，需下载模型）**。
 
 ## 优先级总览
 
 | 优先级 | 事项 | 影响 | 预估 | 依赖 |
 |---|---|---|---|---|
-| **P0** | Windows 录音 + 本地 ASR | 恢复跟读 / 复述，学习闭环才完整 | 2-4 天 | `record` + `sherpa_onnx` |
+| **P0 ✅** | Windows 录音 + 本地 ASR（2026-11-06 完成） | 恢复跟读 / 复述，学习闭环才完整 | 2-4 天 | `record` + `sherpa_onnx` |
 | **P1** | 复习提醒 / 系统通知 | 到点提醒、下载完成通知 | 1-2 天 | `flutter_local_notifications` Windows |
 | **P1** | 后台播放 + 媒体键 | 最小化续播、系统媒体控制 | 2-3 天 | MediaKit / Windows SMTC |
 | **P1** | 本地转录验证与补全 | 导入音频后离线生成字幕 | 0.5-1 天 | `sherpa_onnx_windows` |
@@ -22,7 +22,9 @@
 | **P2** | Web 词典 / PDF / 打印实测 | 确认桌面端可用性 | 0.5-1 天 | 插件已包含 |
 | **P2** | 窗口行为与单实例 / 托盘 | 桌面端日常体验 | 1 天 | `window_manager` |
 
-## P0：恢复完整学习闭环
+## P0：恢复完整学习闭环（已完成 2026-11-06）
+
+> 完成记录：新增 `WindowsSpeechPracticeBackend`（record 7.1.2），真实录音生成 16kHz/16bit WAV；sherpa-onnx Windows 成功加载 whisper-tiny 模型完成转录与 VAD 测试。首次使用需在「我的 → 语音识别」下载模型；不同麦克风与跟读/复述完整流程仍需人工验收。
 
 ### 1. Windows 录音 + 本地 ASR
 
