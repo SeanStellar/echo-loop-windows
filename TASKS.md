@@ -4,6 +4,15 @@
 
 ## 本次完成
 
+- [x] Windows P2：图标 / 版本信息 / 窗口行为 / 单实例（2026-11-06）：
+  - 图标与版本：从 `assets/icon/app-icon-1024-rounded.png` 生成多尺寸 `windows/runner/resources/app_icon.ico`（16–256）；`Runner.rc` 补全 FileDescription「Echo Loop Windows」、ProductVersion 1.0.46、AGPL 版权与修改声明。`CompanyName` 保持 `top.valuespot`，避免改变 `%APPDATA%\top.valuespot\Echo Loop` 用户数据目录。Release exe 的 VersionInfo 已读取核对。
+  - 窗口：`AppWindowService` 增加 Windows 最小尺寸 960×640；窗口位置 / 大小保存到 SP `windows_window_bounds_v1`（moved / resized / blur 后 600ms 防抖，最大化 / 最小化不覆盖）；无记录或非法记录时居中。实测程序化请求 400×300 被系统钳制为 960×640；调整到 40,40 / 1100×700 后关闭，重启恢复相同位置与大小。
+  - 单实例：`windows/runner/main.cpp` 使用 `Local\EchoLoop.Windows.SingleInstance` 命名互斥量，重复启动会激活已有窗口并以 ExitCode 0 退出；实测第一个实例保持运行、第二个实例退出。Dart 层调用 `exit(0)` 会触发引擎 fail-fast（0xC0000602），因此放在 Win32 入口。
+  - 签名：新增 `scripts/sign_windows.ps1`（PFX + SHA-256 + DigiCert 时间戳）。仓库不包含证书，当前 Release 未签名。
+  - 构建与验证：Debug / Release 构建成功；Inno Setup 安装程序重新生成并补 `VersionInfoCopyright`；便携包 80.2MB、安装包 60.2MB（已清除运行产生的 WebView2 缓存，并随包附带 LICENSE / NOTICE / THIRD_PARTY_NOTICES.md / WINDOWS.md）。`flutter analyze lib test` 0 error（236 条均为仓库既有 warning / info）。全量 `flutter test` 为 `+6013 ~11 -41`，失败集中在既有测试的 Windows 主机兼容问题（POSIX 路径断言、临时视频文件被占用无法删除、markdown 标题字号断言），不涉及本次改动文件；窗口与单实例通过实机脚本验证。
+  - 未完成：自动更新（未签名前不做静默更新）、Web 词典 / PDF / 打印人工回归、托盘 / 开机自启、媒体键 / SMTC。
+  **完成时间**: 2026-11-06
+
 - [x] Windows 桌面版构建与本地优先改造（2026-11-05）：
   - 环境与构建：Flutter 3.47.9 + VS 2022 Build Tools（VCTools、Windows SDK 10.0.26100、ATL、CMake）与 NuGet；源码复制到纯英文路径 `D:\EchoLoop` 构建（中文路径会让 analyzer / build_runner 的 URI 与临时文件失败）。
   - 构建修复：`windows/CMakeLists.txt` 加 `/utf-8`（系统代码页 936 下 C4819 被 /WX 升级为错误）；新增 `ECHOLOOP_WINDOWS_BUNDLE_DIR` 指定安装前缀（插件安装规则在配置阶段固化路径，避免装入 `C:/Program Files`）；补装 `WebView2Loader.dll`（flutter_inappwebview_windows 依赖，部分配置的安装规则不复制）；接入 `just_audio_media_kit`，Windows 用 media_kit 实现 just_audio 播放。

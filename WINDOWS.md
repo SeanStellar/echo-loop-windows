@@ -11,6 +11,7 @@
 - **录音与本地 ASR**：`record` + `record_windows` 录 16kHz/16bit WAV，`sherpa-onnx` 在本地转写，恢复跟读 / 复述录音；首次使用需在「我的 → 语音识别」下载模型。
 - **通知提醒**：复习提醒与下载完成通知使用 Windows 原生 Toast；安装包快捷方式写入 `AppUserModelID`。未以 MSIX 打包时通知 `cancel` 不生效，重复调度可能残留。
 - **本地转录**：ffmpeg-kit 将 m4a/mp3 解码为 16kHz WAV，sherpa-onnx 分段生成字幕，已在 Windows 实测通过。
+- **桌面体验**：多尺寸应用图标与完整版本信息；窗口最小 960×640，记住上次位置 / 大小；单实例启动，重复双击只激活已有窗口，避免两个进程同时写数据库。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -21,13 +22,13 @@
 
 便携版：
 
-1. 解压 `EchoLoop-Windows.zip`（或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p2.1.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 `EchoLoop-Windows-Setup-1.0.46.exe`。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.46-p2.1.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -63,7 +64,17 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p2.1` 后缀的文件。
+
+### 代码签名（可选）
+
+仓库提供 `scripts/sign_windows.ps1`，可用自己的受信任 CA 代码签名证书（PFX）为 exe 与安装包签名：
+
+```powershell
+.\scripts\sign_windows.ps1 -PfxPath D:\certs\echoloop.pfx -PfxPassword "你的证书密码"
+```
+
+脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.46.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
 
 ## 已知限制
 
@@ -71,7 +82,11 @@ flutter build windows --release
 - 登录、订阅、云端转录未接入；依赖云端的入口会提示「当前版本不提供账号登录」。
 - 自定义 AI 暂不支持复述评估。
 - Windows 通知已接入调度，但实际 Toast 展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
-- 媒体键 / SMTC（系统“正在播放”卡片）尚未接入，计划放在 P2。
+- 应用未做代码签名（签名脚本已就绪，需要自备受信任证书）。
+- 未实现自动更新：当前版本不会自动下载或安装更新，更新请手动查看 [Releases](https://github.com/SeanStellar/echo-loop-windows/releases)。启动时的更新检查仍沿用上游逻辑，可能提示上游版本，请以本仓库 Releases 为准。
+- Web 词典、PDF 导出与打印尚未逐项回归。
+- 媒体键 / SMTC（系统“正在播放”卡片）尚未接入。
+- 托盘、关闭到托盘、开机自启未实现；关闭窗口即退出，最小化后继续播放。
 - 系统代理等平台能力仍待回归验证。
 
 后续计划、优先级与验收标准见 [docs/windows-roadmap.md](./docs/windows-roadmap.md)。

@@ -23,6 +23,19 @@ Modifications (2026-11-05):
 - Added Windows build fixes: /utf-8 compile option, configurable install
   prefix, and WebView2Loader.dll installation.
 
+Modifications (2026-11-06):
+
+- Added a Windows recording backend (16 kHz / 16-bit mono WAV) and local
+  speech recognition via sherpa-onnx.
+- Added Windows toast notifications for review reminders and download
+  completion, including an AppUserModelID for installer shortcuts.
+- Replaced the application icon with a multi-size Echo Loop icon and
+  completed the Windows version metadata / copyright notice.
+- Added a 960x640 minimum window size, window bounds persistence and a
+  single-instance guard that activates the existing window.
+- Added an optional Authenticode signing script (no certificate is
+  included in this repository).
+
 This project is not affiliated with, endorsed by, or sponsored by the
 original Echo Loop authors or 中央民族大学.
 

@@ -35,6 +35,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.17763
 VersionInfoVersion={#MyAppVersion}.0
 VersionInfoDescription=Echo Loop Windows installer (unofficial fork)
+VersionInfoCopyright=Copyright (C) 2025 top.valuespot; modifications Copyright (C) 2026 SeanStellar. AGPL-3.0.
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
