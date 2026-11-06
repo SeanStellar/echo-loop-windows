@@ -3,6 +3,8 @@
 </div>
 
 > **非官方 Windows 修改版**：本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 fork（基于上游 v1.0.46，AGPL-3.0），与原作者及中央民族大学无隶属关系。本分支移除了 Windows 版的账号登录/订阅门槛，并新增自定义 OpenAI 兼容 AI 配置；构建与运行说明见 [WINDOWS.md](./WINDOWS.md)，修改说明见 [NOTICE](./NOTICE)。
+>
+> Windows 便携版与安装程序见 [Releases](https://github.com/SeanStellar/echo-loop-windows/releases)。
 
 <div align="center">
   <img src="assets/icon/app-icon-1024-rounded.png" alt="Echo Loop" width="128" />
