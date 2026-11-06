@@ -6,7 +6,7 @@
     "zh": "- 新增托盘、关闭到托盘与开机自启\n- 接入 Windows 系统媒体控制（媒体键 / 正在播放）\n- Windows 分支自动检查更新\n- 回归网页词典、PDF 导出与打印"
   },
   "downloadUrl": {
-    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.46-p2.2.exe",
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.46-p2.3.exe",
     "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
   }
 }

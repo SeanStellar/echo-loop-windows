@@ -4,6 +4,8 @@
 
 ## 本次完成
 
+- [x] 修复 Windows 精选 Podcast 订阅仍要求登录（2026-11-06）：`PodcastDiscoveryScreen._subscribe` 仍调用 `ensureSignedInForAction`，本地优先模式下点列表「+」只弹「当前版本不提供账号登录」，而预览页已放开。移除该门槛（订阅只解析公开 RSS 并写本地库，不需要账号）；`podcast_discovery_screen_test` 改为断言未登录也可订阅并调用仓库，13 项通过。**完成时间**: 2026-11-06
+
 - [x] Windows P2 完整版：SMTC / 托盘 / 开机自启 / 自动更新 / Web-PDF 烟测（2026-11-06）：
   - 依赖：新增 `audio_service_win` 0.0.3、`tray_manager` 0.8.3、`launch_at_startup` 0.5.1；统一 AUMID 常量 `top.valuespot.EchoLoop`（`windows_app_identity.dart`），音频媒体会话配置在 Windows 使用同一 AUMID。
   - SMTC：现有 `audio_service` handler 直接驱动 Windows「正在播放」；新增 `integration_test/windows_smtc_smoke_test.dart`，实测系统会话读到标题 / 艺术家、状态 Playing，`TryPauseAsync` / `TryPlayAsync` 回调到 handler，测试通过。限制：未同步 timeline，系统卡片无进度条拖动。
