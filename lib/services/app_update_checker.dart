@@ -24,6 +24,15 @@ import 'runtime_endpoint_router.dart';
 /// App Store Lookup API endpoint。
 const _iosLookupBase = 'https://itunes.apple.com/lookup';
 
+/// Windows 分支的更新清单。作为 GitHub Release 资产随版本发布，
+/// 避免复用上游指向 iOS / Android 的跨平台清单。
+///
+/// 可用 `--dart-define=WINDOWS_UPDATE_MANIFEST_URL=...` 覆盖，便于测试或镜像。
+const windowsVersionManifestUrl = String.fromEnvironment(
+  'WINDOWS_UPDATE_MANIFEST_URL',
+  defaultValue: 'https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/version-windows.json',
+);
+
 /// 日志 tag
 const _logTag = 'AppUpdateChecker';
 
@@ -52,7 +61,9 @@ class AppUpdateChecker {
           receiveTimeout: const Duration(seconds: 30),
         ),
       ),
-      _url = '$apiBaseUrl/version.json',
+      _url = _currentPlatform() == AppUpdateRuntimePlatform.windows
+          ? windowsVersionManifestUrl
+          : '$apiBaseUrl/version.json',
       _bundleId = bundleId,
       _endpointRouter = endpointRouter,
       _platform = _currentPlatform(),
@@ -258,13 +269,21 @@ class AppUpdateChecker {
   Future<AppUpdateInfo?> _checkVersionJson() async {
     try {
       final endpointRouter = _endpointRouter;
-      final url = endpointRouter?.apiUri('/version.json').toString() ?? _url;
+      // Windows 使用本 fork 的清单；测试可通过 _url 注入本地地址。
+      final String url;
+      if (_platform == AppUpdateRuntimePlatform.windows) {
+        url = _url.isNotEmpty ? _url : windowsVersionManifestUrl;
+      } else {
+        url = endpointRouter?.apiUri('/version.json').toString() ?? _url;
+      }
       AppLogger.log(_logTag, 'version.json start: url=$url');
       // 仅本请求打自家后端，per-request 携带平台/渠道标识（同一 _dio 还用于打
       // 外部 App Store Lookup，故不在 BaseOptions 全局注入，避免把标识泄漏给苹果）。
       final response = await _dio.get<Map<String, dynamic>>(
         url,
-        options: Options(headers: clientInfoHeaders()),
+        options: _platform == AppUpdateRuntimePlatform.windows
+            ? null
+            : Options(headers: clientInfoHeaders()),
       );
       final data = response.data;
       if (data == null) {
@@ -348,11 +367,12 @@ class AppUpdateChecker {
 }
 
 /// 运行平台，用于测试注入。
-enum AppUpdateRuntimePlatform { ios, android, other }
+enum AppUpdateRuntimePlatform { ios, android, windows, other }
 
 AppUpdateRuntimePlatform _currentPlatform() {
   if (kIsWeb) return AppUpdateRuntimePlatform.other;
   if (Platform.isIOS) return AppUpdateRuntimePlatform.ios;
   if (Platform.isAndroid) return AppUpdateRuntimePlatform.android;
+  if (Platform.isWindows) return AppUpdateRuntimePlatform.windows;
   return AppUpdateRuntimePlatform.other;
 }

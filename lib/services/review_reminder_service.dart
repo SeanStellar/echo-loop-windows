@@ -10,6 +10,7 @@ import 'app_logger.dart';
 import 'notification_tap_router_bridge.dart';
 import 'review_reminder_texts.dart';
 import 'review_reminder_time_calculator.dart';
+import 'windows_app_identity.dart';
 
 /// 收藏复习提醒通知 ID 范围：[1001, 1015]（15 天独立调度）
 const int _savedReviewIdBase = 1001;
@@ -157,8 +158,8 @@ class ReviewReminderService {
           requestSoundPermission: false,
         ),
         windows: WindowsInitializationSettings(
-          appName: 'Echo Loop',
-          appUserModelId: 'top.valuespot.EchoLoop',
+          appName: windowsAppDisplayName,
+          appUserModelId: windowsAppUserModelId,
           guid: 'b1a7c3d2-4e5f-4a6b-9c8d-0e1f2a3b4c5d',
         ),
       );
@@ -233,7 +234,7 @@ class ReviewReminderService {
 
         await _plugin.zonedSchedule(
           _savedReviewIdBase + i,
-          'Echo Loop',
+          windowsAppDisplayName,
           body,
           triggerTz,
           const NotificationDetails(
@@ -329,7 +330,7 @@ class ReviewReminderService {
 
         await _plugin.zonedSchedule(
           nid,
-          'Echo Loop',
+          windowsAppDisplayName,
           texts.perAudioBody(r.audioName, r.reviewRound),
           scheduledTz,
           const NotificationDetails(

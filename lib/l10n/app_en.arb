@@ -2802,5 +2802,13 @@
   "aiServiceValidationUrl": "Base URL must start with http:// or https://",
   "aiServiceValidationModel": "Please enter a model name",
   "aiServiceTesting": "Testing…",
-  "loginUnavailableOnPlatform": "Sign-in is not available in this build. Cloud account features are disabled."
+  "loginUnavailableOnPlatform": "Sign-in is not available in this build. Cloud account features are disabled.",
+  "desktop": "Desktop",
+  "closeToTrayTitle": "Minimize to tray on close",
+  "closeToTraySubtitle": "Keep running in the background. Use the tray menu to reopen or quit.",
+  "launchAtStartupTitle": "Launch at startup",
+  "launchAtStartupSubtitle": "Open Echo Loop automatically after you sign in to Windows.",
+  "launchAtStartupFailed": "Failed to update the startup setting.",
+  "trayShowWindow": "Show main window",
+  "trayQuit": "Quit Echo Loop"
 }

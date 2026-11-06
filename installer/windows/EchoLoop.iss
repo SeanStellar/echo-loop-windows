@@ -50,6 +50,10 @@ Source: "..\..\NOTICE"; DestDir: "{app}"; DestName: "NOTICE.txt"; Flags: ignorev
 Source: "..\..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\WINDOWS.md"; DestDir: "{app}"; Flags: ignoreversion
 
+[Registry]
+; 卸载时清理应用内“开机自动启动”写入的 HKCU Run 值；安装时不创建该值。
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "Echo Loop"; ValueType: none; Flags: uninsdeletevalue
+
 [Icons]
 Name: "{autoprograms}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"; AppUserModelID: "top.valuespot.EchoLoop"
 Name: "{autodesktop}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; AppUserModelID: "top.valuespot.EchoLoop"

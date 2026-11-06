@@ -1,0 +1,12 @@
+{
+  "latestVersion": "1.0.46",
+  "minimumVersion": "1.0.46",
+  "releaseNotes": {
+    "en": "- Tray icon, close to tray and launch at startup\n- Windows system media controls (media keys / now playing)\n- Automatic update check for the Windows fork\n- Web dictionary, PDF export and printing regression",
+    "zh": "- 新增托盘、关闭到托盘与开机自启\n- 接入 Windows 系统媒体控制（媒体键 / 正在播放）\n- Windows 分支自动检查更新\n- 回归网页词典、PDF 导出与打印"
+  },
+  "downloadUrl": {
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.46-p2.2.exe",
+    "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
+  }
+}

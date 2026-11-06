@@ -12,6 +12,9 @@
 - **通知提醒**：复习提醒与下载完成通知使用 Windows 原生 Toast；安装包快捷方式写入 `AppUserModelID`。未以 MSIX 打包时通知 `cancel` 不生效，重复调度可能残留。
 - **本地转录**：ffmpeg-kit 将 m4a/mp3 解码为 16kHz WAV，sherpa-onnx 分段生成字幕，已在 Windows 实测通过。
 - **桌面体验**：多尺寸应用图标与完整版本信息；窗口最小 960×640，记住上次位置 / 大小；单实例启动，重复双击只激活已有窗口，避免两个进程同时写数据库。
+- **系统媒体控制（SMTC）**：通过 `audio_service_win` 接入 Windows「正在播放」卡片，显示标题 / 艺术家，支持硬件媒体键与系统播放 / 暂停 / 上一句 / 下一句。
+- **托盘与开机自启**：设置 → 桌面，可开启「关闭窗口时最小化到托盘」和「开机自动启动」（默认关闭；自启写入 HKCU Run，安装包卸载时清理）。
+- **更新检查**：Windows 分支从本仓库 Release 的 `version-windows.json` 检查新版本；发现新版本时提示并可打开安装包下载。当前不静默安装（尚未代码签名）。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -22,13 +25,13 @@
 
 便携版：
 
-1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p2.1.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p2.2.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.46-p2.1.exe`）。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.46-p2.2.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -64,7 +67,14 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p2.1` 后缀的文件。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p2.2` 后缀的文件。
+
+### 发布新版本
+
+1. 更新 `pubspec.yaml` 的版本号（例如 1.0.47），重新构建 Release / 安装程序 / 便携包。
+2. 更新根目录 `version-windows.json`：`latestVersion` 填新版本，`minimumVersion` 填仍兼容的最低版本，`downloadUrl.windows` 指向新安装包。
+3. 把便携包、安装程序与 `version-windows.json` 一起上传到新的 GitHub Release；应用会通过 `releases/latest/download/version-windows.json` 读取更新。
+4. 可用 `--dart-define=WINDOWS_UPDATE_MANIFEST_URL=...` 指向镜像或本地清单做测试。
 
 ### 代码签名（可选）
 
@@ -83,10 +93,12 @@ flutter build windows --release
 - 自定义 AI 暂不支持复述评估。
 - Windows 通知已接入调度，但实际 Toast 展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
 - 应用未做代码签名（签名脚本已就绪，需要自备受信任证书）。
-- 未实现自动更新：当前版本不会自动下载或安装更新，更新请手动查看 [Releases](https://github.com/SeanStellar/echo-loop-windows/releases)。启动时的更新检查仍沿用上游逻辑，可能提示上游版本，请以本仓库 Releases 为准。
-- Web 词典、PDF 导出与打印尚未逐项回归。
-- 媒体键 / SMTC（系统“正在播放”卡片）尚未接入。
-- 托盘、关闭到托盘、开机自启未实现；关闭窗口即退出，最小化后继续播放。
+- 自动更新目前是「自动检查 + 提示 + 打开安装包下载」，不会静默下载安装；`version-windows.json` 需要在每个 Release 上传并更新版本。
+- SMTC 已支持元数据与播放控制，但不提供进度条拖动（`audio_service_win` 未同步 timeline）。
+- 托盘 / 开机自启已实现但需要人工回归托盘菜单、系统托盘溢出区与注销 / 重启后的自启行为；便携版移动目录后自启路径会失效，请关闭再重新开启。
+- 关闭到托盘启用时，关闭按钮会隐藏窗口而不是退出；退出请用托盘菜单「退出 Echo Loop」。
+- Windows Toast 实际展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
+- Web 词典 / WebView2 加载、PDF 生成与 `Printing.canPrint` 已通过 Windows 集成测试；系统打印对话框与真实打印机仍需人工验收。
 - 系统代理等平台能力仍待回归验证。
 
 后续计划、优先级与验收标准见 [docs/windows-roadmap.md](./docs/windows-roadmap.md)。

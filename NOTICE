@@ -33,6 +33,12 @@ Modifications (2026-11-06):
   completed the Windows version metadata / copyright notice.
 - Added a 960x640 minimum window size, window bounds persistence and a
   single-instance guard that activates the existing window.
+- Added Windows system media controls (SMTC), tray / close-to-tray and
+  launch-at-startup integration.
+- Added a Windows-specific update manifest and in-app update check that
+  prompts before opening the installer download.
+- Added Windows smoke tests for WebView2 dictionary rendering, PDF
+  generation and printing capability.
 - Added an optional Authenticode signing script (no certificate is
   included in this repository).
 

@@ -10231,6 +10231,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign-in is not available in this build. Cloud account features are disabled.'**
   String get loginUnavailableOnPlatform;
+
+  /// No description provided for @desktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop'**
+  String get desktop;
+
+  /// No description provided for @closeToTrayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimize to tray on close'**
+  String get closeToTrayTitle;
+
+  /// No description provided for @closeToTraySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep running in the background. Use the tray menu to reopen or quit.'**
+  String get closeToTraySubtitle;
+
+  /// No description provided for @launchAtStartupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch at startup'**
+  String get launchAtStartupTitle;
+
+  /// No description provided for @launchAtStartupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Echo Loop automatically after you sign in to Windows.'**
+  String get launchAtStartupSubtitle;
+
+  /// No description provided for @launchAtStartupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update the startup setting.'**
+  String get launchAtStartupFailed;
+
+  /// No description provided for @trayShowWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show main window'**
+  String get trayShowWindow;
+
+  /// No description provided for @trayQuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Quit Echo Loop'**
+  String get trayQuit;
 }
 
 class _AppLocalizationsDelegate

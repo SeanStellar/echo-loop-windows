@@ -18,7 +18,7 @@ bool ActivateExistingWindow() {
   HWND hwnd = nullptr;
   while ((hwnd = FindWindowExW(nullptr, hwnd, kMainWindowClassName,
                                kMainWindowTitle)) != nullptr) {
-    if (!IsWindowVisible(hwnd)) continue;
+    // 托盘模式下窗口是隐藏的，不能以“可见”作为筛选条件。
     ShowWindow(hwnd, IsIconic(hwnd) ? SW_RESTORE : SW_SHOW);
     SetForegroundWindow(hwnd);
     return true;

@@ -2308,5 +2308,13 @@
   "aiServiceValidationUrl": "接口地址必须以 http:// 或 https:// 开头",
   "aiServiceValidationModel": "请填写模型名称",
   "aiServiceTesting": "测试中…",
-  "loginUnavailableOnPlatform": "当前版本不提供账号登录，云端账号功能暂不可用"
+  "loginUnavailableOnPlatform": "当前版本不提供账号登录，云端账号功能暂不可用",
+  "desktop": "桌面",
+  "closeToTrayTitle": "关闭窗口时最小化到托盘",
+  "closeToTraySubtitle": "关闭后继续在后台运行；从托盘菜单可重新打开或退出。",
+  "launchAtStartupTitle": "开机自动启动",
+  "launchAtStartupSubtitle": "登录 Windows 后自动打开 Echo Loop。",
+  "launchAtStartupFailed": "更新开机自启设置失败。",
+  "trayShowWindow": "显示主窗口",
+  "trayQuit": "退出 Echo Loop"
 }

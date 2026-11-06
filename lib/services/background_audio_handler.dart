@@ -3,13 +3,15 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:just_audio/just_audio.dart' as ja;
 
 import '../utils/app_data_dir.dart';
 import 'app_logger.dart';
 import 'media_session_router.dart';
+import 'windows_app_identity.dart';
 
 /// Echo Loop 全局后台播放控制器。
 ///
@@ -450,8 +452,9 @@ EchoLoopAudioHandler? _globalAudioHandler;
 MediaSessionRouter? _globalMediaSessionRouter;
 
 /// 系统媒体会话注册器的可替换初始化函数，供启动编排和测试复用。
-typedef BackgroundMediaSessionInitializer =
-    Future<void> Function(MediaSessionRouter router);
+typedef BackgroundMediaSessionInitializer = Future<void> Function(
+  MediaSessionRouter router,
+);
 
 /// 后台媒体会话协调器。
 ///
@@ -540,7 +543,12 @@ Future<void> _initializeAudioService(MediaSessionRouter router) async {
   await AudioService.init(
     builder: () => router,
     config: AudioServiceConfig(
-      androidNotificationChannelId: 'app.echoloop.audio',
+      // Windows 的 audio_service_win 把该字段当作 SMTC AppMediaId；
+      // 必须与安装包快捷方式 / 通知使用的 AUMID 一致。
+      androidNotificationChannelId:
+          !kIsWeb && defaultTargetPlatform == TargetPlatform.windows
+          ? windowsAppUserModelId
+          : 'app.echoloop.audio',
       androidNotificationChannelName: 'Echo Loop Playback',
       androidStopForegroundOnPause: false,
       // 通知 small icon：app logo 的白色剪影（Android 强制单色，彩色 logo 见封面图）。

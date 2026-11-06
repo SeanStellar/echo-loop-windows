@@ -5813,4 +5813,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loginUnavailableOnPlatform =>
       'Sign-in is not available in this build. Cloud account features are disabled.';
+
+  @override
+  String get desktop => 'Desktop';
+
+  @override
+  String get closeToTrayTitle => 'Minimize to tray on close';
+
+  @override
+  String get closeToTraySubtitle =>
+      'Keep running in the background. Use the tray menu to reopen or quit.';
+
+  @override
+  String get launchAtStartupTitle => 'Launch at startup';
+
+  @override
+  String get launchAtStartupSubtitle =>
+      'Open Echo Loop automatically after you sign in to Windows.';
+
+  @override
+  String get launchAtStartupFailed => 'Failed to update the startup setting.';
+
+  @override
+  String get trayShowWindow => 'Show main window';
+
+  @override
+  String get trayQuit => 'Quit Echo Loop';
 }

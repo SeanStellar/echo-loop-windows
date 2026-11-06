@@ -25,6 +25,7 @@ import '../features/user_region/user_region_providers.dart';
 import '../providers/app_update_provider.dart';
 import '../providers/audio_library_provider.dart';
 import '../providers/collection_provider.dart';
+import '../providers/desktop_integration_provider.dart';
 import '../providers/learning_progress_provider.dart';
 import '../providers/learning_session/favorite_review_due_count_provider.dart';
 import '../providers/notification_permission_provider.dart';
@@ -44,6 +45,7 @@ import '../services/startup_trace.dart';
 import '../services/app_update_launcher.dart';
 import '../services/review_reminder_service.dart';
 import '../services/review_reminder_time_calculator.dart';
+import '../services/windows_desktop_integration.dart';
 import '../screens/log_viewer_screen.dart';
 import '../providers/new_user_guide_provider.dart';
 import '../features/subscription/widgets/member_tab_badge.dart';
@@ -74,11 +76,14 @@ class _MainShellState extends ConsumerState<MainShell>
   ProviderSubscription<AppUpdateState>? _appUpdateSubscription;
   ProviderSubscription<ReminderSettings>? _reminderSettingsSubscription;
   ProviderSubscription<Locale?>? _appLocaleSubscription;
+  ProviderSubscription<DesktopIntegrationState>?
+  _desktopIntegrationSubscription;
   ProviderSubscription<int>? _notificationPromptSubscription;
   ProviderSubscription<GuideControllerState>? _guideWaitSubscription;
   ProviderSubscription<AsyncValue<StartupReport>>? _localStartupSubscription;
   late final RemoteConfigController _remoteConfigController;
   late final AppLifecycleListener _lifecycleListener;
+  late final WindowsDesktopIntegration _desktopIntegration;
   bool _didStartPostLocalTasks = false;
   bool _rootRouteVisible = true;
 
@@ -191,6 +196,27 @@ class _MainShellState extends ConsumerState<MainShell>
       onHide: _onAppBackground,
       onPause: _onAppBackground,
     );
+    if (isWindowsDesktop) {
+      _desktopIntegration = ref.read(windowsDesktopIntegrationProvider);
+      final desktopSettings = ref.read(desktopIntegrationProvider);
+      unawaited(
+        _desktopIntegration.initialize(
+          closeToTray: desktopSettings.closeToTray,
+          showLabel: 'Show main window',
+          quitLabel: 'Quit Echo Loop',
+        ),
+      );
+      _desktopIntegrationSubscription = ref
+          .listenManual<DesktopIntegrationState>(
+            desktopIntegrationProvider,
+            (_, next) => unawaited(
+              _desktopIntegration.applyCloseToTray(next.closeToTray),
+            ),
+          );
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _updateDesktopIntegrationLabels(),
+      );
+    }
 
     // 所有依赖本地数据的后台任务只观察标准 startup provider；首次失败后
     // 用户重试成功时监听器仍会收到 data，避免一次性 Future 等待遗漏恢复流程。
@@ -357,7 +383,10 @@ class _MainShellState extends ConsumerState<MainShell>
       // 界面语言变化时，按新语言重新调度收藏 / 音频复习提醒的通知文案
       _appLocaleSubscription = ref.listenManual<Locale?>(
         appSettingsProvider.select((s) => s.locale),
-        (_, __) => unawaited(_resyncReminderTexts()),
+        (_, __) {
+          unawaited(_resyncReminderTexts());
+          _updateDesktopIntegrationLabels();
+        },
       );
 
       // 监听通知权限 pre-prompt 触发器：价值锚点（首次完成 sub_stage / 收藏）
@@ -449,6 +478,7 @@ class _MainShellState extends ConsumerState<MainShell>
     _appUpdateSubscription?.close();
     _reminderSettingsSubscription?.close();
     _appLocaleSubscription?.close();
+    _desktopIntegrationSubscription?.close();
     _notificationPromptSubscription?.close();
     _guideWaitSubscription?.close();
     _localStartupSubscription?.close();
@@ -676,6 +706,7 @@ class _MainShellState extends ConsumerState<MainShell>
     if (!mounted) return;
     if (ref.read(appSettingsProvider).locale != null) return;
     unawaited(_resyncReminderTexts());
+    _updateDesktopIntegrationLabels();
   }
 
   /// 按当前界面语言重新同步收藏与音频复习提醒的通知文案。
@@ -686,6 +717,19 @@ class _MainShellState extends ConsumerState<MainShell>
     final service = ref.read(reviewReminderServiceProvider);
     await _syncSavedReviewReminder();
     await _syncPerAudioReminders(service);
+  }
+
+  /// 把托盘菜单文案同步到当前界面语言。
+  void _updateDesktopIntegrationLabels() {
+    if (!isWindowsDesktop || !mounted) return;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return;
+    unawaited(
+      _desktopIntegration.updateLabels(
+        showLabel: l10n.trayShowWindow,
+        quitLabel: l10n.trayQuit,
+      ),
+    );
   }
 
   /// 查询收藏数据并调度收藏复习提醒

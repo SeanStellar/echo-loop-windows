@@ -5541,4 +5541,28 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get loginUnavailableOnPlatform => '当前版本不提供账号登录，云端账号功能暂不可用';
+
+  @override
+  String get desktop => '桌面';
+
+  @override
+  String get closeToTrayTitle => '关闭窗口时最小化到托盘';
+
+  @override
+  String get closeToTraySubtitle => '关闭后继续在后台运行；从托盘菜单可重新打开或退出。';
+
+  @override
+  String get launchAtStartupTitle => '开机自动启动';
+
+  @override
+  String get launchAtStartupSubtitle => '登录 Windows 后自动打开 Echo Loop。';
+
+  @override
+  String get launchAtStartupFailed => '更新开机自启设置失败。';
+
+  @override
+  String get trayShowWindow => '显示主窗口';
+
+  @override
+  String get trayQuit => '退出 Echo Loop';
 }

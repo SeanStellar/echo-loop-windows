@@ -269,6 +269,7 @@ class AppUpdate extends _$AppUpdate {
     if (Platform.isIOS) return 'ios';
     if (Platform.isMacOS) return 'macos';
     if (Platform.isAndroid) return 'android';
+    if (Platform.isWindows) return 'windows';
     return 'fallback';
   }
 }

@@ -18,8 +18,10 @@ import '../l10n/app_localizations.dart';
 import '../models/app_update_info.dart';
 import '../providers/app_update_provider.dart';
 import '../providers/developer_options_provider.dart';
+import '../providers/desktop_integration_provider.dart';
 import '../providers/offline_asr_settings_provider.dart';
 import '../providers/tts/tts_settings_provider.dart';
+import '../services/app_logger.dart';
 import '../services/tts/tts_engine.dart';
 import '../providers/package_info_provider.dart';
 import '../providers/reminder_settings_provider.dart';
@@ -119,6 +121,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: AppSpacing.m),
           _buildStudySection(context, ref, l10n),
+          if (isWindowsDesktop) ...[
+            const SizedBox(height: AppSpacing.m),
+            _buildDesktopSection(context, l10n),
+          ],
           const SizedBox(height: AppSpacing.m),
           _buildAboutSection(context, ref, l10n),
           const SizedBox(height: AppSpacing.m),
@@ -318,6 +324,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         Card(child: Column(children: _intersperseDividers(children))),
       ],
     );
+  }
+
+  /// Windows 桌面集成：关闭到托盘与开机自启。
+  Widget _buildDesktopSection(BuildContext context, AppLocalizations l10n) {
+    final settings = ref.watch(desktopIntegrationProvider);
+    final controller = ref.read(desktopIntegrationProvider.notifier);
+    return _buildSection(
+      context,
+      title: l10n.desktop,
+      children: [
+        SwitchListTile(
+          secondary: const Icon(Icons.minimize_outlined),
+          title: Text(l10n.closeToTrayTitle),
+          subtitle: Text(l10n.closeToTraySubtitle),
+          value: settings.closeToTray,
+          onChanged: (value) => unawaited(controller.setCloseToTray(value)),
+        ),
+        SwitchListTile(
+          secondary: const Icon(Icons.power_settings_new_outlined),
+          title: Text(l10n.launchAtStartupTitle),
+          subtitle: Text(l10n.launchAtStartupSubtitle),
+          value: settings.launchAtStartup,
+          onChanged: (value) =>
+              unawaited(_toggleLaunchAtStartup(context, value, l10n)),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _toggleLaunchAtStartup(
+    BuildContext context,
+    bool value,
+    AppLocalizations l10n,
+  ) async {
+    try {
+      await ref
+          .read(desktopIntegrationProvider.notifier)
+          .setLaunchAtStartup(value);
+    } catch (error, stackTrace) {
+      AppLogger.log(
+        'DesktopIntegration',
+        'toggle launch-at-startup failed: $error\n$stackTrace',
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.launchAtStartupFailed)));
+    }
   }
 
   /// 构建「学习」分组：提醒、学习、语音识别、语音合成、播放、词典等入口合并到同一张卡片中。

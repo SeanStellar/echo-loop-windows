@@ -53,6 +53,46 @@ void main() {
       expect(result.minimumVersion, '1.0.0');
     });
 
+    test('Windows 使用注入的 fork 清单地址并解析 windows 下载链接', () async {
+      final windowsChecker = AppUpdateChecker.withDio(
+        mockDio,
+        url: 'https://example.com/version-windows.json',
+        platform: AppUpdateRuntimePlatform.windows,
+      );
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(),
+          data: {
+            'latestVersion': '1.0.47',
+            'minimumVersion': '1.0.46',
+            'releaseNotes': {'zh': '修复'},
+            'downloadUrl': {
+              'windows': 'https://example.com/setup-1.0.47.exe',
+              'fallback': 'https://example.com/releases',
+            },
+          },
+        ),
+      );
+
+      final result = await windowsChecker.check();
+
+      verify(
+        () => mockDio.get<Map<String, dynamic>>(
+          'https://example.com/version-windows.json',
+          options: any(named: 'options'),
+        ),
+      ).called(1);
+      expect(
+        result?.downloadUrl['windows'],
+        'https://example.com/setup-1.0.47.exe',
+      );
+    });
+
     test('网络错误返回 null', () async {
       when(
         () => mockDio.get<Map<String, dynamic>>(
@@ -302,8 +342,7 @@ void main() {
       ).thenAnswer(
         (_) async => Response<String>(
           requestOptions: RequestOptions(),
-          data:
-              '{"resultCount":1,"results":[{"version":"1.0.12","trackViewUrl":"https://apps.apple.com/app/id6760324074"}]}',
+          data: '{"resultCount":1,"results":[{"version":"1.0.12","trackViewUrl":"https://apps.apple.com/app/id6760324074"}]}',
         ),
       );
 
@@ -504,8 +543,7 @@ void main() {
                 'googlePlay': {
                   'minimumVersion': '1.6.0',
                   'storeUrl': 'market://details?id=app.echoloop',
-                  'fallbackUrl':
-                      'https://play.google.com/store/apps/details?id=app.echoloop',
+                  'fallbackUrl': 'https://play.google.com/store/apps/details?id=app.echoloop',
                 },
                 'apk': {
                   'latestVersion': '2.0.1',
@@ -523,16 +561,15 @@ void main() {
     }
 
     void stubChinaApkHead({required int statusCode}) {
-      when(
-        () => mockDio.head<void>(any(), options: any(named: 'options')),
-      ).thenAnswer(
-        (_) async => Response<void>(
-          requestOptions: RequestOptions(
-            path: 'https://cdn-cn.example.com/app-2.0.1.apk',
-          ),
-          statusCode: statusCode,
-        ),
-      );
+      when(() => mockDio.head<void>(any(), options: any(named: 'options')))
+          .thenAnswer(
+            (_) async => Response<void>(
+              requestOptions: RequestOptions(
+                path: 'https://cdn-cn.example.com/app-2.0.1.apk',
+              ),
+              statusCode: statusCode,
+            ),
+          );
     }
 
     test('Google Play 安装来源使用商店渠道配置', () async {
@@ -646,16 +683,15 @@ void main() {
 
     test('中国 APK 探测网络异常时保留中国地址', () async {
       stubManifest(includeChinaUrl: true);
-      when(
-        () => mockDio.head<void>(any(), options: any(named: 'options')),
-      ).thenThrow(
-        DioException(
-          requestOptions: RequestOptions(
-            path: 'https://cdn-cn.example.com/app-2.0.1.apk',
-          ),
-          type: DioExceptionType.connectionTimeout,
-        ),
-      );
+      when(() => mockDio.head<void>(any(), options: any(named: 'options')))
+          .thenThrow(
+            DioException(
+              requestOptions: RequestOptions(
+                path: 'https://cdn-cn.example.com/app-2.0.1.apk',
+              ),
+              type: DioExceptionType.connectionTimeout,
+            ),
+          );
       bridge.installer = null;
       final chinaChecker = buildAndroidChecker(isChinaUser: true);
 

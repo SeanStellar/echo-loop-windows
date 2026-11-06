@@ -4,6 +4,17 @@
 
 ## 本次完成
 
+- [x] Windows P2 完整版：SMTC / 托盘 / 开机自启 / 自动更新 / Web-PDF 烟测（2026-11-06）：
+  - 依赖：新增 `audio_service_win` 0.0.3、`tray_manager` 0.8.3、`launch_at_startup` 0.5.1；统一 AUMID 常量 `top.valuespot.EchoLoop`（`windows_app_identity.dart`），音频媒体会话配置在 Windows 使用同一 AUMID。
+  - SMTC：现有 `audio_service` handler 直接驱动 Windows「正在播放」；新增 `integration_test/windows_smtc_smoke_test.dart`，实测系统会话读到标题 / 艺术家、状态 Playing，`TryPauseAsync` / `TryPlayAsync` 回调到 handler，测试通过。限制：未同步 timeline，系统卡片无进度条拖动。
+  - 托盘 / 自启：`WindowsDesktopIntegration` 使用 `tray_manager` 原生 API；关闭到托盘开启时拦截关闭并隐藏窗口，托盘菜单显示 / 退出；单实例 guard 同时支持激活隐藏窗口。实测关闭后进程存活且窗口隐藏，再次启动恢复窗口；托盘图标创建成功。开机自启经 `integration_test/windows_desktop_integration_test.dart` 写入并移除 HKCU Run，测试通过。安装包新增卸载清理 Run 值。
+  - 自动更新：新增 `version-windows.json`；`AppUpdateChecker` Windows 分支读取 `releases/latest/download/version-windows.json`，`downloadUrl.windows` 作为更新链接；支持 `WINDOWS_UPDATE_MANIFEST_URL` 编译期覆盖。本地清单实测弹出「发现新版本 v1.0.47」并记录 softUpdate；更新检查单测 30 项通过。不静默安装，点击后打开安装包下载。
+  - Web / PDF / 打印：新增 `integration_test/windows_pdf_web_smoke_test.dart`；Windows 生成 23KB PDF（332ms，`%PDF-` 头），`Printing.info().canPrint == true`；WebView2 加载本地网页词典页面并进入 ready。真实打印对话框 / 打印机仍需人工验收。
+  - 设置：新增 Windows「桌面」分组（关闭到托盘、开机自启），补充中英文 l10n。
+  - 构建与测试：Release 便携包 80.8MB、安装包 59.3MB（已清理 Debug 残留 `kernel_blob.bin`）；`flutter analyze lib test` 0 error；全量 `flutter test` 为 `+6010 ~11 -45`，失败仍集中在 Windows 主机既有路径断言、临时媒体文件占用与时序问题，与本次改动无关；SMTC、开机自启、PDF/WebView 三项 Windows 集成测试全部通过。
+  - 待人工：托盘菜单点击 / 托盘溢出区、真实打印、Toast 展示 / 点击、社区下载 UI 端到端、最小化续播；代码签名仍需自备证书。
+  **完成时间**: 2026-11-06
+
 - [x] Windows P2：图标 / 版本信息 / 窗口行为 / 单实例（2026-11-06）：
   - 图标与版本：从 `assets/icon/app-icon-1024-rounded.png` 生成多尺寸 `windows/runner/resources/app_icon.ico`（16–256）；`Runner.rc` 补全 FileDescription「Echo Loop Windows」、ProductVersion 1.0.46、AGPL 版权与修改声明。`CompanyName` 保持 `top.valuespot`，避免改变 `%APPDATA%\top.valuespot\Echo Loop` 用户数据目录。Release exe 的 VersionInfo 已读取核对。
   - 窗口：`AppWindowService` 增加 Windows 最小尺寸 960×640；窗口位置 / 大小保存到 SP `windows_window_bounds_v1`（moved / resized / blur 后 600ms 防抖，最大化 / 最小化不覆盖）；无记录或非法记录时居中。实测程序化请求 400×300 被系统钳制为 960×640；调整到 40,40 / 1100×700 后关闭，重启恢复相同位置与大小。
