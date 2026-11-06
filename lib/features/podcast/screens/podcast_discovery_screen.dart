@@ -22,7 +22,6 @@ import '../../../router/app_router.dart';
 import '../../../services/app_logger.dart';
 import '../../../theme/app_theme.dart';
 import '../../../widgets/common/form_input_style.dart';
-import '../../auth/sign_in_required_dialog.dart';
 import '../providers/featured_podcasts_provider.dart';
 import '../podcast_models.dart';
 import '../podcast_preview_provider.dart';
@@ -422,7 +421,7 @@ class _PodcastDiscoveryScreenState
     );
   }
 
-  /// 订阅列表项：登录校验 → createAndFetch，成功后**停留在本页**。
+  /// 订阅列表项：直接 createAndFetch（只解析公开 RSS 并写本地库，不需要账号），成功后**停留在本页**。
   ///
   /// collectionListProvider 更新会使 tile 自动翻成「去学习」，故不导航。
   /// 用 [id] 驱动对应 tile 的 loading，防竞态。
@@ -434,23 +433,14 @@ class _PodcastDiscoveryScreenState
     final l10n = AppLocalizations.of(context)!;
     if (_subscribingIds.contains(id)) return;
 
-    final canEnroll = await ensureSignedInForAction(
-      context: context,
-      ref: ref,
-      title: l10n.communityCollectionSignInRequiredTitle,
-      message: l10n.podcastSignInRequiredMessage,
-    );
-    if (!mounted || !canEnroll) return;
-
     setState(() => _subscribingIds.add(id));
     try {
       await ref
           .read(podcastRepositoryProvider)
           .createAndFetch(inputUrl, knownFeedUrl: knownFeedUrl);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.enrollSucceeded)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(l10n.enrollSucceeded)));
     } on PodcastAlreadySubscribedException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

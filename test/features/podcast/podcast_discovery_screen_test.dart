@@ -325,10 +325,7 @@ void main() {
     paginationOutcome.complete(FeaturedPodcastUpdated(paginatedSnapshot));
     await Future.wait([loadMore, refreshFirstPage]);
 
-    final snapshot = container
-        .read(featuredPodcastsProvider)
-        .value
-        ?.snapshot;
+    final snapshot = container.read(featuredPodcastsProvider).value?.snapshot;
     expect(service.refreshOrder, ['page:old-cursor', 'first']);
     expect(snapshot?.podcasts.map((podcast) => podcast.id), ['new-first']);
     expect(snapshot?.nextCursor, 'new-cursor');
@@ -401,7 +398,7 @@ void main() {
     expect(badgeRect.bottom, lessThan(checkRect.top));
   });
 
-  testWidgets('未登录订阅精选 Podcast 显示登录提示且不调用仓库', (tester) async {
+  testWidgets('未登录也可订阅精选 Podcast（本地优先）', (tester) async {
     final fakeRepo = _FakePodcastRepository();
     final service = _serviceWithPodcasts([_featuredPodcast()]);
     await tester.pumpWidget(
@@ -419,8 +416,9 @@ void main() {
     await tester.tap(find.byIcon(Icons.add_circle_outline).first);
     await tester.pumpAndSettle();
 
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(fakeRepo.subscribed, isEmpty);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(fakeRepo.subscribed, ['https://example.com/feed.xml']);
+    expect(find.text('Added to My Collections'), findsWidgets);
   });
 
   testWidgets('进入页面时搜索框不会自动聚焦', (tester) async {
