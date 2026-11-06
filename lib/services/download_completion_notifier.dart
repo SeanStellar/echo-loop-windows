@@ -19,14 +19,15 @@ abstract interface class DownloadCompletionNotifier {
   });
 }
 
-/// macOS 下载完成 / 失败的系统通知。
+/// 桌面端下载完成 / 失败的系统通知。
 ///
 /// background_downloader 在桌面端忽略通知配置（插件文档 doc/notifications.md），
 /// 用户离开下载页后将收不到结果，因此由应用发送。
 /// 仅在应用不在前台时发送：用户正在使用应用时，结果已在界面中可见。
 /// 系统通知权限由复习提醒的 pre-prompt 统一申请，未授权时 show 不会展示。
-class MacOSDownloadCompletionNotifier implements DownloadCompletionNotifier {
-  MacOSDownloadCompletionNotifier({
+abstract class _DesktopDownloadCompletionNotifier
+    implements DownloadCompletionNotifier {
+  _DesktopDownloadCompletionNotifier({
     required FlutterLocalNotificationsPlugin plugin,
     required Future<void> Function() ensureInitialized,
     required bool Function() isAppInForeground,
@@ -40,6 +41,9 @@ class MacOSDownloadCompletionNotifier implements DownloadCompletionNotifier {
   final Future<void> Function() _ensureInitialized;
   final bool Function() _isAppInForeground;
 
+  /// 平台对应的通知展示参数。
+  NotificationDetails get details;
+
   @override
   Future<void> notify({
     required String taskId,
@@ -49,23 +53,42 @@ class MacOSDownloadCompletionNotifier implements DownloadCompletionNotifier {
     if (_isAppInForeground()) return;
     await _ensureInitialized();
     try {
-      await _plugin.show(
-        _notificationIdFor(taskId),
-        title,
-        body,
-        const NotificationDetails(
-          macOS: DarwinNotificationDetails(
-            presentAlert: true,
-            presentSound: true,
-          ),
-        ),
-      );
+      await _plugin.show(_notificationIdFor(taskId), title, body, details);
     } on PlatformException catch (error) {
       AppLogger.log(_logTag, 'show failed errorType=${error.runtimeType}');
     } on MissingPluginException catch (error) {
       AppLogger.log(_logTag, 'show failed errorType=${error.runtimeType}');
     }
   }
+}
+
+/// macOS 下载完成 / 失败的系统通知。
+class MacOSDownloadCompletionNotifier
+    extends _DesktopDownloadCompletionNotifier {
+  MacOSDownloadCompletionNotifier({
+    required super.plugin,
+    required super.ensureInitialized,
+    required super.isAppInForeground,
+  });
+
+  @override
+  NotificationDetails get details => const NotificationDetails(
+    macOS: DarwinNotificationDetails(presentAlert: true, presentSound: true),
+  );
+}
+
+/// Windows 下载完成 / 失败的系统通知。
+class WindowsDownloadCompletionNotifier
+    extends _DesktopDownloadCompletionNotifier {
+  WindowsDownloadCompletionNotifier({
+    required super.plugin,
+    required super.ensureInitialized,
+    required super.isAppInForeground,
+  });
+
+  @override
+  NotificationDetails get details =>
+      const NotificationDetails(windows: WindowsNotificationDetails());
 }
 
 /// 同一进程内同一任务得到同一通知 ID；Dart 的 `%` 对正数除数恒返回非负值。

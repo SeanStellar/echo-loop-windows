@@ -101,6 +101,9 @@ class ReviewReminderService {
       return _supportsSystemNotificationOverride;
     }
     if (kIsWeb) return false;
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      return true;
+    }
     return io.Platform.isIOS || io.Platform.isAndroid || io.Platform.isMacOS;
   }
 
@@ -152,6 +155,11 @@ class ReviewReminderService {
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
+        ),
+        windows: WindowsInitializationSettings(
+          appName: 'Echo Loop',
+          appUserModelId: 'top.valuespot.EchoLoop',
+          guid: 'b1a7c3d2-4e5f-4a6b-9c8d-0e1f2a3b4c5d',
         ),
       );
 
@@ -238,6 +246,7 @@ class ReviewReminderService {
             ),
             iOS: DarwinNotificationDetails(),
             macOS: DarwinNotificationDetails(),
+            windows: WindowsNotificationDetails(),
           ),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           payload: _openFavoritesPayload,
@@ -333,6 +342,7 @@ class ReviewReminderService {
             ),
             iOS: DarwinNotificationDetails(),
             macOS: DarwinNotificationDetails(),
+            windows: WindowsNotificationDetails(),
           ),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           payload: '$_openAudioPrefix${r.audioId}',

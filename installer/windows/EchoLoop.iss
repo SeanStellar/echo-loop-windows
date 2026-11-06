@@ -50,8 +50,8 @@ Source: "..\..\THIRD_PARTY_NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\WINDOWS.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"; AppUserModelID: "top.valuespot.EchoLoop"
+Name: "{autodesktop}\Echo Loop Windows"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; AppUserModelID: "top.valuespot.EchoLoop"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch Echo Loop Windows"; Flags: nowait postinstall skipifsilent

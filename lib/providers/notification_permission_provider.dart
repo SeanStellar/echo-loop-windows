@@ -11,7 +11,8 @@ library;
 
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,6 +29,9 @@ const String _logTag = 'NotifPerm';
 final notificationPermissionReporterProvider =
     Provider<NotificationPermissionReporter>((ref) {
       if (kIsWeb) return const UnsupportedNotificationPermissionReporter();
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+        return const WindowsNotificationPermissionReporter();
+      }
       if (Platform.isMacOS) return MacOSNotificationPermissionReporter();
       if (Platform.isIOS) {
         return IOSNotificationPermissionReporter();

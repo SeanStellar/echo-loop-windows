@@ -18,10 +18,12 @@ library;
 
 import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
+import 'package:url_launcher/url_launcher.dart';
 
 /// 通知授权状态（平台无关）。
 enum NotificationAuthorization {
@@ -224,6 +226,40 @@ class AndroidNotificationPermissionReporter
 // ─────────────────────────────────────────────────────────
 // 不支持平台 Reporter（Web / Linux / Windows）
 // ─────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────
+// Windows Reporter
+// ─────────────────────────────────────────────────────────
+
+/// Windows 没有可供 App 查询的单应用通知授权状态；系统级开关由用户控制。
+/// 默认视为已授权，请求直接返回 true，设置入口打开系统通知设置。
+class WindowsNotificationPermissionReporter
+    implements NotificationPermissionReporter {
+  const WindowsNotificationPermissionReporter();
+
+  @override
+  bool get isSupported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+
+  @override
+  Future<NotificationAuthorization> getAuthorizationStatus() async =>
+      isSupported
+      ? NotificationAuthorization.authorized
+      : NotificationAuthorization.unsupported;
+
+  @override
+  Future<bool> requestAuthorization() async => isSupported;
+
+  @override
+  Future<void> openSettings() async {
+    if (!isSupported) return;
+    try {
+      await launchUrl(Uri.parse('ms-settings:notifications'));
+    } catch (_) {
+      // 设置页打开失败不阻断业务。
+    }
+  }
+}
 
 class UnsupportedNotificationPermissionReporter
     implements NotificationPermissionReporter {

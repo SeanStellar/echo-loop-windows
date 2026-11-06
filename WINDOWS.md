@@ -9,6 +9,8 @@
 - **自定义 AI**：设置 → AI 服务，可配置任意 OpenAI 兼容服务（Base URL / API Key / 模型）。启用后翻译、句子解析、意群拆分、AI 查词、AI 助手直接请求你配置的服务，不需要登录，也不消耗 Echo Loop 云端额度。API Key 仅保存在本机安全存储中。
 - **播放**：通过 `just_audio_media_kit` 在 Windows 上使用 media_kit/libmpv 实现 `just_audio` 播放。
 - **录音与本地 ASR**：`record` + `record_windows` 录 16kHz/16bit WAV，`sherpa-onnx` 在本地转写，恢复跟读 / 复述录音；首次使用需在「我的 → 语音识别」下载模型。
+- **通知提醒**：复习提醒与下载完成通知使用 Windows 原生 Toast；安装包快捷方式写入 `AppUserModelID`。未以 MSIX 打包时通知 `cancel` 不生效，重复调度可能残留。
+- **本地转录**：ffmpeg-kit 将 m4a/mp3 解码为 16kHz WAV，sherpa-onnx 分段生成字幕，已在 Windows 实测通过。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -68,7 +70,9 @@ flutter build windows --release
 - 录音与本地 ASR 已支持，但不同麦克风设备、VAD 阈值、跟读 / 复述完整流程仍需人工验收；首次使用要在「我的 → 语音识别」下载模型。
 - 登录、订阅、云端转录未接入；依赖云端的入口会提示「当前版本不提供账号登录」。
 - 自定义 AI 暂不支持复述评估。
-- 通知、系统代理等平台能力仍待回归验证。
+- Windows 通知已接入调度，但实际 Toast 展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
+- 媒体键 / SMTC（系统“正在播放”卡片）尚未接入，计划放在 P2。
+- 系统代理等平台能力仍待回归验证。
 
 后续计划、优先级与验收标准见 [docs/windows-roadmap.md](./docs/windows-roadmap.md)。
 

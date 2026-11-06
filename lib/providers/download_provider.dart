@@ -2,6 +2,8 @@ import 'dart:io' show Platform;
 import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:background_downloader/background_downloader.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/widgets.dart' show AppLifecycleState, WidgetsBinding;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,16 +56,26 @@ final resourceDownloadRegistryProvider = Provider<ResourceDownloadRegistry>(
   (ref) => sharedResourceDownloadRegistry,
 );
 
-/// 桌面端终态通知：background_downloader 在 macOS 上不发通知，由应用补发。
+/// 桌面端终态通知：background_downloader 在 macOS / Windows 上不发通知，由应用补发。
 /// 移动端由插件原生发送，这里返回 null。
 DownloadCompletionNotifier? _desktopDownloadCompletionNotifier(Ref ref) {
-  if (!Platform.isMacOS) return null;
+  final isMacOS = Platform.isMacOS;
+  final isWindows = !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+  if (!isMacOS && !isWindows) return null;
   final reminderService = ref.read(reviewReminderServiceProvider);
-  return MacOSDownloadCompletionNotifier(
+  bool isForeground() =>
+      WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+  if (isMacOS) {
+    return MacOSDownloadCompletionNotifier(
+      plugin: FlutterLocalNotificationsPlugin(),
+      ensureInitialized: reminderService.initPlugin,
+      isAppInForeground: isForeground,
+    );
+  }
+  return WindowsDownloadCompletionNotifier(
     plugin: FlutterLocalNotificationsPlugin(),
     ensureInitialized: reminderService.initPlugin,
-    isAppInForeground: () =>
-        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed,
+    isAppInForeground: isForeground,
   );
 }
 
