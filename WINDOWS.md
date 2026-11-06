@@ -14,9 +14,19 @@
 
 ## 运行预构建包
 
+预构建的便携包与安装程序发布在 [Releases](https://github.com/SeanStellar/echo-loop-windows/releases)。
+
+便携版：
+
 1. 解压 `EchoLoop-Windows.zip`（或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
+
+安装版：
+
+1. 运行 `EchoLoop-Windows-Setup-1.0.46.exe`。
+2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
+3. 从开始菜单或桌面快捷方式启动。
 
 Release 包内含 Flutter 的第三方许可清单：`data/flutter_assets/NOTICES.Z`。更多说明见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
 
@@ -41,6 +51,16 @@ flutter build windows --release
 ```
 
 建议把源码放在**纯英文路径**下构建（例如 `D:\EchoLoop`）。中文路径可能导致 analyzer / build_runner 的 URI 或临时文件问题。
+
+### 构建安装程序
+
+安装 [Inno Setup 6](https://jrsoftware.org/isinfo.php) 后执行：
+
+```powershell
+& "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
+```
+
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。
 
 ## 已知限制
 
