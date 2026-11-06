@@ -69,6 +69,8 @@ flutter build windows --release
 - 自定义 AI 暂不支持复述评估。
 - 通知、系统代理等平台能力仍待回归验证。
 
+后续计划、优先级与验收标准见 [docs/windows-roadmap.md](./docs/windows-roadmap.md)。
+
 ## 许可证
 
 本仓库沿用上游的 **AGPL-3.0**，详见 [LICENSE](./LICENSE)。分发修改版或二进制时，请保留许可证、版权声明，并提供对应的完整源码。
