@@ -29,7 +29,7 @@ if (-not $signTool) {
 
 $targets = @(
     (Join-Path $DistDir 'EchoLoop-Windows\echo_loop.exe'),
-    (Join-Path $DistDir 'installer\EchoLoop-Windows-Setup-1.0.46.exe')
+    (Join-Path $DistDir 'installer\EchoLoop-Windows-Setup-1.0.47.exe')
 )
 
 foreach ($target in $targets) {

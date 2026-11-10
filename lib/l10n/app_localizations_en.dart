@@ -3260,6 +3260,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stageBreakdownSpeakShort => 'Speak';
 
   @override
+  String get todayNewWordsShort => 'New words';
+
+  @override
   String get stageBreakdownNoStageData =>
       'Detailed breakdown data starts recording from this version';
 
@@ -3603,6 +3606,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get unitMinute => 'min';
+
+  @override
+  String get unitHour => 'h';
+
+  @override
+  String get unitDay => 'd';
+
+  @override
+  String hourMinuteUnit(int minutes) {
+    return 'h ${minutes}m';
+  }
+
+  @override
+  String get unitSecond => 's';
+
+  @override
+  String get unitItem => 'items';
+
+  @override
   String get monthlyTotal => 'Total';
 
   @override
@@ -3613,16 +3636,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get monthlyBestStreak => 'Best streak';
-
-  @override
-  String daysSuffix(int days) {
-    return '${days}d';
-  }
-
-  @override
-  String activeDaysFraction(int active, int total) {
-    return '$active/$total days';
-  }
 
   @override
   String get senseGroupSplit => 'Split into Sense Groups';
@@ -4347,13 +4360,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingQ2Option30 => '30+ minutes';
 
   @override
-  String get onboardingQ2OptionFlexible => 'It varies';
-
-  @override
   String get onboardingQ3Prompt => 'How did you hear about us?';
 
   @override
-  String get onboardingQ3OptionAppStore => 'App Store / Google Play';
+  String get onboardingQ3OptionAppStore => 'App Store';
 
   @override
   String get onboardingQ3OptionYoutube => 'YouTube';
@@ -4374,9 +4384,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingQ3OptionBilibili => 'Bilibili';
 
   @override
-  String get onboardingQ3OptionGoogleSearch => 'Search Engine';
-
-  @override
   String get onboardingQ3OptionGithub => 'GitHub';
 
   @override
@@ -4390,6 +4397,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingQ3OptionSearchEngine => 'Search engine';
+
+  @override
+  String get onboardingQ3OptionAiAssistant => 'AI Assistant';
 
   @override
   String get onboardingQ3OptionTeacherSchool => 'Teacher or school';
@@ -4420,6 +4430,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get learningSettings => 'Learning Settings';
 
   @override
+  String get dailyGoalSetting => 'Daily study goal';
+
+  @override
+  String get dailyGoalSettingSubtitle => 'How long you plan to study each day';
+
+  @override
+  String dailyGoalMinutesValue(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get activityDayCheckedInSemantics => ', daily goal completed';
+
+  @override
+  String get dailyGoalTodayTitle => 'Today\'s goal';
+
+  @override
+  String dailyGoalStudiedLabel(int minutes) {
+    return '$minutes min studied';
+  }
+
+  @override
+  String dailyGoalTargetLabel(int minutes) {
+    return 'Goal $minutes min';
+  }
+
+  @override
+  String get dailyGoalTodayCheckedIn => 'Checked in today';
+
+  @override
+  String get monthlyCheckInDays => 'Check-in days';
+
+  @override
+  String get activityLegendCheckedIn => 'Daily goal completed';
+
+  @override
+  String dailyGoalCompletedToast(int minutes) {
+    return 'Today\'s $minutes-minute study goal is complete!';
+  }
+
+  @override
   String get showRecommendationToggle => 'Show recommendation card';
 
   @override
@@ -4434,7 +4485,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hideRecommendationMessage =>
-      'The Study page will stop showing recommendations. To bring it back, turn it on again in Settings › Learning › Display Settings.';
+      'The Study page will stop showing recommendations. To bring it back, turn it on again in Profile › Display Settings.';
+
+  @override
+  String get showWeeklyChartToggle => 'Show weekly study chart';
+
+  @override
+  String get showWeeklyChartSubtitle =>
+      'Show the weekly study time chart on the Study page';
+
+  @override
+  String get hideWeeklyChartTooltip => 'Hide weekly chart';
+
+  @override
+  String get hideWeeklyChartTitle => 'Hide weekly study chart?';
+
+  @override
+  String get hideWeeklyChartMessage =>
+      'The Study page will stop showing the weekly study chart. To bring it back, turn it on again in Profile › Display Settings.';
 
   @override
   String get speakingPracticeSection => 'Speaking practice';
@@ -5415,7 +5483,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dictionaryAdFilterTitle => 'Block ads in web dictionaries';
 
   @override
-  String get dictSourceLocal => 'Local Dictionary';
+  String get dictSourceLocal => 'Basic Dictionary';
 
   @override
   String get dictSourceAi => 'AI Dictionary';
@@ -5839,4 +5907,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trayQuit => 'Quit Echo Loop';
+
+  @override
+  String get autoShowDailyShareToggle => 'Auto-show Today’s Moment';
+
+  @override
+  String get autoShowDailyShareSubtitle =>
+      'Automatically show your card when returning to Study after reaching your daily goal';
+
+  @override
+  String get shareCardTitle => 'Today’s Moment';
+
+  @override
+  String get shareCardPreparing =>
+      'Your card is being prepared. Please try again shortly.';
+
+  @override
+  String get shareCardPreparationFailed =>
+      'Could not prepare your card. Retrying; please try again shortly.';
+
+  @override
+  String get shareCardNoCards =>
+      'No share cards are available right now. Please try again later.';
+
+  @override
+  String get shareCardNoAlternative => 'No other cards are available.';
+
+  @override
+  String get shareCardSave => 'Save to Photos';
+
+  @override
+  String get shareCardSaveDesktop => 'Save image';
+
+  @override
+  String get shareCardShare => 'Share';
+
+  @override
+  String get shareCardChange => 'Try another';
+
+  @override
+  String get shareCardSaved => 'Image saved';
+
+  @override
+  String get shareCardActionFailed =>
+      'Could not complete the action. Please try again.';
+
+  @override
+  String get shareCardPermissionDenied =>
+      'Allow photo access in system settings to save your card.';
+
+  @override
+  String get shareCardNotSignedIn => 'Sign in to share your card.';
 }

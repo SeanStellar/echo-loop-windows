@@ -29,6 +29,7 @@ import 'tables/saved_words.dart';
 import 'tables/saved_sense_groups.dart';
 import 'tables/learned_word_forms.dart';
 import 'tables/daily_study_records.dart';
+import 'tables/dictionary_cache.dart';
 import 'tables/daily_stage_study_records.dart';
 import 'tables/tts_cache.dart';
 import 'tables/memory_schedules.dart';
@@ -77,6 +78,7 @@ part 'app_database.g.dart';
     LearnedWordForms,
     DailyStudyRecords,
     DailyStageStudyRecords,
+    DictionaryCache,
     TtsCache,
     MemorySchedules,
     MemoryReviewEvents,
@@ -106,7 +108,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   /// 当前 schema 版本（静态访问，用于导入前版本检查）
-  static const currentSchemaVersion = 64;
+  static const currentSchemaVersion = 66;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -912,6 +914,18 @@ class AppDatabase extends _$AppDatabase {
             'audio_items',
             'community_difficulty',
             'difficulty',
+          );
+        }
+        // v64→v65：对齐上游 schema，保留在线词典查词缓存表（本 fork 自定义 AI 未使用）。
+        if (from < 65) {
+          await m.createTable(dictionaryCache);
+        }
+        // v65→v66：每日学习统计行记录当天打卡的目标分钟数（NULL = 未打卡）。
+        if (from < 66) {
+          await _addColumnIfNotExists(
+            'daily_study_records',
+            'checked_in_goal_minutes',
+            'INTEGER',
           );
         }
       },

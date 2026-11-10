@@ -4,6 +4,13 @@
 
 ## 本次完成
 
+- [x] 同步官方 v1.0.47 非账号功能到 Windows 分支（2026-11-10）：
+  - 同步范围：词典来源更名为「基础词典」；每日学习目标设置与跨端同步；每日目标自动打卡、学习日历、今日卡片进度；今日打卡卡片分享；Onboarding 来源新增「AI 助手」；学习页本周图/推荐卡可关闭；学习设置测试修复。排除全部头像 / 昵称 / 账号页相关提交（18 个），账号资料 UI 未更新。
+  - 数据库：schema 64→66，补齐上游 v65 `dictionary_cache` 表与 v66 `daily_study_records.checked_in_goal_minutes` 列；保留本 fork 既有表与数据。
+  - 分享适配：为打卡分享补入 `user_profile` 领域 / API / Provider 兼容层，但不加入账号资料 UI；Windows 无登录时分享入口按官方逻辑隐藏，每日目标 / 自动打卡 / 学习日历可离线使用。
+  - 构建：Windows 改用随仓库携带的 `windows/runner/resources/sqlite3.dll`（pubspec hooks Windows source=system），避免 sqlite3 native hook 从 GitHub 下载超时；版本升至 1.0.47。
+  - 验证：相关上游功能测试 252 项通过（每日目标、打卡、分享、日历、Onboarding、Toast、学习页）；全量 `flutter test` 为 `+6136 ~11 -40`，失败均为 Windows 主机既有的路径分隔符、临时媒体文件占用、日志路径等环境问题，不涉及本次同步的功能。Debug 构建成功。**完成时间**: 2026-11-10
+
 - [x] 修复 Windows 精选 Podcast 订阅仍要求登录（2026-11-06）：`PodcastDiscoveryScreen._subscribe` 仍调用 `ensureSignedInForAction`，本地优先模式下点列表「+」只弹「当前版本不提供账号登录」，而预览页已放开。移除该门槛（订阅只解析公开 RSS 并写本地库，不需要账号）；`podcast_discovery_screen_test` 改为断言未登录也可订阅并调用仓库，13 项通过。**完成时间**: 2026-11-06
 
 - [x] Windows P2 完整版：SMTC / 托盘 / 开机自启 / 自动更新 / Web-PDF 烟测（2026-11-06）：

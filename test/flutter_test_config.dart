@@ -5,6 +5,7 @@
 library;
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +18,15 @@ const _kTestWindowSize = Size(1200, 800);
 
 Future<void> testExecutable(FutureOr<void> testMain()) async {
   final binding = TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Windows 单测直接加载随仓库携带的 SQLite DLL（应用构建由 CMake 复制）。
+  if (Platform.isWindows) {
+    final vendor = File('windows/runner/resources/sqlite3.dll');
+    final target = File('sqlite3.dll');
+    if (await vendor.exists() && !await target.exists()) {
+      await vendor.copy(target.path);
+    }
+  }
 
   // 全局提供纯 Dart 的偏好实现，避免未显式注入 provider 的测试访问真实平台通道。
   SharedPreferences.setMockInitialValues({});

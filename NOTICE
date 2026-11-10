@@ -23,6 +23,16 @@ Modifications (2026-11-05):
 - Added Windows build fixes: /utf-8 compile option, configurable install
   prefix, and WebView2Loader.dll installation.
 
+Modifications (2026-11-10):
+
+- Synced non-account changes from upstream v1.0.47: daily learning goal,
+  automatic check-in, study calendar, daily check-in sharing, dictionary
+  rename, onboarding source option and build fixes.
+- Added upstream database migrations for the dictionary cache table and
+  daily check-in minutes; Windows builds use a bundled sqlite3.dll.
+- Account profile updates (avatar, nickname, account screen) from upstream
+  are intentionally not merged.
+
 Modifications (2026-11-06):
 
 - Added a Windows recording backend (16 kHz / 16-bit mono WAV) and local

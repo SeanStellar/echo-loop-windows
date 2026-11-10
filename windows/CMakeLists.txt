@@ -87,6 +87,15 @@ install(
   COMPONENT Runtime
 )
 
+
+# 随仓库携带的 SQLite DLL；配合 pubspec hooks 的 Windows source=system，
+# 避免 native asset hook 每次从 GitHub 下载。
+install(
+  FILES "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/sqlite3.dll"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  COMPONENT Runtime
+)
+
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 

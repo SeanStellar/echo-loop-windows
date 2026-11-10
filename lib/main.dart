@@ -48,6 +48,7 @@ import 'services/speech_practice_platform.dart';
 import 'services/windows_speech_practice_backend.dart';
 import 'services/user_id_service.dart';
 import 'widgets/app_notice_presenter.dart';
+import 'widgets/daily_goal_check_in_presenter.dart';
 import 'widgets/app_startup_gate.dart';
 import 'features/community_collections/data/trigger_community_sync.dart';
 import 'features/community_collections/download/community_download_notifier.dart';
@@ -565,8 +566,10 @@ class _EchoLoopAppState extends ConsumerState<EchoLoopApp>
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: router,
-      builder: (context, child) => AppStartupGate(
-        child: AppNoticePresenter(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => DailyGoalCheckInPresenter(
+        child: AppStartupGate(
+          child: AppNoticePresenter(child: child ?? const SizedBox.shrink()),
+        ),
       ),
       scaffoldMessengerKey: communityDownloadScaffoldMessengerKey,
     );

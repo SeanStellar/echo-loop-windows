@@ -1,12 +1,12 @@
 {
-  "latestVersion": "1.0.46",
+  "latestVersion": "1.0.47",
   "minimumVersion": "1.0.46",
   "releaseNotes": {
-    "en": "- Tray icon, close to tray and launch at startup\n- Windows system media controls (media keys / now playing)\n- Automatic update check for the Windows fork\n- Web dictionary, PDF export and printing regression",
-    "zh": "- 新增托盘、关闭到托盘与开机自启\n- 接入 Windows 系统媒体控制（媒体键 / 正在播放）\n- Windows 分支自动检查更新\n- 回归网页词典、PDF 导出与打印"
+    "en": "- Daily learning goal, automatic check-in and study calendar\n- Daily check-in sharing (requires sign-in)\n- Onboarding AI assistant source option\n- Dictionary renamed to Basic Dictionary\n- Windows local-first fork updates and build fixes",
+    "zh": "- 每日学习目标、自动打卡与学习日历\n- 今日打卡分享（需要登录）\n- 引导页来源渠道新增 AI 助手\n- 默认词典更名为基础词典\n- Windows 本地优先分支更新与构建修复"
   },
   "downloadUrl": {
-    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.46-p2.3.exe",
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.47-p3.1.exe",
     "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
   }
 }

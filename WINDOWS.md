@@ -1,6 +1,6 @@
 # Echo Loop Windows（非官方本地优先版）
 
-本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于上游 v1.0.46。与原作者及中央民族大学无隶属关系。
+本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于上游 v1.0.47。与原作者及中央民族大学无隶属关系。
 
 ## 这个分支改了什么
 
@@ -15,6 +15,9 @@
 - **系统媒体控制（SMTC）**：通过 `audio_service_win` 接入 Windows「正在播放」卡片，显示标题 / 艺术家，支持硬件媒体键与系统播放 / 暂停 / 上一句 / 下一句。
 - **托盘与开机自启**：设置 → 桌面，可开启「关闭窗口时最小化到托盘」和「开机自动启动」（默认关闭；自启写入 HKCU Run，安装包卸载时清理）。
 - **更新检查**：Windows 分支从本仓库 Release 的 `version-windows.json` 检查新版本；发现新版本时提示并可打开安装包下载。当前不静默安装（尚未代码签名）。
+- **每日学习目标 / 打卡**：新增每日目标设置、自动打卡、学习日历与今日卡片进度；目标随偏好同步。
+- **今日打卡分享**：官方打卡卡片分享功能已同步；分享依赖登录，Windows 本地版未登录时会隐藏分享入口。
+- **官方同步**：已同步上游 v1.0.47 的非账号功能（每日目标/打卡/分享、词典更名、Onboarding、构建修复）；头像/昵称/账号页等账号资料更新未合并。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -25,13 +28,13 @@
 
 便携版：
 
-1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p2.2.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.1.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.46-p2.2.exe`）。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.47-p3.1.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -67,7 +70,7 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.46.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p2.2` 后缀的文件。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.47.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.1` 后缀的文件。
 
 ### 发布新版本
 
@@ -84,7 +87,7 @@ flutter build windows --release
 .\scripts\sign_windows.ps1 -PfxPath D:\certs\echoloop.pfx -PfxPassword "你的证书密码"
 ```
 
-脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.46.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
+脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.47.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
 
 ## 已知限制
 
@@ -94,6 +97,9 @@ flutter build windows --release
 - Windows 通知已接入调度，但实际 Toast 展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
 - 应用未做代码签名（签名脚本已就绪，需要自备受信任证书）。
 - 自动更新目前是「自动检查 + 提示 + 打开安装包下载」，不会静默下载安装；`version-windows.json` 需要在每个 Release 上传并更新版本。
+- 每日打卡分享依赖登录，Windows 本地版没有账号登录，因此分享入口不可用；每日目标、自动打卡和学习日历可离线使用。
+- 官方账号资料（头像 / 昵称 / 账号页）更新未合并。
+- Windows 构建使用随仓库携带的 `sqlite3.dll`，避免 native asset hook 下载 GitHub 超时。
 - SMTC 已支持元数据与播放控制，但不提供进度条拖动（`audio_service_win` 未同步 timeline）。
 - 托盘 / 开机自启已实现但需要人工回归托盘菜单、系统托盘溢出区与注销 / 重启后的自启行为；便携版移动目录后自启路径会失效，请关闭再重新开启。
 - 关闭到托盘启用时，关闭按钮会隐藏窗口而不是退出；退出请用托盘菜单「退出 Echo Loop」。
