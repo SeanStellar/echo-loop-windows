@@ -512,20 +512,6 @@ class IntensiveListenPlayer extends _$IntensiveListenPlayer {
     _setAnnotationPhase(const InspectingAnnotation());
   }
 
-  Future<void> exitAnnotationMode() async {
-    if (state.annotationState == null ||
-        state.annotationState?.phase is WaitingAnnotationPageTransition) {
-      return;
-    }
-    stopSenseGroupPlayback();
-    // “继续”始终只重播一次，再沿用原有自动推进流程。
-    await _startInlineAnnotationReplay(
-      repeatCount: 1,
-      advanceAfterReplay: true,
-      showReplayStatus: true,
-    );
-  }
-
   /// 盲听模式下用户接管流程。
   void enterWaitingForUserInBlindMode() {
     if (state.annotationState != null) return;
@@ -546,8 +532,14 @@ class IntensiveListenPlayer extends _$IntensiveListenPlayer {
       return;
     }
 
+    // 如果会话内部句正在播放，用户点击工具栏时只登记“播完后等待”，不要立刻改状态；
+    // 否则 isPlaying 会先变 false，底部播放/暂停按钮图标会短暂跳变。
     final phase = state.annotationState!.phase;
-    if (phase is ReplayingWithSubtitle) {
+    final isAnnotationSentencePlaying =
+        state.isPlaying &&
+        _annotationSentencePlaybackSessionId != null &&
+        _annotationSentencePlaybackSessionId == _annotationSessionId;
+    if (phase is ReplayingWithSubtitle || isAnnotationSentencePlaying) {
       _annotationWaitAfterCurrentPlayback = true;
       AppLogger.log('IntensiveAnnotation', '-> WaitingForUser (after replay)');
       return;
@@ -557,6 +549,21 @@ class IntensiveListenPlayer extends _$IntensiveListenPlayer {
       _setAnnotationPhase(const WaitingAnnotationUser());
       return;
     }
+    _setAnnotationPhase(const WaitingAnnotationUser());
+  }
+
+  /// 点击意群 badge 时调用：立即停止句子播放，让位给意群试听。
+  ///
+  /// 与 [onAnnotationUserInteraction] 不同，这里不能「播完后再等待」：意群区间会
+  /// 抢占同一音频引擎，句子根本播不完，等待标志会残留到下一次播放。
+  void interruptAnnotationForSenseGroup() {
+    if (state.annotationState == null) return;
+    if (state.annotationState?.phase is WaitingAnnotationPageTransition) {
+      return;
+    }
+
+    stopSenseGroupPlayback();
+    _cleanupAnnotationSession();
     _setAnnotationPhase(const WaitingAnnotationUser());
   }
 

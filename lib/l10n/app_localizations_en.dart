@@ -714,6 +714,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t complete this action. Please try again.';
 
   @override
+  String get sentenceAudioUnavailable =>
+      'The audio file is unavailable, so it can\'t be played.';
+
+  @override
+  String get sentenceDetailLoadFailed =>
+      'Couldn\'t load the transcript. Please try again.';
+
+  @override
+  String get sentenceDetailRetry => 'Retry';
+
+  @override
   String get hotkeyReplay => 'R: Replay';
 
   @override
@@ -1402,9 +1413,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get intensiveListenWordDictNotFound => 'Word not found in dictionary';
-
-  @override
-  String get intensiveListenContinue => 'Next';
 
   @override
   String get intensiveListenReplayingWithSubtitle =>
@@ -4495,6 +4503,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show the weekly study time chart on the Study page';
 
   @override
+  String get showPlaybackSpeedButtonToggle => 'Show playback speed button';
+
+  @override
+  String get showPlaybackSpeedButtonSubtitle =>
+      'Show the playback speed button in the playback controls of learning tasks.';
+
+  @override
+  String get playbackSpeedDragHint => 'Slide left or right · release to apply';
+
+  @override
   String get hideWeeklyChartTooltip => 'Hide weekly chart';
 
   @override
@@ -5934,7 +5952,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareCardNoAlternative => 'No other cards are available.';
 
   @override
-  String get shareCardSave => 'Save to Photos';
+  String get shareCardSave => 'Save';
 
   @override
   String get shareCardSaveDesktop => 'Save image';

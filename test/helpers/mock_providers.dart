@@ -314,6 +314,7 @@ List<Override> learningSettingsOverrides({
   bool pdfExportReminderShown = false,
   bool unclearAutoSaveReminderShown = false,
   bool podcastTranscriptReminderShown = false,
+  bool showPlaybackSpeedButton = false,
   SharedPreferences? prefs,
 }) {
   return [
@@ -332,6 +333,7 @@ List<Override> learningSettingsOverrides({
         pdfExportReminderShown: pdfExportReminderShown,
         unclearAutoSaveReminderShown: unclearAutoSaveReminderShown,
         podcastTranscriptReminderShown: podcastTranscriptReminderShown,
+        showPlaybackSpeedButton: showPlaybackSpeedButton,
       ),
     ),
     if (prefs != null) sharedPreferencesProvider.overrideWithValue(prefs),

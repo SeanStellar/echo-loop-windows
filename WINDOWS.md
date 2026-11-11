@@ -17,7 +17,7 @@
 - **更新检查**：Windows 分支从本仓库 Release 的 `version-windows.json` 检查新版本；发现新版本时提示并可打开安装包下载。当前不静默安装（尚未代码签名）。
 - **每日学习目标 / 打卡**：新增每日目标设置、自动打卡、学习日历与今日卡片进度；目标随偏好同步。
 - **今日打卡分享**：官方打卡卡片分享功能已同步；分享依赖登录，Windows 本地版未登录时会隐藏分享入口。
-- **官方同步**：已同步上游 v1.0.47 的非账号功能（每日目标/打卡/分享、词典更名、Onboarding、构建修复）；头像/昵称/账号页等账号资料更新未合并。
+- **官方同步**：已同步上游 v1.0.47 的非账号功能（每日目标/打卡/分享、词典更名、Onboarding、字号/排版、倍速播放、网盘分页等）；头像/昵称/账号页等账号资料更新未合并。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -28,13 +28,13 @@
 
 便携版：
 
-1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.1.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.2.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.47-p3.1.exe`）。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.47-p3.2.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -70,7 +70,7 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.47.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.1` 后缀的文件。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.47.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.2` 后缀的文件。
 
 ### 发布新版本
 

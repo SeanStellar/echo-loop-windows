@@ -1364,6 +1364,24 @@ abstract class AppLocalizations {
   /// **'Couldn\'t complete this action. Please try again.'**
   String get sentenceMenuActionFailed;
 
+  /// No description provided for @sentenceAudioUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The audio file is unavailable, so it can\'t be played.'**
+  String get sentenceAudioUnavailable;
+
+  /// No description provided for @sentenceDetailLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the transcript. Please try again.'**
+  String get sentenceDetailLoadFailed;
+
+  /// No description provided for @sentenceDetailRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get sentenceDetailRetry;
+
   /// No description provided for @hotkeyReplay.
   ///
   /// In en, this message translates to:
@@ -2557,12 +2575,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Word not found in dictionary'**
   String get intensiveListenWordDictNotFound;
-
-  /// No description provided for @intensiveListenContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get intensiveListenContinue;
 
   /// No description provided for @intensiveListenReplayingWithSubtitle.
   ///
@@ -7850,6 +7862,24 @@ abstract class AppLocalizations {
   /// **'Show the weekly study time chart on the Study page'**
   String get showWeeklyChartSubtitle;
 
+  /// No description provided for @showPlaybackSpeedButtonToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show playback speed button'**
+  String get showPlaybackSpeedButtonToggle;
+
+  /// No description provided for @showPlaybackSpeedButtonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the playback speed button in the playback controls of learning tasks.'**
+  String get showPlaybackSpeedButtonSubtitle;
+
+  /// No description provided for @playbackSpeedDragHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Slide left or right · release to apply'**
+  String get playbackSpeedDragHint;
+
   /// No description provided for @hideWeeklyChartTooltip.
   ///
   /// In en, this message translates to:
@@ -10445,7 +10475,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareCardSave.
   ///
   /// In en, this message translates to:
-  /// **'Save to Photos'**
+  /// **'Save'**
   String get shareCardSave;
 
   /// No description provided for @shareCardSaveDesktop.

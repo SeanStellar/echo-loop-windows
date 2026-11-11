@@ -6,7 +6,7 @@
     "zh": "- 每日学习目标、自动打卡与学习日历\n- 今日打卡分享（需要登录）\n- 引导页来源渠道新增 AI 助手\n- 默认词典更名为基础词典\n- Windows 本地优先分支更新与构建修复"
   },
   "downloadUrl": {
-    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.47-p3.1.exe",
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.47-p3.2.exe",
     "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
   }
 }
