@@ -49,7 +49,11 @@ class DictionaryResultView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     switch (sourceId) {
       case 'local':
-        return LocalDictResultView(state: state, word: word);
+        return LocalDictResultView(
+          state: state,
+          word: word,
+          onRetry: onRetry,
+        );
       case 'ai':
         return AiDictResultView(
           state: state,

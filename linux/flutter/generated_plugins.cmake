@@ -3,21 +3,22 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  app_links_linux
   charset_converter
   ffmpeg_kit_flutter_new_min
+  file_selector_linux
   flutter_secure_storage_linux
   flutter_timezone
+  gtk
   media_kit_libs_linux
   media_kit_video
   printing
+  record_linux
   screen_retriever_linux
   url_launcher_linux
   window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  jni
   sherpa_onnx_linux
 )
 

@@ -23,7 +23,9 @@ import 'package:echo_loop/models/audio_engine_state.dart';
 import 'package:echo_loop/models/audio_item.dart';
 import 'package:echo_loop/models/speech_practice_models.dart';
 import 'package:echo_loop/providers/app_update_provider.dart';
+import 'package:echo_loop/providers/dictionary/dictionary_registry.dart';
 import 'package:echo_loop/providers/dictionary_provider.dart';
+import 'package:echo_loop/services/dictionary_service.dart';
 import 'package:echo_loop/providers/notification_permission_provider.dart';
 import 'package:echo_loop/providers/offline_asr_settings_provider.dart';
 import 'package:echo_loop/providers/retell_recording_controller_provider.dart';
@@ -274,6 +276,23 @@ Override notificationPermissionOverride() {
 }
 
 // ========== 词典 ==========
+
+class MockDictionaryService extends Mock implements DictionaryService {}
+
+/// 返回离线基础词典服务的 override。未传入 [service] 时使用默认桩：所有词均未收录。
+Override dictionaryServiceOverride([DictionaryService? service]) {
+  return dictionaryServiceProvider.overrideWithValue(
+    service ?? _unmatchedDictionaryService(),
+  );
+}
+
+DictionaryService _unmatchedDictionaryService() {
+  final service = MockDictionaryService();
+  when(() => service.lookup(any())).thenReturn(null);
+  when(() => service.lookupAll(any())).thenReturn(const {});
+  when(() => service.readCachedAll(any())).thenAnswer((_) async => const {});
+  return service;
+}
 
 /// 返回 dictionaryProvider 的 override
 Override dictionaryOverride({

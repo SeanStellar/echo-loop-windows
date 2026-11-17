@@ -44,7 +44,7 @@ final class AppUpdateProvider
   }
 }
 
-String _$appUpdateHash() => r'366bfdcf4f8a05bd5f9aa3b96b6625770e47d797';
+String _$appUpdateHash() => r'bbac9c322825d36b822ccf3dcd5f69d4890f710d';
 
 /// App 版本更新 Provider
 

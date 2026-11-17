@@ -2,7 +2,7 @@
 ; Build with: ISCC.exe installer\windows\EchoLoop.iss
 
 #define MyAppName "Echo Loop Windows"
-#define MyAppVersion "1.0.47"
+#define MyAppVersion "1.0.48"
 #define MyAppPublisher "SeanStellar (unofficial fork)"
 #define MyAppURL "https://github.com/SeanStellar/echo-loop-windows"
 #define MyAppExeName "echo_loop.exe"

@@ -168,7 +168,7 @@ final class PodcastDownloadControllerProvider
 }
 
 String _$podcastDownloadControllerHash() =>
-    r'62f2a02a4129f020df4baf5d42794befc0e8ab69';
+    r'32451b8543a7704950ac212cbc272ca674803f84';
 
 /// Podcast 单集懒下载控制器。
 ///

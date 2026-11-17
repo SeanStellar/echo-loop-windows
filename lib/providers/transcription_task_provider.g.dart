@@ -221,7 +221,7 @@ final class TranscriptionTaskManagerProvider
 }
 
 String _$transcriptionTaskManagerHash() =>
-    r'94a131e206d816b776d31f9083ba2ef3b8b38cce';
+    r'71bc60e805e804b2473f5c90e5a7372bea82a2de';
 
 /// 转录任务管理器
 ///

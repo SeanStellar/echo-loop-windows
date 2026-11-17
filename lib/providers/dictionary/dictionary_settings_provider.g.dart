@@ -45,7 +45,7 @@ final class DictionarySettingsNotifierProvider
 }
 
 String _$dictionarySettingsNotifierHash() =>
-    r'eb577935e7d61e573232503a7cef4c6c555878b9';
+    r'49aa7a10a5e5b53cf40eb917ad254978cfb01a14';
 
 /// 词典设置 Notifier
 

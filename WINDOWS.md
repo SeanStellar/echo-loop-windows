@@ -1,6 +1,6 @@
 # Echo Loop Windows（非官方本地优先版）
 
-本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于上游 v1.0.47。与原作者及中央民族大学无隶属关系。
+本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于上游 v1.0.47，并已同步官方主线 v1.0.48 在途 70 个提交。与原作者及中央民族大学无隶属关系。
 
 ## 这个分支改了什么
 
@@ -17,7 +17,7 @@
 - **更新检查**：Windows 分支从本仓库 Release 的 `version-windows.json` 检查新版本；发现新版本时提示并可打开安装包下载。当前不静默安装（尚未代码签名）。
 - **每日学习目标 / 打卡**：新增每日目标设置、自动打卡、学习日历与今日卡片进度；目标随偏好同步。
 - **今日打卡分享**：官方打卡卡片分享功能已同步；分享依赖登录，Windows 本地版未登录时会隐藏分享入口。
-- **官方同步**：已同步上游 v1.0.47 的非账号功能（每日目标/打卡/分享、词典更名、Onboarding、字号/排版、倍速播放、网盘分页等）；头像/昵称/账号页等账号资料更新未合并。
+- **官方同步（P3.3）**：已同步上游 v1.0.48 在途 70 个提交的非账号功能：资源库/合集搜索、OPUS/OGG/WEBM/AVI 导入、合集学习进度、收藏词汇 AI 查词与手动查词、收藏句/词汇 PDF 导出、段落复述「看译文」、字幕字号/粗细与译文、视频字幕遮罩、全部学习任务视频自适应分栏、媒体剪辑、本地合集自定义封面、打卡庆祝动画/音效与下载重试修复。此前 v1.0.47 的每日目标/打卡/分享、Onboarding、字号/排版、倍速播放等也已包含；头像/昵称/账号页与「用量与额度」等账号功能仍未合并。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -28,13 +28,13 @@
 
 便携版：
 
-1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.2.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.3.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.47-p3.2.exe`）。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.48-p3.3.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -70,11 +70,11 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.47.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.2` 后缀的文件。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.48.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.3` 后缀的文件。
 
 ### 发布新版本
 
-1. 更新 `pubspec.yaml` 的版本号（例如 1.0.47），重新构建 Release / 安装程序 / 便携包。
+1. 更新 `pubspec.yaml` 的版本号（例如 1.0.48），重新构建 Release / 安装程序 / 便携包。
 2. 更新根目录 `version-windows.json`：`latestVersion` 填新版本，`minimumVersion` 填仍兼容的最低版本，`downloadUrl.windows` 指向新安装包。
 3. 把便携包、安装程序与 `version-windows.json` 一起上传到新的 GitHub Release；应用会通过 `releases/latest/download/version-windows.json` 读取更新。
 4. 可用 `--dart-define=WINDOWS_UPDATE_MANIFEST_URL=...` 指向镜像或本地清单做测试。
@@ -87,7 +87,7 @@ flutter build windows --release
 .\scripts\sign_windows.ps1 -PfxPath D:\certs\echoloop.pfx -PfxPassword "你的证书密码"
 ```
 
-脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.47.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
+脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.48.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
 
 ## 已知限制
 
@@ -99,6 +99,8 @@ flutter build windows --release
 - 自动更新目前是「自动检查 + 提示 + 打开安装包下载」，不会静默下载安装；`version-windows.json` 需要在每个 Release 上传并更新版本。
 - 每日打卡分享依赖登录，Windows 本地版没有账号登录，因此分享入口不可用；每日目标、自动打卡和学习日历可离线使用。
 - 官方账号资料（头像 / 昵称 / 账号页）更新未合并。
+- 账户页「用量与额度」及账号资料仍不提供；Windows 本地版无账号额度概念。
+- 媒体剪辑、本地合集自定义封面、视频自适应分栏与字幕遮罩来自官方 v1.0.48 在途版本，已通过构建与单元测试，真实视频、相册选图与长素材剪辑仍需人工验收。
 - Windows 构建使用随仓库携带的 `sqlite3.dll`，避免 native asset hook 下载 GitHub 超时。
 - SMTC 已支持元数据与播放控制，但不提供进度条拖动（`audio_service_win` 未同步 timeline）。
 - 托盘 / 开机自启已实现但需要人工回归托盘菜单、系统托盘溢出区与注销 / 重启后的自启行为；便携版移动目录后自启路径会失效，请关闭再重新开启。

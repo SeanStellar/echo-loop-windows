@@ -8,9 +8,12 @@ import 'daos/audio_item_dao.dart';
 import 'daos/collection_dao.dart';
 import 'daos/bookmark_dao.dart';
 import 'daos/playback_state_dao.dart';
+import 'daos/video_subtitle_mask_dao.dart';
 import 'daos/learning_progress_dao.dart';
 import 'daos/stage_completion_dao.dart';
 import 'daos/tag_dao.dart';
+import 'daos/dictionary_cache_dao.dart';
+import 'daos/lookup_history_dao.dart';
 import 'daos/sentence_ai_cache_dao.dart';
 import 'daos/saved_word_dao.dart';
 import 'daos/saved_sense_group_dao.dart';
@@ -125,6 +128,8 @@ void switchAppDatabase(
   invalidate(sentenceAiNotifierProvider);
   // AI 词典源（keepAlive）持有 L1 内存缓存，切库后须重建以丢弃旧库结果
   invalidate(aiDictionarySourceProvider);
+  // 在线词典服务持有缓存 DAO，切库后须重建以指向新库
+  invalidate(dictionaryServiceProvider);
 }
 
 /// 数据库 Provider
@@ -154,6 +159,11 @@ final playbackStateDaoProvider = Provider<PlaybackStateDao>((ref) {
   return ref.watch(appDatabaseProvider).playbackStateDao;
 });
 
+/// VideoSubtitleMask DAO Provider
+final videoSubtitleMaskDaoProvider = Provider<VideoSubtitleMaskDao>((ref) {
+  return ref.watch(appDatabaseProvider).videoSubtitleMaskDao;
+});
+
 /// LearningProgress DAO Provider
 final learningProgressDaoProvider = Provider<LearningProgressDao>((ref) {
   return ref.watch(appDatabaseProvider).learningProgressDao;
@@ -172,6 +182,16 @@ final tagDaoProvider = Provider<TagDao>((ref) {
 /// SentenceAiCache DAO Provider
 final sentenceAiCacheDaoProvider = Provider<SentenceAiCacheDao>((ref) {
   return ref.watch(appDatabaseProvider).sentenceAiCacheDao;
+});
+
+/// DictionaryCache DAO Provider
+final dictionaryCacheDaoProvider = Provider<DictionaryCacheDao>((ref) {
+  return ref.watch(appDatabaseProvider).dictionaryCacheDao;
+});
+
+/// 手动查词历史 DAO Provider
+final lookupHistoryDaoProvider = Provider<LookupHistoryDao>((ref) {
+  return ref.watch(appDatabaseProvider).lookupHistoryDao;
 });
 
 /// SavedWord DAO Provider

@@ -49,7 +49,7 @@ final class ListenAndRepeatControllerProvider
 }
 
 String _$listenAndRepeatControllerHash() =>
-    r'b8cfbb0a69980a1f0d03cbc47c5bf55adcb076f1';
+    r'cfac6fbd542bf66b06e1921bca6c3a465dd26c37';
 
 /// 跟读会话控制器
 

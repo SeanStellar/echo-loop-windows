@@ -12,8 +12,8 @@ import '../../l10n/app_localizations.dart';
 import '../../models/dict_entry.dart';
 import '../../models/dictionary/dictionary_lookup_result.dart';
 import '../../providers/dictionary/lookup_controller.dart';
+import '../../providers/dictionary/dictionary_registry.dart';
 import '../../providers/dictionary_provider.dart';
-import '../../services/dictionary_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/text_normalize.dart';
 import 'pos_tag.dart';
@@ -26,10 +26,14 @@ class LocalDictResultView extends ConsumerWidget {
   /// 归一化后的查询词（表面词形），用于本地词典的精确结果展示。
   final String word;
 
+  /// 失败后的重试回调；为空时不显示重试按钮。
+  final VoidCallback? onRetry;
+
   const LocalDictResultView({
     super.key,
     required this.state,
     required this.word,
+    this.onRetry,
   });
 
   @override
@@ -37,7 +41,8 @@ class LocalDictResultView extends ConsumerWidget {
     final theme = Theme.of(context);
 
     // 词典未就绪：显示下载/下载中/失败入口（仅此分支才订阅下载状态）
-    if (!DictionaryService.instance.isAvailable) {
+    final dictionaryService = ref.watch(dictionaryServiceProvider);
+    if (!dictionaryService.isAvailable) {
       final dictState = ref.watch(dictionaryProvider);
       return _buildDictUnavailable(context, ref, theme, dictState);
     }
@@ -48,6 +53,9 @@ class LocalDictResultView extends ConsumerWidget {
     }
     if (s is LookupNotFound) {
       return _buildNotFound(context, theme);
+    }
+    if (s is LookupError) {
+      return _buildError(context, theme);
     }
     // Loading / Idle / 其它
     return const Padding(
@@ -97,6 +105,32 @@ class LocalDictResultView extends ConsumerWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  /// 查询失败提示 + 重试
+  Widget _buildError(BuildContext context, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, size: 16, color: theme.colorScheme.error),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.dictionaryLookupFailed,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ),
+          if (onRetry case final retry?)
+            TextButton(
+              onPressed: retry,
+              child: Text(AppLocalizations.of(context)!.retry),
+            ),
         ],
       ),
     );

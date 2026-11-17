@@ -80,7 +80,7 @@ final class MonthlyStudyRecordsProvider
 }
 
 String _$monthlyStudyRecordsHash() =>
-    r'3b05a4e497835f71794d7ac4580ab82aee563e26';
+    r'7e2a04bd6e85ef791d8b647868b86a614980a1c4';
 
 /// 查询指定月份的每日学习记录
 ///

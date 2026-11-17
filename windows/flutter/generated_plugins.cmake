@@ -4,9 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  audio_service_win
   charset_converter
   connectivity_plus
   ffmpeg_kit_flutter_new_min
+  file_selector_windows
   firebase_core
   flutter_inappwebview_windows
   flutter_secure_storage_windows
@@ -26,7 +28,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
   flutter_local_notifications_windows
-  jni
   sherpa_onnx_windows
 )
 

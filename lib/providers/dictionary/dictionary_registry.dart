@@ -19,10 +19,14 @@ import '../../services/sentence_ai_api_client.dart';
 
 part 'dictionary_registry.g.dart';
 
+/// 离线基础词典服务（单例；Windows 本地版不依赖在线词典缓存）
+@Riverpod(keepAlive: true)
+DictionaryService dictionaryService(Ref ref) => DictionaryService.instance;
+
 /// 本地词典源
 @Riverpod(keepAlive: true)
 LocalDictionarySource localDictionarySource(Ref ref) =>
-    LocalDictionarySource(DictionaryService.instance);
+    LocalDictionarySource(ref.watch(dictionaryServiceProvider));
 
 /// AI 词典源
 ///

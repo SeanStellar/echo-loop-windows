@@ -43,7 +43,7 @@ final class StudyStatsNotifierProvider
 }
 
 String _$studyStatsNotifierHash() =>
-    r'10eff22265d975cc3c259eb7cf54d92e838e27ee';
+    r'6cd16367b66f57d5cd0b94435dca02b4c996cb6a';
 
 /// 学习统计 Provider
 ///

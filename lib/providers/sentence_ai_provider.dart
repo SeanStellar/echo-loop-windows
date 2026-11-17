@@ -331,6 +331,7 @@ class SentenceAiNotifier {
         );
         if (translation.translation.isNotEmpty) {
           _translationCache[cacheKey] = translation;
+          AppLogger.log('SentenceAI', '翻译命中数据库缓存 key=${aiCacheLogKey(hash)}');
           yield translation;
           return;
         }
@@ -353,10 +354,12 @@ class SentenceAiNotifier {
 
     final existing = _pendingTranslations[cacheKey];
     if (existing != null) {
+      AppLogger.log('SentenceAI', '翻译复用进行中请求 key=${aiCacheLogKey(hash)}');
       yield* existing.subscribe();
       return;
     }
 
+    AppLogger.log('SentenceAI', '翻译发起网络请求 key=${aiCacheLogKey(hash)}');
     final pending = _PendingTranslationStream();
     _pendingTranslations[cacheKey] = pending;
     unawaited(
@@ -388,6 +391,8 @@ class SentenceAiNotifier {
     required String accessToken,
   }) async {
     SentenceTranslation? finalTranslation;
+    final stopwatch = Stopwatch()..start();
+    var wroteCache = false;
     try {
       var attempt = 0;
       while (true) {
@@ -452,6 +457,12 @@ class SentenceAiNotifier {
         );
         await _onApiSucceeded?.call(PremiumFeature.aiTranslation);
         _onConsumeTrial?.call(PremiumFeature.aiTranslation);
+        wroteCache = true;
+        AppLogger.log(
+          'SentenceAI',
+          '翻译完成并写入缓存 key=${aiCacheLogKey(hash)} '
+              'elapsedMs=${stopwatch.elapsedMilliseconds}',
+        );
       }
       await pending.close();
     } catch (e, stackTrace) {
@@ -461,6 +472,10 @@ class SentenceAiNotifier {
         await pending.addError(e, stackTrace);
       }
     } finally {
+      // 写入缓存后最后一个订阅者离开同样会触发取消令牌，此时不算请求被取消。
+      if (pending.cancelToken.isCancelled && !wroteCache) {
+        AppLogger.log('SentenceAI', '翻译请求已取消，未写入缓存 key=${aiCacheLogKey(hash)}');
+      }
       _pendingTranslations.remove(cacheKey);
     }
   }
@@ -500,6 +515,7 @@ class SentenceAiNotifier {
         );
         if (analysis.isNotEmpty) {
           _analysisCache[cacheKey] = analysis;
+          AppLogger.log('SentenceAI', '解析命中数据库缓存 key=${aiCacheLogKey(hash)}');
           yield analysis;
           return;
         }
@@ -522,10 +538,12 @@ class SentenceAiNotifier {
 
     final existing = _pendingAnalyses[cacheKey];
     if (existing != null) {
+      AppLogger.log('SentenceAI', '解析复用进行中请求 key=${aiCacheLogKey(hash)}');
       yield* existing.subscribe();
       return;
     }
 
+    AppLogger.log('SentenceAI', '解析发起网络请求 key=${aiCacheLogKey(hash)}');
     final pending = _PendingAnalysisStream();
     _pendingAnalyses[cacheKey] = pending;
     unawaited(
@@ -553,6 +571,8 @@ class SentenceAiNotifier {
     required String accessToken,
   }) async {
     SentenceAnalysis? finalAnalysis;
+    final stopwatch = Stopwatch()..start();
+    var wroteCache = false;
     try {
       var attempt = 0;
       while (true) {
@@ -612,6 +632,12 @@ class SentenceAiNotifier {
         );
         await _onApiSucceeded?.call(PremiumFeature.aiAnalysis);
         _onConsumeTrial?.call(PremiumFeature.aiAnalysis);
+        wroteCache = true;
+        AppLogger.log(
+          'SentenceAI',
+          '解析完成并写入缓存 key=${aiCacheLogKey(hash)} '
+              'elapsedMs=${stopwatch.elapsedMilliseconds}',
+        );
       } else if (finalAnalysis != null) {
         AppLogger.log('SentenceAI', '解析最终结果为空，不落缓存（可重试）');
       }
@@ -623,6 +649,10 @@ class SentenceAiNotifier {
         await pending.addError(e, stackTrace);
       }
     } finally {
+      // 写入缓存后最后一个订阅者离开同样会触发取消令牌，此时不算请求被取消。
+      if (pending.cancelToken.isCancelled && !wroteCache) {
+        AppLogger.log('SentenceAI', '解析请求已取消，未写入缓存 key=${aiCacheLogKey(hash)}');
+      }
       _pendingAnalyses.remove(cacheKey);
     }
   }
@@ -663,6 +693,7 @@ class SentenceAiNotifier {
         );
         if (result.medium.isNotEmpty) {
           _senseGroupCache[hash] = result;
+          AppLogger.log('SenseGroup', '意群命中数据库缓存 key=${aiCacheLogKey(hash)}');
           yield result;
           return;
         }
@@ -688,10 +719,12 @@ class SentenceAiNotifier {
 
     final existing = _pendingSenseGroups[hash];
     if (existing != null) {
+      AppLogger.log('SenseGroup', '意群复用进行中请求 key=${aiCacheLogKey(hash)}');
       yield* existing.subscribe();
       return;
     }
 
+    AppLogger.log('SenseGroup', '意群发起网络请求 key=${aiCacheLogKey(hash)}');
     final pending = _PendingSenseGroupStream();
     _pendingSenseGroups[hash] = pending;
     unawaited(
@@ -713,6 +746,8 @@ class SentenceAiNotifier {
     required String accessToken,
   }) async {
     SenseGroupResult? finalResult;
+    final stopwatch = Stopwatch()..start();
+    var wroteCache = false;
     try {
       var attempt = 0;
       while (true) {
@@ -775,6 +810,12 @@ class SentenceAiNotifier {
         );
         await _onApiSucceeded?.call(PremiumFeature.aiSenseGroup);
         _onConsumeTrial?.call(PremiumFeature.aiSenseGroup);
+        wroteCache = true;
+        AppLogger.log(
+          'SenseGroup',
+          '意群完成并写入缓存 key=${aiCacheLogKey(hash)} '
+              'elapsedMs=${stopwatch.elapsedMilliseconds}',
+        );
       } else if (finalResult != null) {
         AppLogger.log('SenseGroup', '最终结果空或 concat 校验失败，不落缓存（可重试）');
       }
@@ -786,6 +827,10 @@ class SentenceAiNotifier {
         await pending.addError(e, stackTrace);
       }
     } finally {
+      // 写入缓存后最后一个订阅者离开同样会触发取消令牌，此时不算请求被取消。
+      if (pending.cancelToken.isCancelled && !wroteCache) {
+        AppLogger.log('SenseGroup', '意群请求已取消，未写入缓存 key=${aiCacheLogKey(hash)}');
+      }
       _pendingSenseGroups.remove(hash);
     }
   }
@@ -951,6 +996,10 @@ class SentenceAiNotifier {
     );
   }
 }
+
+/// 日志用的短缓存键：同一句在预热、卡片请求与缓存命中各条日志间可对上，且不记录句子原文。
+String aiCacheLogKey(String hash) =>
+    hash.length <= 8 ? hash : hash.substring(0, 8);
 
 /// SentenceAiNotifier Provider
 final sentenceAiNotifierProvider = Provider<SentenceAiNotifier>((ref) {

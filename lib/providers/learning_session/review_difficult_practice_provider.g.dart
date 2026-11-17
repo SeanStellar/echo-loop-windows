@@ -49,7 +49,7 @@ final class ReviewDifficultPracticeProvider
 }
 
 String _$reviewDifficultPracticeHash() =>
-    r'4505c79a8036ba3156f463083c31cf89745a7161';
+    r'0a71049e3ebe8a7c665aef8af75c29454d7b958b';
 
 /// 难句补练 Provider
 

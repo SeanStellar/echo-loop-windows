@@ -191,6 +191,13 @@ class DictionaryService {
     return result;
   }
 
+  /// 只读本地词典缓存。
+  ///
+  /// 离线词典本身就是本地库，与 [lookupAll] 等价；供收藏导出等
+  /// 只读场景使用，语义上保证不会发起网络请求。
+  Future<Map<String, DictEntry>> readCachedAll(List<String> words) async =>
+      lookupAll(words);
+
   /// 释放资源
   void dispose() {
     _db?.close();

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as p;
 
 import 'package:echo_loop/database/app_database.dart';
 import 'package:echo_loop/database/daos/audio_item_dao.dart';
@@ -21,6 +22,7 @@ import 'package:echo_loop/database/providers.dart';
 import 'package:echo_loop/l10n/app_localizations.dart';
 import 'package:echo_loop/providers/audio_engine/audio_engine_provider.dart';
 import 'package:echo_loop/providers/short_audio_player_provider.dart';
+import 'package:echo_loop/providers/dictionary/visible_sources_provider.dart';
 import 'package:echo_loop/providers/pronunciation/pronunciation_providers.dart';
 import 'package:echo_loop/providers/sentence_ai_provider.dart';
 import 'package:echo_loop/providers/tts/tts_controller_provider.dart';
@@ -377,6 +379,8 @@ void main() {
       overrides: dedupeOverrides([
         analyticsOverride(),
         ...studyTimeOverrides(),
+        dictionaryServiceOverride(DictionaryService.instance),
+        visibleDictionarySourcesProvider.overrideWithValue(const []),
         bookmarkDaoProvider.overrideWithValue(_TestBookmarkDao(bookmarkC)),
         savedWordDaoProvider.overrideWithValue(_TestSavedWordDao(wordC)),
         savedSenseGroupDaoProvider.overrideWithValue(
@@ -698,7 +702,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(shortAudioPlayer.openedPaths, [
-      '${appDataDir.path}/audios/audio-1.m4a',
+      p.join(appDataDir.path, 'audios/audio-1.m4a'),
     ]);
     expect(shortAudioPlayer.openedStarts, [const Duration(milliseconds: 1200)]);
   });
@@ -729,7 +733,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(shortAudioPlayer.openedPaths, [
-      '${appDataDir.path}/audios/audio-2.m4a',
+      p.join(appDataDir.path, 'audios/audio-2.m4a'),
     ]);
     expect(shortAudioPlayer.openedStarts, [const Duration(milliseconds: 4000)]);
   });

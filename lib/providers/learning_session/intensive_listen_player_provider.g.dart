@@ -42,7 +42,7 @@ final class IntensiveListenPlayerProvider
 }
 
 String _$intensiveListenPlayerHash() =>
-    r'443c5dc638da5a0cf82ae739fc81af8a42472372';
+    r'daa4585f443fc72b44296e29f4b8215c3e7ed7d2';
 
 abstract class _$IntensiveListenPlayer extends $Notifier<IntensiveListenState> {
   IntensiveListenState build();

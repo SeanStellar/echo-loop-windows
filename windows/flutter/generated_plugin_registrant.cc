@@ -7,9 +7,11 @@
 #include "generated_plugin_registrant.h"
 
 #include <app_links/app_links_plugin_c_api.h>
+#include <audio_service_win/audio_service_win_plugin_c_api.h>
 #include <charset_converter/charset_converter_plugin.h>
 #include <connectivity_plus/connectivity_plus_windows_plugin.h>
 #include <ffmpeg_kit_flutter_new_min/f_fmpeg_kit_flutter_plugin.h>
+#include <file_selector_windows/file_selector_windows.h>
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
@@ -29,12 +31,16 @@
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   AppLinksPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
+  AudioServiceWinPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AudioServiceWinPluginCApi"));
   CharsetConverterPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("CharsetConverterPlugin"));
   ConnectivityPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
   FFmpegKitFlutterPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FFmpegKitFlutterPlugin"));
+  FileSelectorWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FileSelectorWindows"));
   FirebaseCorePluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
   FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(

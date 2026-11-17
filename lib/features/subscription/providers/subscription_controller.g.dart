@@ -42,7 +42,7 @@ final class SubscriptionControllerProvider
 }
 
 String _$subscriptionControllerHash() =>
-    r'bb6fd108bed6e826febd0d2b0fb57363f4b0d474';
+    r'a91fa7ef9e6839995a783ccf730cd523138f8ce4';
 
 abstract class _$SubscriptionController extends $Notifier<EntitlementState> {
   EntitlementState build();

@@ -69,7 +69,7 @@ final class FeatureAccessProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$featureAccessHash() => r'a7c133c1b930b5a3b11bd5ae16beae40f93e64ac';
+String _$featureAccessHash() => r'cd57f0d0278b92f0427ab1ce96e347e2e8b80a7e';
 
 /// 某 [feature] 当前是否对用户可用。
 

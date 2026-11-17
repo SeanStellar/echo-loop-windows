@@ -4,6 +4,13 @@
 
 ## 本次完成
 
+- [x] 同步官方 v1.0.48 在途 70 个提交到 Windows 分支（2026-11-17，P3.3）：
+  - 同步范围：资源库/合集搜索、OPUS/OGG/WEBM/AVI 导入；合集学习进度、收藏词汇 AI 查词、手动查词与历史；收藏句/词汇 PDF 导出；段落复述「看译文」、字幕字号/粗细与译文、视频字幕遮罩；逐句精听等全部学习任务的视频自适应分栏；媒体剪辑、本地合集自定义封面；打卡庆祝动画/音效、评价提醒时机、下载失败重试等。
+  - 数据库：schema 66→69，新增 `lookup_histories`、`video_subtitle_masks` 与 `collections.local_cover_path`；现有用户库已在启动时自动迁移并验证。
+  - 适配：保留本 fork 的离线基础词典与自定义 AI 直连，新增 `DictionaryService.readCachedAll` 并让本地词典源改读 Provider；本地合集封面复用上游共享 1:1 裁图组件；排除账户「用量与额度」页及账号资料相关 UI；Windows 通知、托盘、更新、SMTC、自定义 AI 等 fork 能力保持不变。
+  - 验证：`flutter analyze lib test` 0 error；词典/收藏/PDF/新增功能与学习任务页面定向测试共 1000+ 项通过；Windows Release 构建成功（exe 版本 1.0.48，无 `kernel_blob.bin`），启动冒烟正常，日志确认数据库 v69 与 410 条本地音频加载；`media_playback_screen_test` 的临时视频文件占用失败为 Windows 主机既有环境问题。
+  - 版本 1.0.48，发布标签计划 `windows-v1.0.48-p3.3`；安装包与便携包已生成。**完成时间**: 2026-11-17
+
 - [x] 同步官方 v1.0.47 后续 17 个非账号提交（2026-11-10，P3.2）：
   - 内容：字号跟随系统 / 100% 档 16pt / 上限 150%、行高字距与解析样式修复；学习首页整卡点击；倍速按钮扩展到各学习任务、句子讲解页复用精听控制区；百度网盘目录分页取全；打卡分享方形导出、按本地日期请求；评价提醒状态弹窗与 Google Play 评价入口；构建修复。
   - 适配：补齐 `interruptAnnotationForSenseGroup` 等本 fork 基线缺失、但官方 v1.0.46 已含的注解交互方法；移除因官方删除 `exitAnnotationMode` 而失效的本 fork 旧测试，并保留官方新增的两条倍速/意群测试。

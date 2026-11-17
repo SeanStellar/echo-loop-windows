@@ -58,4 +58,4 @@ final class ChatApiClientProvider
   }
 }
 
-String _$chatApiClientHash() => r'dd1611b8b601913cb8bda794aea0fb01fb89e404';
+String _$chatApiClientHash() => r'fa12b13ff7790b1f5a219dc82f662a0d0d19f5c2';

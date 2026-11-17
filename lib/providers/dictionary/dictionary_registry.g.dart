@@ -8,6 +8,58 @@ part of 'dictionary_registry.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// 离线基础词典服务（单例；Windows 本地版不依赖在线词典缓存）
+
+@ProviderFor(dictionaryService)
+final dictionaryServiceProvider = DictionaryServiceProvider._();
+
+/// 离线基础词典服务（单例；Windows 本地版不依赖在线词典缓存）
+
+final class DictionaryServiceProvider
+    extends
+        $FunctionalProvider<
+          DictionaryService,
+          DictionaryService,
+          DictionaryService
+        >
+    with $Provider<DictionaryService> {
+  /// 离线基础词典服务（单例；Windows 本地版不依赖在线词典缓存）
+  DictionaryServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dictionaryServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dictionaryServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<DictionaryService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DictionaryService create(Ref ref) {
+    return dictionaryService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DictionaryService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DictionaryService>(value),
+    );
+  }
+}
+
+String _$dictionaryServiceHash() => r'2e5231ffe35d31e7e87a6f565ac1bcdc79c2e6d9';
+
 /// 本地词典源
 
 @ProviderFor(localDictionarySource)
@@ -118,7 +170,7 @@ final class AiDictionarySourceProvider
 }
 
 String _$aiDictionarySourceHash() =>
-    r'219e794f0e8acedb4ea21898e42b6872614a52ba';
+    r'05c37506bbc6272c6f6111919a39b95f76beb9e8';
 
 /// 网页词典源列表（由 [kWebDictConfigs] 配置生成：Cambridge / Oxford / ...）
 

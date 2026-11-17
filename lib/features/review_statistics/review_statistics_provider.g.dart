@@ -34,7 +34,7 @@ final class ReviewStatisticsNotifierProvider
 }
 
 String _$reviewStatisticsNotifierHash() =>
-    r'156bf95798451cd3f095e2789e2b20cd7440825f';
+    r'6ac407af9822e69c4a28cc5c9f8e236c60362e0e';
 
 abstract class _$ReviewStatisticsNotifier
     extends $AsyncNotifier<ReviewStatistics> {

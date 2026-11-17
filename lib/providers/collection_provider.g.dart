@@ -41,7 +41,7 @@ final class CollectionListProvider
   }
 }
 
-String _$collectionListHash() => r'75b648dc7c6e90ba2950df8f76688ed2d45c0167';
+String _$collectionListHash() => r'5a4feba570ec1171a0e25409df0596469164b8e5';
 
 abstract class _$CollectionList extends $Notifier<CollectionState> {
   CollectionState build();

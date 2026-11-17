@@ -44,7 +44,7 @@ final class RetellPlayerProvider
   }
 }
 
-String _$retellPlayerHash() => r'e76ec2be5b3a0cbcf94f87c7b166e089b0c51a13';
+String _$retellPlayerHash() => r'a8fdeb051c2ec498f9b52768a8be48ec80fa9b4c';
 
 /// 复述专用播放器 Provider
 

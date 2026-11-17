@@ -20,6 +20,7 @@ import 'package:echo_loop/services/resource_download_registry.dart';
 import 'package:echo_loop/utils/app_data_dir.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
 import '../../helpers/mock_providers.dart';
 import 'package:echo_loop/database/app_database.dart' show configureAppDatabaseConnection;
@@ -71,6 +72,30 @@ class _AvailableFileApi extends CommunityCollectionApi {
         words: [],
       ),
     );
+  }
+}
+
+/// 首次获取详情时模拟 TLS 握手被断开，之后恢复正常，对应弱网下的瞬时失败。
+class _FlakyFileApi extends _AvailableFileApi {
+  int _detailRequests = 0;
+
+  @override
+  Future<CommunityCollectionFileDetail> getFileDetail(
+    String collectionId,
+    String fileId, {
+    CancelToken? cancelToken,
+  }) async {
+    _detailRequests++;
+    if (_detailRequests == 1) {
+      throw DioException(
+        requestOptions: RequestOptions(path: '/files/$fileId'),
+        type: DioExceptionType.unknown,
+        error: const HandshakeException(
+          'Connection terminated during handshake',
+        ),
+      );
+    }
+    return super.getFileDetail(collectionId, fileId, cancelToken: cancelToken);
   }
 }
 
@@ -293,7 +318,7 @@ void main() {
     final item = await database.audioItemDao.getById('audio-1');
     expect(item?.name, 'Episode');
     expect(item?.totalDuration, 12);
-    expect(item?.audioPath, 'audios/community/audio-1.mp3');
+    expect(item?.audioPath, p.join('audios', 'community', 'audio-1.mp3'));
     expect(await File('${dataDirectory.path}/${item?.audioPath}').length(), 3);
     final collectionAudioItem = await (database.select(
       database.collectionAudioItems,
@@ -398,5 +423,87 @@ void main() {
     await runner.complete(1);
     expect(await first, isNull);
     expect(await second, isNull);
+  });
+
+  test('下载失败后重试会重新开始，不被残留的失败状态拦截', () async {
+    final database = db.AppDatabase(
+      NativeDatabase.memory(setup: configureAppDatabaseConnection),
+    );
+    final dataDirectory = await Directory.systemTemp.createTemp(
+      'community-retry-',
+    );
+    appDataDirectoryOverride = dataDirectory;
+    await database.collectionDao.upsert(
+      db.CollectionsCompanion(
+        id: const Value('collection-1'),
+        name: const Value('Community'),
+        createdDate: Value(DateTime(2026, 1, 1)),
+        updatedAt: Value(DateTime(2026, 1, 1)),
+        source: const Value('community'),
+        remoteId: const Value('remote-1'),
+      ),
+    );
+    await database.audioItemDao.upsert(
+      db.AudioItemsCompanion(
+        id: const Value('audio-1'),
+        name: const Value('Episode'),
+        addedDate: Value(DateTime(2026, 1, 1)),
+        updatedAt: Value(DateTime(2026, 1, 1)),
+        remoteAudioId: const Value('file-1'),
+      ),
+    );
+    await database
+        .into(database.collectionAudioItems)
+        .insert(
+          db.CollectionAudioItemsCompanion(
+            collectionId: const Value('collection-1'),
+            audioItemId: const Value('audio-1'),
+            addedAt: Value(DateTime(2026, 1, 1)),
+          ),
+        );
+
+    final runner = _FakeBackgroundDownloadRunner();
+    final container = ProviderContainer(
+      overrides: dedupeOverrides([
+        appDatabaseProvider.overrideWithValue(database),
+        communityCollectionApiProvider.overrideWithValue(_FlakyFileApi()),
+        isChinaUserProvider.overrideWithValue(true),
+        backgroundFileDownloadServiceProvider.overrideWithValue(
+          BackgroundFileDownloadService(runner: runner),
+        ),
+        communityFileLifecycleServiceProvider.overrideWithValue(
+          CommunityFileLifecycleService(
+            database: database,
+            dataDir: () async => dataDirectory,
+          ),
+        ),
+        audioLibraryProvider.overrideWith(() => TestAudioLibrary()),
+        collectionListProvider.overrideWith(() => TestCollectionList()),
+      ]),
+    );
+    addTearDown(() async {
+      container.dispose();
+      await database.close();
+      appDataDirectoryOverride = null;
+      await dataDirectory.delete(recursive: true);
+    });
+
+    final notifier = container.read(communityDownloadProvider.notifier);
+    expect(
+      await notifier.start(audioItemId: 'audio-1', displayName: 'Episode'),
+      StartResult.started,
+    );
+    expect(await waitUntilSettled(container, 'audio-1'), isA<DownloadFailed>());
+
+    // 失败状态保留给 UI 展示，但不代表仍在下载，重试必须能重新开始。
+    final retried = waitUntilSettled(container, 'audio-1');
+    expect(
+      await notifier.start(audioItemId: 'audio-1', displayName: 'Episode'),
+      StartResult.started,
+    );
+    expect(await retried, isNull);
+    expect(runner.enqueuedDisplayName, 'Episode');
+    final item = await database.audioItemDao.getById('audio-1');
+    expect(item?.audioPath, p.join('audios', 'community', 'audio-1.mp3'));
   });
 }
