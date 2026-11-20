@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:echo_loop/widgets/common/svg_action_icon.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/app_update_info.dart';
@@ -942,36 +943,44 @@ class _MainShellState extends ConsumerState<MainShell>
                   labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
                   destinations: [
                     NavigationDestination(
-                      icon: const Icon(Icons.library_music_outlined),
-                      selectedIcon: const Icon(
-                        Icons.library_music,
+                      icon: const SvgActionIcon(
+                        assetName: 'assets/icon/library.svg',
+                      ),
+                      selectedIcon: const SvgActionIcon(
+                        assetName: 'assets/icon/library.svg',
                         color: AppTheme.navActiveColor,
                       ),
                       label: l10n.library,
                     ),
                     NavigationDestination(
-                      icon: const Icon(Icons.school_outlined),
-                      selectedIcon: const Icon(
-                        Icons.school,
+                      icon: const SvgActionIcon(
+                        assetName: 'assets/icon/book-open.svg',
+                      ),
+                      selectedIcon: const SvgActionIcon(
+                        assetName: 'assets/icon/book-open.svg',
                         color: AppTheme.navActiveColor,
                       ),
                       label: l10n.study,
                     ),
                     NavigationDestination(
-                      icon: const Icon(Icons.bookmark_border),
-                      selectedIcon: const Icon(
-                        Icons.bookmark,
+                      icon: const SvgActionIcon(
+                        assetName: 'assets/icon/bookmark.svg',
+                      ),
+                      selectedIcon: const SvgActionIcon(
+                        assetName: 'assets/icon/bookmark.svg',
                         color: AppTheme.navActiveColor,
                       ),
                       label: l10n.favorites,
                     ),
                     NavigationDestination(
                       icon: const MemberTabBadge(
-                        child: Icon(Icons.person_outline),
+                        child: SvgActionIcon(
+                          assetName: 'assets/icon/account-round.svg',
+                        ),
                       ),
                       selectedIcon: const MemberTabBadge(
-                        child: Icon(
-                          Icons.person,
+                        child: SvgActionIcon(
+                          assetName: 'assets/icon/account-round.svg',
                           color: AppTheme.navActiveColor,
                         ),
                       ),
@@ -1030,7 +1039,9 @@ class _MainShellState extends ConsumerState<MainShell>
                   onPressed: () => unawaited(
                     ref.read(localStartupProvider.notifier).retry(),
                   ),
-                  icon: const Icon(Icons.refresh),
+                  icon: const SvgActionIcon(
+                    assetName: 'assets/icon/refresh.svg',
+                  ),
                   label: Text(l10n.retry),
                 ),
                 TextButton.icon(

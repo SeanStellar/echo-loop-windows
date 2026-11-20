@@ -77,7 +77,7 @@ final class ListeningPracticeProvider
   }
 }
 
-String _$listeningPracticeHash() => r'c0aba46573b56281088d8a4af93eac9d3f95a673';
+String _$listeningPracticeHash() => r'1789d8f8238c4ae011e341ef802e6354ca29f423';
 
 /// 自由练习播放器的状态与业务编排。
 ///

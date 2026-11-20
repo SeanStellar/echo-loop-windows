@@ -48,7 +48,7 @@ final class FavoriteVocabularyReviewProvider
 }
 
 String _$favoriteVocabularyReviewHash() =>
-    r'd10cafd0ea87ae1f7e440f41ba4488556e746053';
+    r'9375df1a245b9d7293b6fb0c5f72b00aca5267fb';
 
 abstract class _$FavoriteVocabularyReview
     extends $Notifier<FavoriteVocabularyReviewState> {

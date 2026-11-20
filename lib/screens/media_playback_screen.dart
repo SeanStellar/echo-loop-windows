@@ -556,6 +556,7 @@ class _MediaPlaybackScreenState extends ConsumerState<MediaPlaybackScreen>
       playingSentenceIndex: resolvedPlayingLocalIndex,
       wordHighlightSource: wordHighlightSource,
       autoFocusEnabled: true,
+      isPlaying: state.isPlaying,
       focusActive:
           !showSingleSentence &&
           _routeVisible &&
@@ -637,7 +638,6 @@ class _MediaPlaybackScreenState extends ConsumerState<MediaPlaybackScreen>
           audioItemId: widget.audioItem.id,
           audioName: widget.audioItem.name,
           sentenceText: sentence.text,
-          sentenceIndex: sentence.index,
           startTimeMs: sentence.startTime.inMilliseconds,
           endTimeMs: sentence.endTime.inMilliseconds,
           rangePlaybackBuilder: (playbackSpeed) => MediaSenseGroupRangePlayback(

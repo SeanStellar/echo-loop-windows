@@ -2,11 +2,11 @@
   "latestVersion": "1.0.48",
   "minimumVersion": "1.0.47",
   "releaseNotes": {
-    "en": "- Library and collection search\n- OPUS/OGG/WEBM/AVI import\n- Favorites PDF export and manual dictionary lookup\n- Subtitle font weight, subtitle mask and adaptive video split\n- Media trimming and custom local collection covers\n- Check-in celebration animation and sounds\n- Community download retry fix\n- Database migration to schema 69",
-    "zh": "- 资源库与合集搜索\n- 支持 OPUS/OGG/WEBM/AVI 导入\n- 收藏句/词汇 PDF 导出与手动查词\n- 字幕粗细、字幕遮罩与视频自适应分栏\n- 媒体剪辑与本地合集自定义封面\n- 打卡庆祝动画与音效\n- 修复社区合集下载失败重试\n- 数据库升级到 schema 69"
+    "en": "- Subtitle editor and waveform interaction overhaul\n- Media trim split width adjustment\n- Preserve favorites and study progress after subtitle edits\n- Favorite vocabulary prewarm lifecycle fixes\n- SVG icon unification and playback/split layout fixes\n- Database migration to schema 71",
+    "zh": "- 字幕编辑器与波形交互重构\n- 媒体剪辑支持调整左右分栏宽度\n- 编辑字幕后按时间区间保留收藏与学习进度\n- 收藏词汇预热生命周期修复\n- SVG 图标统一与播放/分栏修复\n- 数据库升级到 schema 71"
   },
   "downloadUrl": {
-    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.3.exe",
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe",
     "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
   }
 }

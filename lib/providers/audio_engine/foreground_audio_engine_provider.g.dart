@@ -81,7 +81,7 @@ final class ForegroundAudioEngineProvider
 }
 
 String _$foregroundAudioEngineHash() =>
-    r'ea93ce94e83c2d6c015f9d720de98611fbc4f279';
+    r'ef8aa85c3b72aa4f0aa25e62eef0fa811966595d';
 
 /// 前台音频引擎——录音/复习类任务专用，**不接入 `audio_service`**。
 ///

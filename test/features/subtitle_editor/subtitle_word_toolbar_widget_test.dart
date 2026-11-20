@@ -2,63 +2,29 @@ import 'package:echo_loop/features/subtitle_editor/subtitle_editor_controller.da
 import 'package:echo_loop/features/subtitle_editor/subtitle_simple_editor_screen.dart';
 import 'package:echo_loop/models/audio_item.dart';
 import 'package:echo_loop/models/sentence.dart';
-import 'package:echo_loop/providers/audio_engine/audio_engine_provider.dart';
 import 'package:echo_loop/database/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/mock_providers.dart';
 import '../../helpers/test_app.dart';
-
-/// 字幕编辑器返回固定句子 / 时长、不触底层播放器的测试音频引擎。
-class _FakeEditorAudioEngine extends FakeAudioEngine {
-  _FakeEditorAudioEngine(this._sentences, this._duration);
-
-  final List<Sentence> _sentences;
-  final Duration _duration;
-
-  @override
-  Future<Duration?> loadAudio(
-    AudioItem item,
-    double speed, {
-    String? subtitle,
-  }) async => _duration;
-
-  @override
-  Future<List<Sentence>> loadTranscript(AudioItem audioItem) async =>
-      _sentences;
-
-  @override
-  Future<void> playRangeOnce(
-    Duration start,
-    Duration end,
-    int sessionId, {
-    void Function()? onClipReady,
-  }) async {}
-
-  @override
-  Future<void> playClipOnce(Sentence sentence, int sessionId) async {}
-
-  @override
-  Future<void> stopPlayback() async {}
-}
+import 'subtitle_editor_test_support.dart';
 
 void main() {
   late AudioItem audioItem;
   late TestAudioItemDao audioItemDao;
   late ProviderContainer container;
 
-  setUp(() {
+  setUp(() async {
+    await useTemporaryAppDataDirectory();
     audioItem = createTestAudioItem(totalDuration: 6);
     audioItemDao = TestAudioItemDao();
   });
 
   Future<void> pumpEditor(WidgetTester tester, List<Sentence> sentences) async {
-    final engine = _FakeEditorAudioEngine(
-      sentences,
-      const Duration(seconds: 6),
-    );
+    audioItemDao.transcriptSrtStore[audioItem.id] = srtOf(sentences);
     await tester.pumpWidget(
       createTestApp(
         Consumer(
@@ -68,7 +34,12 @@ void main() {
           },
         ),
         overrides: dedupeOverrides([
-          audioEngineProvider.overrideWith(() => engine),
+          ...subtitleEditorPlaybackOverrides(
+            RangeRecordingBackend(
+              const Duration(seconds: 6),
+              completesImmediately: true,
+            ),
+          ),
           audioItemDaoProvider.overrideWithValue(audioItemDao),
         ]),
       ),
@@ -156,5 +127,174 @@ void main() {
     expect(state().sentences.length, 2);
     expect(state().sentences[0].text, 'one');
     expect(state().sentences[1].text, 'two three');
+  });
+
+  testWidgets('后插：词旁出现空输入框，回车后插入；标题栏撤销 / 重做', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    await tester.tap(find.text('two'));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-word-insert-after-1')),
+    );
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('subtitle-word-insert-field')),
+      'and',
+    );
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    expect(state().sentences[0].text, 'one two and three');
+
+    await tester.tap(find.byKey(const ValueKey('subtitle-editor-undo')));
+    await tester.pump();
+    expect(state().sentences[0].text, 'one two three');
+    expect(state().isDirty, isFalse);
+
+    await tester.tap(find.byKey(const ValueKey('subtitle-editor-redo')));
+    await tester.pump();
+    expect(state().sentences[0].text, 'one two and three');
+  });
+
+  testWidgets('插词输入框按 Esc 取消，不改字幕', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    await tester.tap(find.text('two'));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-word-insert-before-1')),
+    );
+    await tester.pump();
+    await tester.enterText(
+      find.byKey(const ValueKey('subtitle-word-insert-field')),
+      'big',
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey('subtitle-word-insert-field')),
+      findsNothing,
+    );
+    expect(state().sentences[0].text, 'one two three');
+    expect(state().canUndo, isFalse);
+  });
+
+  testWidgets('删除按钮删掉该词', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    await tester.tap(find.text('two'));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-word-delete-button-1')),
+    );
+    await tester.pump();
+
+    expect(state().sentences[0].text, 'one three');
+  });
+
+  testWidgets('「编辑文字」整句改文字，回车保存', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-sentence-edit-text-0')),
+    );
+    await tester.pump();
+    final field = find.byKey(const ValueKey('subtitle-sentence-text-field-0'));
+    expect(field, findsOne);
+    await tester.enterText(
+      find.descendant(of: field, matching: find.byType(TextField)),
+      'one two three four',
+    );
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    expect(state().sentences[0].text, 'one two three four');
+    expect(field, findsNothing);
+  });
+
+  testWidgets('桌面快捷键：⌘Z 撤销、⇧⌘Z 重做；输入文字时不响应', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    await tester.tap(find.text('two'));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-word-delete-button-1')),
+    );
+    await tester.pump();
+    expect(state().sentences[0].text, 'one three');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+    await tester.pump();
+    expect(state().sentences[0].text, 'one two three');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+    await tester.pump();
+    expect(state().sentences[0].text, 'one three');
+
+    // 打开整句输入框后，⌘Z 交给输入框，不撤销字幕。
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-sentence-edit-text-0')),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(
+      FocusManager.instance.primaryFocus?.context
+          ?.findAncestorWidgetOfExactType<EditableText>(),
+      isNotNull,
+    );
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+    await tester.pump();
+    expect(state().sentences[0].text, 'one three');
+  });
+
+  testWidgets('输入框里按空格交给输入框，不被页面快捷键拦截（回归：新句无法输入空格）', (tester) async {
+    await pumpEditor(tester, singleSentence());
+
+    Future<void> expectSpaceReachesField(String where) async {
+      await tester.pump();
+      final typing = FocusManager.instance.primaryFocus?.context
+          ?.findAncestorWidgetOfExactType<EditableText>();
+      expect(typing, isNotNull, reason: '$where：输入框应已获得焦点');
+      // 页面若处理了空格（返回 true），macOS 不会再把字符交给输入框。
+      expect(
+        await tester.sendKeyEvent(LogicalKeyboardKey.space),
+        isFalse,
+        reason: '$where：空格应交给输入框',
+      );
+      expect(state().isPlaying, isFalse, reason: '$where：不应触发播放');
+    }
+
+    // 整句改文字。
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-sentence-edit-text-0')),
+    );
+    await expectSpaceReachesField('整句输入框');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+
+    // 插词。
+    await tester.tap(find.text('two'));
+    await tester.pump();
+    await tester.tap(
+      find.byKey(const ValueKey('subtitle-word-insert-after-1')),
+    );
+    await expectSpaceReachesField('插词输入框');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+
+    // 字幕编辑不需要空格播放：不在输入时空格也不被页面处理、不触发播放。
+    await tester.pump();
+    expect(await tester.sendKeyEvent(LogicalKeyboardKey.space), isFalse);
+    expect(state().isPlaying, isFalse);
   });
 }

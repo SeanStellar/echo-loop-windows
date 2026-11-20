@@ -68,7 +68,6 @@ class _TestFavoriteVocabularyLifecycle extends FavoriteVocabularyLifecycle {
   Future<void> saveWord({
     required String word,
     String? audioItemId,
-    int? sentenceIndex,
     String? sentenceText,
     int? sentenceStartMs,
     int? sentenceEndMs,
@@ -77,7 +76,6 @@ class _TestFavoriteVocabularyLifecycle extends FavoriteVocabularyLifecycle {
       .saveWord(
         word: word,
         audioItemId: audioItemId,
-        sentenceIndex: sentenceIndex,
         sentenceText: sentenceText,
         sentenceStartMs: sentenceStartMs,
         sentenceEndMs: sentenceEndMs,
@@ -88,7 +86,6 @@ class _TestFavoriteVocabularyLifecycle extends FavoriteVocabularyLifecycle {
     required String phraseText,
     required String displayText,
     String? audioItemId,
-    int? sentenceIndex,
     String? sentenceText,
     int? sentenceStartMs,
     int? sentenceEndMs,
@@ -100,7 +97,6 @@ class _TestFavoriteVocabularyLifecycle extends FavoriteVocabularyLifecycle {
         phraseText: phraseText,
         displayText: displayText,
         audioItemId: audioItemId,
-        sentenceIndex: sentenceIndex,
         sentenceText: sentenceText,
         sentenceStartMs: sentenceStartMs,
         sentenceEndMs: sentenceEndMs,
@@ -137,7 +133,6 @@ class _RecordingSavedWordDao implements SavedWordDao {
   String? savedWord;
   String? removedWord;
   String? audioItemId;
-  int? sentenceIndex;
   String? sentenceText;
   int? sentenceStartMs;
   int? sentenceEndMs;
@@ -155,14 +150,12 @@ class _RecordingSavedWordDao implements SavedWordDao {
   Future<void> saveWord({
     required String word,
     String? audioItemId,
-    int? sentenceIndex,
     String? sentenceText,
     int? sentenceStartMs,
     int? sentenceEndMs,
   }) async {
     savedWord = word;
     this.audioItemId = audioItemId;
-    this.sentenceIndex = sentenceIndex;
     this.sentenceText = sentenceText;
     this.sentenceStartMs = sentenceStartMs;
     this.sentenceEndMs = sentenceEndMs;
@@ -718,7 +711,6 @@ void main() {
 
     expect(dao.savedWord, 'alpha beta');
     expect(dao.audioItemId, 'audio-1');
-    expect(dao.sentenceIndex, 7);
     expect(dao.sentenceText, 'Alpha   beta, gamma');
     expect(dao.sentenceStartMs, 1200);
     expect(dao.sentenceEndMs, 3400);

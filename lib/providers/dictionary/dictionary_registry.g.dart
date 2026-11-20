@@ -111,7 +111,7 @@ final class LocalDictionarySourceProvider
 }
 
 String _$localDictionarySourceHash() =>
-    r'7f19433abfbaec7bb6923e1b2c0be267a480c811';
+    r'd4e0f2a0ebf95a7cf774246adc7bf9d401ecf5de';
 
 /// AI 词典源
 ///

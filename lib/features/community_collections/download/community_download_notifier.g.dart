@@ -56,7 +56,7 @@ final class CommunityDownloadProvider
   }
 }
 
-String _$communityDownloadHash() => r'371bb57c7e8e0967f27b5613f2fd0f551ea24057';
+String _$communityDownloadHash() => r'ed91f7bbe6b9ca79ecf4cd68598e57070c9b4992';
 
 /// 社区合集媒体和字幕下载调度器。
 ///

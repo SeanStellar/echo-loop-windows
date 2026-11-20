@@ -44,7 +44,7 @@ final class BlindListenPlayerProvider
   }
 }
 
-String _$blindListenPlayerHash() => r'e1c7990e04c5e7bf51977e9a15001429e6525659';
+String _$blindListenPlayerHash() => r'80427865af40b25effb32b00d2d55b8ab4c3f292';
 
 /// 盲听专用播放器 Provider
 

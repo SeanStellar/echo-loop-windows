@@ -41,7 +41,7 @@ final class AudioEngineProvider
   }
 }
 
-String _$audioEngineHash() => r'a439c7a33c62d79b245e2a85e37699640b840a5d';
+String _$audioEngineHash() => r'9d37e8d986506f923c25e8f56f866bded04be141';
 
 abstract class _$AudioEngine extends $Notifier<AudioEngineState> {
   AudioEngineState build();

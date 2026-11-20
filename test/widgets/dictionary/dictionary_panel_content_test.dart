@@ -57,17 +57,20 @@ class _StubTtsController extends TtsController {
   }
 
   @override
-  Future<void> prewarmTexts(List<String> texts) async {
+  Future<void> prewarmTexts(List<String> texts, {required Object owner}) async {
     _prewarmCalls.add(texts);
   }
 
   @override
-  Future<void> prewarmTextsIncremental(List<String> texts) async {
+  Future<void> prewarmTextsIncremental(
+    List<String> texts, {
+    required Object owner,
+  }) async {
     _prewarmCalls.add(texts);
   }
 
   @override
-  void cancelTextsPrewarm() {}
+  void cancelTextsPrewarm({required Object owner}) {}
   @override
   Future<void> stop() async {
     _ttsStopCalls++;
@@ -96,7 +99,7 @@ class _StubTextPlaybackController extends TextPlaybackController {
   }
 
   @override
-  Future<void> prewarmWord(String word) async {
+  Future<void> prewarmWord(String word, {required Object owner}) async {
     _headwordPrewarmCalls.add(word);
   }
 

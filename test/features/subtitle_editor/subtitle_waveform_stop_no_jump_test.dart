@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:echo_loop/features/subtitle_editor/subtitle_waveform_view.dart';
 import 'package:echo_loop/models/sentence.dart';
+import 'package:echo_loop/utils/waveform_peaks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:just_waveform/just_waveform.dart';
 
 import '../../helpers/test_app.dart';
 
@@ -53,7 +55,7 @@ void main() {
       key: const ValueKey('subtitle-waveform-stop-no-jump'),
     );
 
-    testWidgets('播放到句尾后停止：viewOffset 不变且红线消失', (tester) async {
+    testWidgets('播放到句尾后停止：viewOffset 不变且播放头仍在', (tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 240));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -84,9 +86,9 @@ void main() {
         await tester.pump(const Duration(milliseconds: 16));
       }
 
-      // 结构性零跳变：偏移像素级不变；停止态隐藏红线。
+      // 结构性零跳变：偏移像素级不变；播放头常驻，停在停止位置。
       expect(_viewOffset(tester), closeTo(offsetPlaying, 0.001));
-      expect(_hasPlayhead(tester), isFalse);
+      expect(_hasPlayhead(tester), isTrue);
     });
 
     testWidgets('用户显式点选（epoch 自增）才把该句居中', (tester) async {
@@ -151,15 +153,12 @@ bool _hasPlayhead(WidgetTester tester) {
   return false;
 }
 
-Waveform _waveform({int length = 100}) {
-  return Waveform(
-    version: 1,
-    flags: 0,
-    sampleRate: 1000,
-    samplesPerPixel: 100,
-    length: length,
-    data: [
+WaveformPeaks _waveform({int length = 100}) {
+  return WaveformPeaks(
+    pixelsPerSecond: 10,
+    duration: Duration(milliseconds: length * 100),
+    minMax: Int16List.fromList([
       for (var i = 0; i < length; i++) ...[-9000 - i * 10, 9000 + i * 10],
-    ],
+    ]),
   );
 }

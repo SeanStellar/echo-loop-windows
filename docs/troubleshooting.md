@@ -761,10 +761,11 @@
 
 - 现象：剪辑页时间轴的波形几乎是一条细线，正常音量的音频也看不出起伏。
 - 根因：just_waveform 0.0.7 的 `JustWaveform.parse` 对 16 位数据用 `Int16List.view(bytes, headerLength ~/ 2)`，偏移是 10 字节而非规范的 20 字节头。`getPixelMin/Max` 整体错位 5 个采样，开头还混入头部字段（采样率 44100 被读成 -21436），按峰值归一化时真实波形被压扁。另外它的头部视图按 20 个 uint32 读取，文件小于 80 字节会抛 RangeError。
-- 解法：用 `WaveformSamples` 从原始 buffer 第 20 字节重新建立 16 位视图；8 位数据偏移本身正确。不修改插件源码。字幕编辑器的波形同样受影响，尚未切换。
+- 解法：用 `WaveformSamples` 从原始 buffer 第 20 字节重新建立 16 位视图；8 位数据偏移本身正确。不修改插件源码。字幕编辑器的波形同样受影响，已于 2026-11-17 切换到 `WaveformSamples`（`lib/features/subtitle_editor/subtitle_waveform_view.dart`）。
 - 验证：`test/utils/waveform_samples_test.dart` 构造带头部的波形文件，确认 min/max 与峰值正确；macOS 集成测试截图中波形恢复正常高度。
 - 相关代码：`lib/utils/waveform_samples.dart`、`lib/features/media_trim/widgets/media_trim_timeline.dart`。
 - 记录时间：2026-11-16。
+- 后续（2026-11-18）：just_waveform 已整体移除，`WaveformSamples` 随之删除，见 7.61。
 
 ### 7.55 时间轴把手在触屏上拖不动
 
@@ -801,3 +802,44 @@
 - 验证：`media_trim_clip_test.dart`「播放头在片段内且片段之后没有空白」与「任意播放头位置…都不与现有片段重叠」（有字幕 / 无字幕多种布局，每 500ms 一个播放头）；`media_trim_editor_controller_test.dart`「连续两次新片段在同一播放头处不重叠」。三条在修复前均失败。
 - 相关代码：`lib/features/media_trim/media_trim_clip.dart`。
 - 记录时间：2026-11-16。
+
+### 7.59 列表项菜单关闭后卡片残留灰底；菜单展开时点击外部穿透到列表
+
+- 现象：macOS 上音频列表项「…」菜单展开时整张卡片变灰；关闭菜单后部分卡片灰底一直不消失（截图取色 224 = 白底叠 12% 黑，即 InkWell `focusColor`）。另外菜单展开时点击其他列表项会直接触发跳转。
+- 根因（灰底）：`MenuAnchor` 嵌在卡片 `InkWell` 内，其浮层（OverlayPortal）在焦点树上挂在卡片 Focus 节点之下；`MenuItemButton` 默认 `requestFocusOnHover`，鼠标悬停菜单项即获焦，而 `Focus.onFocusChange` 按 `hasFocus`（含子孙）回调，卡片显示 focus 高亮。菜单关闭时获焦的菜单项随浮层同帧销毁，`FocusManager._markDetached` 把 `_primaryFocus` 置空，`applyFocusChangesIfNeeded` 用空的旧焦点路径计算失焦节点，卡片 Focus 收不到 `onFocusChange(false)`，InkWell 的 `_hasFocus` 停在 true。debug 日志可见 `Updating focus from null to ...`。列表无 key、按位置复用元素，残留会落到同位置的其他条目上。
+- 根因（穿透）：由 `PopupMenuButton`（模态路由拦截点击）改为 `MenuAnchor` 后，`consumeOutsideTap` 默认 false，点击外部关闭菜单的同时事件继续传给下方控件。
+- 解法：菜单与 InkWell 改为 Stack 兄弟节点（Row 里保留等宽占位），隔离焦点；`MenuAnchor` 设 `consumeOutsideTap: true`（学习计划页 AppBar「更多」菜单同步）。
+- 验证：`audio_list_tile_test.dart`「鼠标悬停菜单项后关闭菜单，卡片不残留 focus 高亮」「菜单展开时点击外部只关闭菜单，不穿透触发下方控件」，修复前均失败。
+- 相关代码：`lib/widgets/audio_list_tile.dart`、`lib/screens/learning_plan_screen.dart`。
+- 记录时间：2026-11-18。
+
+### 7.60 iOS 上部分 mkv 视频无法编辑字幕（报「(-11828) 无法打开」）
+
+- 现象：字幕编辑页打开部分视频条目时整页报错「(-11828) 无法打开」，保存按钮不可用；同一版本里 mp4 视频正常。日志中这些条目都是 `videos/*.mkv`。
+- 根因：字幕编辑器的声音走 just_audio（全局 `AudioEngine`），iOS/macOS 上底层是 AVPlayer。AVFoundation 不解封装 matroska / avi，打开即报 `AVErrorFileFormatNotRecognized`（-11828）。视频白名单加入 mkv/webm/avi 时只有画面链路（media_kit）能处理，声音链路没跟上。macOS 同样用 AVFoundation，桌面上即可复现。
+- 解法：字幕编辑器改为独占一个 media_kit 播放器（`SubtitleEditorAudioPlayer`，与剪辑页同一模式：页面创建、离开释放，不接入全局引擎和系统媒体会话），只开音轨，画面仍由独立预览播放器负责。区间试听用 mpv 原生终点裁切句尾，会话隔离与原实现一致。字幕读取抽为 `loadTranscriptSentences`，两个 just_audio 引擎改为复用它；进入编辑页暂停其它播放改用共享的 `pauseOtherPlaybackProvider`（原剪辑页私有）。
+- 关联坑：mpv 播到原生终点（`end`）时 keep-open 立即暂停，输出缓冲里未播出的声音被丢弃。默认 `audio-buffer=0.2` 会把单词 / 句尾截掉约 200ms（日志：781ms 的单词实际只播 587ms，位置先停在句尾前 233ms 再跳到句尾）。编辑器播放器打开媒体前把输出缓冲设为 50ms（`MediaPlayerBackend.setAudioOutputBuffer`），实测播放时长与区间误差 ≤50ms。全局 `MediaEngine` 的区间播放用的是同一机制、默认缓冲，学习页句尾可能同样被截，尚未处理。
+- 关联坑 2：波形同样读不了。just_waveform 在 iOS/macOS 上用 ExtAudioFile 解码，打开 mkv/avi 报 `ExtAudioOpenURL error 1954115647`（`'typ?'`，不支持的文件类型），波形区显示「波形生成失败」。字幕编辑改用剪辑页的 `MediaTrimWaveformLoader`，两页共用 `waveforms/{id}.wave` 缓存；日志标签改为 `[MediaWaveform]`。随后波形生成整体改为 FFmpeg 解码 PCM + 自研峰值计算，见 7.61。
+- 规则：新增视频扩展名时，确认所有出声链路都走 media_kit、所有系统解码器读取（波形等）都先抽音轨；用原生终点做区间播放时，按 `区间播放 started/return … played=` 日志核对实际播放时长，而不是只看位置。
+- 验证：`integration_test/subtitle_editor_media_kit_audio_test.dart`（macOS 真实 media_kit，合成 mkv / avi：加载成功、不经 just_audio、句 / 词 / 2x 试听播放时长误差 ≤100ms、切句与停止按取消结束、视频画面加载、离开释放）；`test/features/subtitle_editor/subtitle_editor_audio_player_test.dart`；同一集成测试断言 mkv / avi 波形提取成功（修复前 macOS 上以 ExtAudioOpenURL 失败）。iOS 真机待验证：打开 mkv 条目的字幕编辑页，日志应出现 `[SubtitleEditorAudio] 打开媒体 complete file=*.mkv`。
+- 相关代码：`lib/features/subtitle_editor/subtitle_editor_audio_player.dart`、`lib/features/subtitle_editor/subtitle_editor_controller.dart`、`lib/services/media_kit_player_backend.dart`。
+- 记录时间：2026-11-18。
+
+### 7.61 波形生成改为 FFmpeg 解码 PCM，移除 just_waveform
+
+- 背景：just_waveform 依赖系统解码器（iOS/macOS 为 ExtAudioFile），读不了 mkv/avi（7.60），视频只能先用 ffmpeg 编码一条 AAC 代理音轨再交给它解码，慢（22 分钟 mkv 仅抽代理音轨 CLI 就要 13.8s）；0.0.7 还有 16 位解析错位（7.54）。导入时的静音检测也直接用 just_waveform 读原文件，mkv/avi 一律失败并退回「非静音」，检测实际失效。
+- 解法：`lib/utils/waveform_peaks.dart`。FFmpeg 把第一条音轨解码为 24kHz 单声道 s16le 临时 PCM，后台 isolate 分块计算每像素（80px/s，即每 300 个采样）min/max，缓存为自有格式（magic `ELWP` 开头）。旧 just_waveform 缓存或写坏的缓存读取时直接删除并重新生成，不做兼容。静音检测复用同一解码与计算（20px/s）。
+- 参数取舍：FFmpeg 解码耗时与输出采样率基本无关（8k~48k 均约 2.2s），采样率只影响临时文件和计算量。与原生采样率的峰值相比，16kHz 有 9% 的竖条差超过 1px（滤掉了齿擦音等高频峰值），24kHz 约 2%、p99 误差 3%，肉眼不可分辨。24kHz 临时 PCM 约 170MB/小时，用完即删。实测 macOS FFmpegKit：22 分钟 mkv 5.1s、37 分钟 mp3 10.0s，其中峰值计算 0.2~0.4s，其余为解码。
+- 坑：在方法内直接写 `Isolate.run(() => ...)`，闭包会连带捕获外层上下文（Notifier 的 onProgress 回调、Stream），发送时报 `Illegal argument in isolate message: object is unsendable - _DistinctStream`，波形区显示「生成失败」。单独调用加载器的测试回调简单，不会暴露，必须走真实页面。解法：后台计算放在顶层函数 `computeWaveformPeaksInBackground`，闭包只捕获路径与像素密度。
+- 验证：`test/utils/waveform_peaks_test.dart`（逐像素 min/max、跨 1MB 分块、尾部不足一像素、缓存编解码、无效缓存识别）；`integration_test/media_waveform_loader_test.dart`（macOS 真实 FFmpegKit，m4a/flac/wav/mkv(ac3)/avi(pcm)：静音段峰值 <1% 满量程、0.5 满量程正弦段每像素误差 ≤10%、时长误差 <100ms、进度单调到 1、二次命中缓存、解码中取消不留缓存、静音 mkv 判 silent）；`integration_test/subtitle_editor_media_kit_audio_test.dart` 走真实字幕编辑页覆盖 isolate 捕获问题。
+- 测试坑：macOS 集成测试若不在 setUpAll 初始化 `windowManager`、tearDownAll 中 `windowManager.hide()`，`flutter test -d macos` 结束后 Debug 版 Echo Loop 进程不退出，每跑一次残留一个窗口（本次连续 5 次复现，加上后不再残留）。新增 macOS 集成测试照抄现有文件的 setUpAll / tearDownAll。
+- 相关代码：`lib/utils/waveform_peaks.dart`、`lib/features/media_trim/media_trim_waveform_loader.dart`、`lib/features/media_trim/media_trim_processor.dart`、`lib/utils/audio_content_check.dart`。
+- 记录时间：2026-11-18。
+
+### 7.62 HONOR 上视频剪辑保存失败或视频轨只有一帧
+
+- 复现：HONOR YAL-AL00（Android 10 / API 29）运行原剪辑集成测试。两段 320×240、25 fps 的选区中，第二段报 `Error submitting video frame to the encoder`，整批未提交。
+- 证据：同款 FFmpeg 8.0.0 真机探针对 1280×720、24 fps 的 H.264 输入裁剪 1.5 秒时，MediaCodec 也可能返回成功，但只写出 1 帧（约 42ms），完整 AAC 音轨使容器时长仍约为 1.5 秒。用原生 MediaCodec API 单独调用同一 `OMX.hisi.video.encoder.avc`，`yuv420p` 和 NV12 均完整编码 25 帧。用同一原生 API 先预送一帧、发 EOS 再 flush，随后只收到 2 帧就再次收到 EOS。
+- 根因：FFmpeg 8.0 为 MP4 全局头部探测 H.264 配置时，先送入探测帧并发送 EOS，随后尝试 flush 同一编码会话。该流程触发了这台 HONOR 上的兼容性问题。只加 `-flags:v -global_header` 后，同一 1.5 秒输入写满 36 帧，MP4 包含 H.264 配置并通过完整解码。原始报障素材未参与对照。
+- 修复：仅对 Android 的 `h264_mediacodec` 禁用全局头部预探测，MP4 封装器从实际码流提取 H.264 配置。校验视频轨时长，防止音轨掩盖失败。Android 文档明确指出，编码器回到 Flushed 状态的行为未定义。见 [Android MediaCodec 文档](https://developer.android.com/reference/android/media/MediaCodec)和 [FFmpeg 8.0 MediaCodec 源码](https://ffmpeg.org/doxygen/8.0/mediacodecenc_8c_source.html)。
+- 记录时间：2026-11-19。

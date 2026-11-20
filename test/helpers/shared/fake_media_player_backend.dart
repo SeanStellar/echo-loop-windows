@@ -28,7 +28,9 @@ class FakeMediaPlayerBackend implements MediaPlayerBackend {
 
   /// 依次记录 [setPlaybackEnd] 的参数，`null` 表示撤销终点。
   final playbackEndCalls = <Duration?>[];
+  final audioOutputBufferCalls = <Duration>[];
   final videoTrackCalls = <bool>[];
+  final audioTrackCalls = <bool>[];
   final subtitleTrackDataCalls = <String?>[];
   final videoViewSizes = <Size>[];
   int playCalls = 0;
@@ -166,8 +168,18 @@ class FakeMediaPlayerBackend implements MediaPlayerBackend {
       playbackEndCalls.isEmpty ? null : playbackEndCalls.last;
 
   @override
+  Future<void> setAudioOutputBuffer(Duration buffer) async {
+    audioOutputBufferCalls.add(buffer);
+  }
+
+  @override
   Future<void> setVideoTrackEnabled(bool enabled) async {
     videoTrackCalls.add(enabled);
+  }
+
+  @override
+  Future<void> setAudioTrackEnabled(bool enabled) async {
+    audioTrackCalls.add(enabled);
   }
 
   @override

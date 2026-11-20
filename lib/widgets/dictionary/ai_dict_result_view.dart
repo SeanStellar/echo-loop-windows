@@ -8,6 +8,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:echo_loop/widgets/common/svg_action_icon.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../models/dictionary/dictionary_entry.dart';
@@ -286,7 +287,10 @@ class _AiEntryContent extends StatelessWidget {
       children.add(
         _Section(
           title: l10n.dictAiExpressions,
-          icon: Icons.link_rounded,
+          icon: const SvgActionIcon(
+            assetName: 'assets/icon/link.svg',
+            size: 14,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -305,7 +309,7 @@ class _AiEntryContent extends StatelessWidget {
       children.add(
         _Section(
           title: l10n.dictAiForms,
-          icon: Icons.text_fields_rounded,
+          icon: const Icon(Icons.text_fields_rounded, size: 14),
           child: _FormsGrid(forms: entry.forms),
         ),
       );
@@ -316,7 +320,7 @@ class _AiEntryContent extends StatelessWidget {
       children.add(
         _Section(
           title: l10n.dictAiWordFamily,
-          icon: Icons.account_tree_outlined,
+          icon: const Icon(Icons.account_tree_outlined, size: 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -335,7 +339,7 @@ class _AiEntryContent extends StatelessWidget {
       children.add(
         _Section(
           title: l10n.dictAiTips,
-          icon: Icons.lightbulb_outline,
+          icon: const Icon(Icons.lightbulb_outline, size: 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -354,7 +358,7 @@ class _AiEntryContent extends StatelessWidget {
       children.add(
         _Section(
           title: l10n.dictAiEtymology,
-          icon: Icons.history_edu_outlined,
+          icon: const Icon(Icons.history_edu_outlined, size: 14),
           child: _bodyText(theme, entry.etymology),
         ),
       );
@@ -943,7 +947,7 @@ class _TipItem extends StatelessWidget {
 /// 分节：图标徽章 + 主色小标题 + 柔和卡片内容
 class _Section extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final Widget icon;
   final Widget child;
   const _Section({
     required this.title,
@@ -965,7 +969,10 @@ class _Section extends StatelessWidget {
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(icon, size: 14, color: theme.colorScheme.primary),
+              child: IconTheme(
+                data: IconThemeData(size: 14, color: theme.colorScheme.primary),
+                child: icon,
+              ),
             ),
             const SizedBox(width: 8),
             Text(

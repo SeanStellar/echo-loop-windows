@@ -17,11 +17,11 @@
   </p>
 
   <p>
-    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.3.exe"><img src="https://img.shields.io/badge/Download-Installer-2ea44f?style=for-the-badge&logo=windows&logoColor=white" alt="Download installer" /></a>
-    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.3.zip"><img src="https://img.shields.io/badge/Download-Portable-0969da?style=for-the-badge&logo=windows&logoColor=white" alt="Download portable" /></a>
+    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe"><img src="https://img.shields.io/badge/Download-Installer-2ea44f?style=for-the-badge&logo=windows&logoColor=white" alt="Download installer" /></a>
+    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.4.zip"><img src="https://img.shields.io/badge/Download-Portable-0969da?style=for-the-badge&logo=windows&logoColor=white" alt="Download portable" /></a>
   </p>
 
-  <p><sub>Version 1.0.48 (P3.3) · Unofficial fork · Not affiliated with the upstream authors or Minzu University of China</sub></p>
+  <p><sub>Version 1.0.48 (P3.4) · Unofficial fork · Not affiliated with the upstream authors or Minzu University of China</sub></p>
 </div>
 
 ---
@@ -53,7 +53,7 @@ These screenshots come from the Windows build in this repository, not from the o
 
 ## What this build is
 
-This is an **unofficial Windows desktop fork** of [Echo Loop](https://github.com/echo-loop/Echo-Loop). It is based on upstream v1.0.47 and has synced the non-account features from the 70 in-flight commits on upstream main toward v1.0.48.
+This is an **unofficial Windows desktop fork** of [Echo Loop](https://github.com/echo-loop/Echo-Loop). It is based on the official v1.0.48 release and keeps the Windows local-first changes.
 
 It is not a thin mobile wrapper. The Windows build is intentionally local-first:
 
@@ -97,17 +97,18 @@ See [NOTICE](./NOTICE) for file-level modifications and [WINDOWS.md](./WINDOWS.m
 - Download the ASR model once under My → Speech Recognition.
 - Local audio / video import: mp3, m4a, wav, aac, flac, mp4, mov, m4v, mkv, plus OPUS / OGG / WEBM / AVI.
 - Local transcription: ffmpeg decodes to 16 kHz WAV and sherpa-onnx produces subtitles in segments.
-- Adaptive video split layout, video subtitle mask and media trimming from upstream v1.0.48 are included.
+- Adaptive video split layout, video subtitle mask and media trimming from the official v1.0.48 release are included.
 
 ### Upstream sync
 
-Non-account features from the in-flight v1.0.48 work are synced, including:
+The official v1.0.48 release is synced, including:
 
 - Library / collection search and collection learning progress.
 - AI lookup from favorite vocabulary, manual dictionary lookup with history, and PDF export for favorite sentences / vocabulary.
 - Retelling “show translation”, subtitle font size and weight, and subtitle translation.
 - Adaptive video split across all study tasks, video subtitle mask and media trimming.
 - Custom local collection covers, check-in celebration animation and sounds, and community download retry fixes.
+- New in P3.4: subtitle editor and waveform interaction overhaul, media trim split width adjustment, preserving favorites and study progress after subtitle edits, and unified SVG icons.
 
 ---
 
@@ -115,8 +116,8 @@ Non-account features from the in-flight v1.0.48 work are synced, including:
 
 | Option | File | Notes |
 |---|---|---|
-| Installer | [`EchoLoop-Windows-Setup-1.0.48-p3.3.exe`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.3.exe) | Per-user install, no administrator rights |
-| Portable | [`EchoLoop-Windows-p3.3.zip`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.3.zip) | Unzip and run `echo_loop.exe`; keep the whole folder |
+| Installer | [`EchoLoop-Windows-Setup-1.0.48-p3.4.exe`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe) | Per-user install, no administrator rights |
+| Portable | [`EchoLoop-Windows-p3.4.zip`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.4.zip) | Unzip and run `echo_loop.exe`; keep the whole folder |
 | Update manifest | [`version-windows.json`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/version-windows.json) | Read by the in-app update checker |
 
 - Requirements: Windows 10 / 11 x64.
@@ -139,7 +140,7 @@ SHA-256:
 5. For recording: My → Speech Recognition, download the local ASR model.
 6. In My → Settings, configure close-to-tray, launch at startup, sound effects and subtitle size.
 
-> Database upgrade: v1.0.48 moves the schema from 66 to 69. The first launch migrates automatically. Export a backup from Settings → Backup & Restore before upgrading if the data matters to you.
+> Database upgrade: P3.4 moves the schema to 71 (from 69 for P3.3 users, or 66 for older installs). The first launch migrates automatically. Export a backup from Settings → Backup & Restore before upgrading if the data matters to you.
 
 ---
 
@@ -151,7 +152,7 @@ SHA-256:
 | Account and subscription | Required | Not integrated |
 | AI | Official cloud quota | Bring your own OpenAI-compatible service |
 | Cloud transcription / retelling evaluation | Supported | Unavailable; local recording and local ASR instead |
-| Learning loop | Complete | Complete (non-account upstream features synced to in-flight v1.0.48) |
+| Learning loop | Complete | Complete (aligned with the official v1.0.48 release) |
 | Desktop integration | — | Tray, autostart, SMTC, Toast, window memory, single instance |
 | Account profile / usage page | Supported | Not merged |
 | Updates | Official channel | This repository's `version-windows.json` |
@@ -195,7 +196,7 @@ See [WINDOWS.md](./WINDOWS.md) for dependencies, signing, release and update-man
 - Unsigned build; SmartScreen may block it. A self-signed certificate does not remove the warning.
 - Sign-in, subscriptions, cloud transcription, retelling evaluation and account quota are unavailable.
 - Daily check-in sharing requires sign-in, so the share entry is hidden on Windows. Daily goals, automatic check-in and the study calendar work offline.
-- Media trimming, local collection covers, adaptive video split and the subtitle mask come from in-flight upstream v1.0.48. They pass the build and unit tests but still need validation with real videos, photo picking and long clips.
+- Media trimming, local collection covers, adaptive video split, the subtitle mask, and the subtitle editor/waveform interaction come from the official v1.0.48 release. They pass the build and unit tests but still need validation with real videos, photo picking, long clips and long-audio editing.
 - Native Toast display / click, community download UI end-to-end and minimized playback still need manual validation.
 - Without MSIX packaging, Toast `cancel` may not work and repeated schedules may remain.
 - SMTC exposes metadata and playback controls but no timeline scrubbing.

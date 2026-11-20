@@ -41,7 +41,7 @@ final class BookmarkReviewProvider
   }
 }
 
-String _$bookmarkReviewHash() => r'4852b90e72fe51cead1501477823daa349c1f99c';
+String _$bookmarkReviewHash() => r'35de6cd3303c117e418ec3b6cc25ed9f0e8172a2';
 
 abstract class _$BookmarkReview extends $Notifier<BookmarkReviewState> {
   BookmarkReviewState build();
