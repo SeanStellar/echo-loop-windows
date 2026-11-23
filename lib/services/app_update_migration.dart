@@ -13,7 +13,10 @@ import 'storage_migration_service.dart';
 /// SharedPreferences 中记录应用升级迁移链进度的 key。
 const appUpdateMigrationVersionKey = 'app_update_migration_version';
 
-/// 当前已注册的应用升级迁移版本。
+/// 当前已注册的应用升级迁移版本，必须与 [buildAppUpdateMigrations] 末尾的版本一致。
+///
+/// 备份会记录该进度，恢复时若备份进度超过此值会被判定为更新版本的备份而拒绝；
+/// 新增迁移时若忘记同步此常量，同一应用生成的备份也会无法恢复。
 const currentAppUpdateMigrationVersion = 11;
 
 /// 删除已废弃的 TTS 模型下载状态缓存；模型状态现在以安装清单和文件校验为准。

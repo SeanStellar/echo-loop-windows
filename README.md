@@ -17,11 +17,11 @@
   </p>
 
   <p>
-    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe"><img src="https://img.shields.io/badge/Download-Installer-2ea44f?style=for-the-badge&logo=windows&logoColor=white" alt="Download installer" /></a>
-    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.4.zip"><img src="https://img.shields.io/badge/Download-Portable-0969da?style=for-the-badge&logo=windows&logoColor=white" alt="Download portable" /></a>
+    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.49-p3.5.exe"><img src="https://img.shields.io/badge/Download-Installer-2ea44f?style=for-the-badge&logo=windows&logoColor=white" alt="Download installer" /></a>
+    <a href="https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.5.zip"><img src="https://img.shields.io/badge/Download-Portable-0969da?style=for-the-badge&logo=windows&logoColor=white" alt="Download portable" /></a>
   </p>
 
-  <p><sub>当前版本 1.0.48（P3.4） · 非官方修改版 · 与原作者及中央民族大学无隶属关系</sub></p>
+  <p><sub>当前版本 1.0.49（P3.5） · 非官方修改版 · 与原作者及中央民族大学无隶属关系</sub></p>
 </div>
 
 ---
@@ -53,7 +53,7 @@
 
 ## 这个版本是什么
 
-这是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的**非官方 Windows 桌面分支**，基于官方 v1.0.48 正式版，并保留 Windows 本地优先改造。
+这是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的**非官方 Windows 桌面分支**，基于官方 v1.0.49 正式版，并保留 Windows 本地优先改造。
 
 它不是把移动端简单套壳到桌面，而是针对 Windows 做了本地优先改造：
 
@@ -97,11 +97,11 @@
 - 首次使用需在「我的 → 语音识别」下载模型。
 - 本地音频 / 视频导入，支持 mp3、m4a、wav、aac、flac、mp4、mov、m4v、mkv，以及 OPUS / OGG / WEBM / AVI。
 - 本地转录：ffmpeg 解码为 16kHz WAV，sherpa-onnx 分段生成字幕。
-- 视频自适应分栏、视频字幕遮罩与媒体剪辑已对齐官方 v1.0.48 正式版。
+- 视频自适应分栏、视频字幕遮罩与媒体剪辑已对齐官方 v1.0.49 正式版。
 
 ### 官方功能同步
 
-已对齐官方 v1.0.48 正式版，包含：
+已对齐官方 v1.0.49 正式版，包含：
 
 - 资源库 / 合集搜索、合集学习进度。
 - 收藏词汇 AI 查词、手动查词与历史、收藏句 / 词汇 PDF 导出。
@@ -109,6 +109,7 @@
 - 全部学习任务的视频自适应分栏、视频字幕遮罩、媒体剪辑。
 - 本地合集自定义封面、打卡庆祝动画与音效、社区合集下载重试修复。
 - P3.4 新增：字幕编辑器与波形交互重构、剪辑分栏宽度调整、编辑字幕后按时间区间保留收藏与学习进度、SVG 图标统一。
+- P3.5 新增：循环页面间隙保持播放态与主按钮环形倒计时、间隙录音按钮、视频全屏控件自动隐藏修复、同一版本备份恢复提示修复。
 
 ---
 
@@ -116,8 +117,8 @@
 
 | 方式 | 文件 | 说明 |
 |---|---|---|
-| 安装版 | [`EchoLoop-Windows-Setup-1.0.48-p3.4.exe`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe) | 按当前用户安装，无需管理员权限 |
-| 便携版 | [`EchoLoop-Windows-p3.4.zip`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.4.zip) | 解压后运行 `echo_loop.exe`，整个文件夹需保持完整 |
+| 安装版 | [`EchoLoop-Windows-Setup-1.0.49-p3.5.exe`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.49-p3.5.exe) | 按当前用户安装，无需管理员权限 |
+| 便携版 | [`EchoLoop-Windows-p3.5.zip`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-p3.5.zip) | 解压后运行 `echo_loop.exe`，整个文件夹需保持完整 |
 | 更新清单 | [`version-windows.json`](https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/version-windows.json) | 应用自动检查更新时读取 |
 
 - 系统要求：Windows 10 / 11 x64。
@@ -152,7 +153,7 @@ SHA-256：
 | 账号与订阅 | 需要 | 不接入 |
 | AI 能力 | 官方云端额度 | 自定义 OpenAI 兼容服务 |
 | 云端转录 / 复述评估 | 支持 | 不可用；提供本地录音与本地 ASR |
-| 学习闭环 | 完整 | 完整（已对齐官方 v1.0.48 正式版） |
+| 学习闭环 | 完整 | 完整（已对齐官方 v1.0.49 正式版） |
 | 桌面能力 | — | 托盘、自启、SMTC、Toast、窗口记忆、单实例 |
 | 账号资料 / 用量页 | 支持 | 未合并 |
 | 更新渠道 | 官方 | 本仓库 `version-windows.json` |
@@ -196,7 +197,7 @@ flutter build windows --release
 - 未做代码签名，SmartScreen 可能拦截；自签名证书不能消除提示。
 - 登录、订阅、云端转录、复述评估与账号额度不可用。
 - 每日打卡分享依赖登录，因此 Windows 本地版会隐藏分享入口；每日目标、自动打卡与学习日历可离线使用。
-- 媒体剪辑、本地合集封面、视频自适应分栏、字幕遮罩与字幕编辑器/波形交互来自官方 v1.0.48 正式版，已通过构建与单元测试，真实视频、相册选图、长素材剪辑与长音频编辑仍需人工验收。
+- 媒体剪辑、本地合集封面、视频自适应分栏、字幕遮罩与字幕编辑器/波形交互来自官方 v1.0.49 正式版，已通过构建与单元测试，真实视频、相册选图、长素材剪辑与长音频编辑仍需人工验收。
 - Windows Toast 实际展示 / 点击、社区合集下载 UI 端到端、最小化续播仍需人工验收。
 - 未以 MSIX 打包时，Toast `cancel` 可能不生效，重复调度可能残留。
 - SMTC 支持元数据与播放控制，但不提供系统卡片进度条拖动。

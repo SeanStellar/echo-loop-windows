@@ -1,12 +1,12 @@
 {
-  "latestVersion": "1.0.48",
+  "latestVersion": "1.0.49",
   "minimumVersion": "1.0.47",
   "releaseNotes": {
-    "en": "- Subtitle editor and waveform interaction overhaul\n- Media trim split width adjustment\n- Preserve favorites and study progress after subtitle edits\n- Favorite vocabulary prewarm lifecycle fixes\n- SVG icon unification and playback/split layout fixes\n- Database migration to schema 71",
-    "zh": "- 字幕编辑器与波形交互重构\n- 媒体剪辑支持调整左右分栏宽度\n- 编辑字幕后按时间区间保留收藏与学习进度\n- 收藏词汇预热生命周期修复\n- SVG 图标统一与播放/分栏修复\n- 数据库升级到 schema 71"
+    "en": "- Loop gap state with ring countdown across study pages\n- Gap recording button and countdown fixes\n- Video fullscreen controls auto-hide fix\n- Same-version backup restore fix\n- Official v1.0.49 sync",
+    "zh": "- 循环间隙保持播放态并显示环形倒计时\n- 间隙录音按钮与倒计时冲突修复\n- 视频全屏控件自动隐藏修复\n- 同一版本备份恢复误提示修复\n- 同步官方 v1.0.49"
   },
   "downloadUrl": {
-    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.48-p3.4.exe",
+    "windows": "https://github.com/SeanStellar/echo-loop-windows/releases/latest/download/EchoLoop-Windows-Setup-1.0.49-p3.5.exe",
     "fallback": "https://github.com/SeanStellar/echo-loop-windows/releases/latest"
   }
 }

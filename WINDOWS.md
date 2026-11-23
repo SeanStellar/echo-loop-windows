@@ -1,6 +1,6 @@
 # Echo Loop Windows（非官方本地优先版）
 
-本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于官方 v1.0.48 正式版。与原作者及中央民族大学无隶属关系。
+本仓库是 [Echo Loop](https://github.com/echo-loop/Echo-Loop) 的非官方 Windows 分支，基于官方 v1.0.49 正式版。与原作者及中央民族大学无隶属关系。
 
 ## 这个分支改了什么
 
@@ -17,7 +17,7 @@
 - **更新检查**：Windows 分支从本仓库 Release 的 `version-windows.json` 检查新版本；发现新版本时提示并可打开安装包下载。当前不静默安装（尚未代码签名）。
 - **每日学习目标 / 打卡**：新增每日目标设置、自动打卡、学习日历与今日卡片进度；目标随偏好同步。
 - **今日打卡分享**：官方打卡卡片分享功能已同步；分享依赖登录，Windows 本地版未登录时会隐藏分享入口。
-- **官方同步（P3.4）**：已对齐官方 v1.0.48 正式版。P3.4 新增字幕编辑器与波形交互重构、媒体剪辑左右分栏宽度调整、编辑字幕后按时间区间保留收藏与学习进度、收藏词汇预热生命周期隔离、SVG 图标统一及一批播放/分栏修复。P3.3 已包含资源库/合集搜索、OPUS/OGG/WEBM/AVI 导入、收藏词汇 AI 查词与手动查词、收藏句/词汇 PDF 导出、段落复述「看译文」、字幕字号/粗细与译文、视频字幕遮罩、全部学习任务视频自适应分栏、媒体剪辑、本地合集自定义封面、打卡庆祝动画/音效与下载重试修复。头像/昵称/账号页与「用量与额度」等账号功能仍未合并。
+- **官方同步（P3.5）**：已对齐官方 v1.0.49 正式版，循环页面统一为间隙保持播放态 + 主按钮环形倒计时，间隙支持录音，视频全屏控件自动隐藏与同一版本备份恢复提示修复。P3.4 已包含字幕编辑器与波形交互重构、媒体剪辑左右分栏宽度、编辑字幕后按时间区间保留收藏与学习进度、收藏词汇预热生命周期隔离与 SVG 图标统一。P3.3 已包含资源库/合集搜索、OPUS/OGG/WEBM/AVI 导入、收藏词汇 AI 查词与手动查词、收藏句/词汇 PDF 导出、段落复述「看译文」、字幕字号/粗细与译文、视频字幕遮罩、全部学习任务视频自适应分栏、媒体剪辑、本地合集自定义封面、打卡庆祝动画/音效与下载重试修复。头像/昵称/账号页与「用量与额度」等账号功能仍未合并。
 - **构建修复**：`windows/CMakeLists.txt` 增加 `/utf-8`、可配置安装前缀 `ECHOLOOP_WINDOWS_BUNDLE_DIR`，并补装 `WebView2Loader.dll`。
 
 完整的文件级修改说明见 [NOTICE](./NOTICE) 与 `TASKS.md`。
@@ -28,13 +28,13 @@
 
 便携版：
 
-1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.4.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
+1. 解压 Releases 中的便携包（文件名通常为 `EchoLoop-Windows-p3.5.zip` 或使用 `dist/EchoLoop-Windows/` 目录）。
 2. 双击 `echo_loop.exe`。
 3. 整个文件夹必须保持完整，不能只复制 exe。
 
 安装版：
 
-1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.48-p3.4.exe`）。
+1. 运行 Releases 中的安装程序（`EchoLoop-Windows-Setup-1.0.49-p3.5.exe`）。
 2. 按向导完成安装（默认安装到当前用户目录，不需要管理员权限）。
 3. 从开始菜单或桌面快捷方式启动。
 
@@ -70,7 +70,7 @@ flutter build windows --release
 & "C:\Users\<你>\AppData\Local\Programs\Inno Setup 6\ISCC.exe" "installer\windows\EchoLoop.iss"
 ```
 
-输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.48.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.4` 后缀的文件。
+输出文件：`dist\installer\EchoLoop-Windows-Setup-1.0.49.exe`。安装脚本默认按当前用户安装（`PrivilegesRequired=lowest`），不会请求管理员权限。发布到 Releases 时会把产物重命名为带 `p3.5` 后缀的文件。
 
 ### 发布新版本
 
@@ -87,7 +87,7 @@ flutter build windows --release
 .\scripts\sign_windows.ps1 -PfxPath D:\certs\echoloop.pfx -PfxPassword "你的证书密码"
 ```
 
-脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.48.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
+脚本会对 `dist\EchoLoop-Windows\echo_loop.exe` 与 `dist\installer\EchoLoop-Windows-Setup-1.0.49.exe` 做 SHA-256 签名并添加 DigiCert 时间戳。仓库不包含证书；没有证书时跳过此步骤不影响运行，但 Windows SmartScreen 可能提示未知发布者。自签名证书不能消除 SmartScreen 提示。
 
 ## 已知限制
 
